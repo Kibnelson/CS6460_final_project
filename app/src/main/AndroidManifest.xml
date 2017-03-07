@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+		  package="com.edu.peers">
+
+	<uses-sdk
+			android:minSdkVersion="9"
+			android:targetSdkVersion="23"/>
+
+	<uses-feature android:name="android.hardware.usb.host"/>
+	<uses-permission android:name="android.permission.USB_PERMISSION"/>
+
+	<uses-feature
+			android:required="false"
+			android:name="android.hardware.camera"/>
+
+	<uses-permission android:name="android.permission.INTERNET"/>
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+	<uses-permission android:name="android.permission.CAMERA"/>
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+	<application
+			android:name="com.edu.peers.views.SchoolCensus"
+			android:allowBackup="true"
+			android:largeHeap="true"
+			android:icon="@drawable/peer_collaboration"
+			android:label="@string/app_name"
+			android:theme="@style/AppThemeTwo">
+
+		<activity
+				android:screenOrientation="unspecified"
+				android:name=".views.LoginView"
+				android:configChanges="orientation|keyboardHidden|screenSize"
+				android:windowSoftInputMode="stateAlwaysHidden"
+				android:label="@string/app_name">
+
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+
+				<category android:name="android.intent.category.LAUNCHER"/>
+			</intent-filter>
+
+		</activity>
+
+		<activity
+				android:name="com.edu.peers.views.MainView"
+				android:windowSoftInputMode="stateAlwaysHidden"
+				android:configChanges="orientation|keyboardHidden|screenSize">
+		</activity>
+
+		<service android:name="com.edu.peers.services.BackgroundService"/>
+
+
+	</application>
+
+</manifest>
+
