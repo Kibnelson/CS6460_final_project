@@ -4,6 +4,7 @@ package com.edu.peers.adapter;
  */
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,9 +59,18 @@ public class NotificationListViewAdapter extends BaseAdapter {
         .findViewById(R.id.listitem_label);
     TextView textViewOne = (TextView) homeListItem
         .findViewById(R.id.listitem_labeltwo);
+
+
     textView.setText(item.getMessage());
     textViewOne.setText("");
 
+    if (item.getRead()!=null) {
+      if (item.getRead()) {
+        textView.setTypeface(textView.getTypeface(), Typeface.NORMAL);
+      } else
+        textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
+
+    }
     return homeListItem;
   }
 

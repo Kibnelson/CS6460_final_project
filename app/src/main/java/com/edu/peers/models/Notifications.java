@@ -7,6 +7,7 @@ import java.util.UUID;
  */
 
 public class Notifications {
+
   private String uuid;
   private String message;
   private Boolean read;
@@ -16,9 +17,8 @@ public class Notifications {
   public Notifications(String message){
     this.message=message;
     this.uuid= UUID.randomUUID().toString();
+    read=false;
   }
-
-
 
   public String getUuid() {
     return uuid;

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			 android:id="@+id/root"
+			 android:layout_width="fill_parent"
+			 android:layout_height="fill_parent"
+			 android:background="@drawable/school_layer_background">
+
+
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_gravity="center"
+			android:orientation="vertical">
+
+
+		<FrameLayout android:id="@+id/main"
+					 android:layout_width="fill_parent"
+					 android:layout_height="fill_parent">
+
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="top"
+					android:layout_margin="10dp"
+					android:layout_centerInParent="true"
+					android:gravity="top"
+					android:orientation="vertical">
+
+				<GridView
+						android:id="@+id/homeGridview"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:columnWidth="150dp"
+						android:numColumns="auto_fit"
+						android:layout_marginTop="10dp"
+						android:verticalSpacing="10dp"
+						android:horizontalSpacing="10dp"
+						android:stretchMode="spacingWidthUniform"
+						android:gravity="center"
+						/>
+
+
+			</LinearLayout>
+
+
+		</FrameLayout>
+	</LinearLayout>
+
+
+</FrameLayout>

@@ -114,7 +114,7 @@ public class LearningContentListView extends Fragment implements
     schoolCensus.setCurrentFragment(this);
     schoolCensus.initHome();
     schoolCensus.setState(Constants.STUDENT_SUMMARY_VIEW);
-
+    schoolCensus.setCurrentTitle(Constants.LearningContentListView);
     contentManager =
         new ContentManager(schoolCensus.getCloudantInstance(), getContext());
 
@@ -149,55 +149,61 @@ public class LearningContentListView extends Fragment implements
 
   public void setDrawerAdapter() {
 
-    List<Content> questionsList = contentObject.getContentList();
+    if (contentObject!=null) {
 
-    groupData = new ArrayList<Map<String, Content>>();
-    childData = new ArrayList<List<Map<String, ContentFile>>>();
-    // add data in group and child list
-    for (int i = 0; i < questionsList.size(); i++) {
-      Map<String, Content> curGroupMap = new HashMap<String, Content>();
-      groupData.add(curGroupMap);
-      curGroupMap.put(NAME, questionsList.get(i));
+      List<Content> questionsList = contentObject.getContentList();
 
-      List<Map<String, ContentFile>> children = new ArrayList<Map<String, ContentFile>>();
+      groupData = new ArrayList<Map<String, Content>>();
+      childData = new ArrayList<List<Map<String, ContentFile>>>();
+      // add data in group and child list
+      for (int i = 0; i < questionsList.size(); i++) {
+        Map<String, Content> curGroupMap = new HashMap<String, Content>();
+        groupData.add(curGroupMap);
+        curGroupMap.put(NAME, questionsList.get(i));
 
-      //  String[][] childItems = {{}, {}, {}, {}, {}};
-      if (questionsList.get(i).getContentFileList() != null) {
-        for (int j = 0; j < questionsList.get(i).getContentFileList().size(); j++) {
-          Map<String, ContentFile> curChildMap = new HashMap<String, ContentFile>();
-          children.add(curChildMap);
-          curChildMap.put(NAME, questionsList.get(i).getContentFileList().get(j));
+        List<Map<String, ContentFile>> children = new ArrayList<Map<String, ContentFile>>();
+
+        //  String[][] childItems = {{}, {}, {}, {}, {}};
+        if (questionsList.get(i).getContentFileList() != null) {
+          for (int j = 0; j < questionsList.get(i).getContentFileList().size(); j++) {
+            Map<String, ContentFile> curChildMap = new HashMap<String, ContentFile>();
+            children.add(curChildMap);
+            curChildMap.put(NAME, questionsList.get(i).getContentFileList().get(j));
+          }
         }
+
+        childData.add(children);
       }
 
-      childData.add(children);
+      String groupFrom[] = {NAME};
+      int groupTo[] = {R.id.titleName};
+      String childFrom[] = {NAME};
+      int childTo[] = {R.id.childname};
+
+      adapter =
+          new ContentFileExpandableListViewAdapter(
+              this,
+              groupData,
+              R.layout.group_row_content, groupFrom, groupTo,
+              childData,
+              R.layout.child_row_content,
+              childFrom, childTo
+          );
+
+      listView.setAdapter(adapter);
+
+      listView.setOnChildClickListener(this);
+
+      listView.setOnGroupClickListener(this);
+
     }
-
-    String groupFrom[] = {NAME};
-    int groupTo[] = {R.id.titleName};
-    String childFrom[] = {NAME};
-    int childTo[] = {R.id.childname};
-
-    adapter =
-        new ContentFileExpandableListViewAdapter(
-            this,
-            groupData,
-            R.layout.group_row_content, groupFrom, groupTo,
-            childData,
-            R.layout.child_row_content,
-            childFrom, childTo
-        );
-
-    listView.setAdapter(adapter);
-
-    listView.setOnChildClickListener(this);
-
-    listView.setOnGroupClickListener(this);
-
-
   }
 
   public void addContent(Content content) {
+
+
+
+
 
     new backgroundProcessSave().execute(content);
 
@@ -342,7 +348,7 @@ public class LearningContentListView extends Fragment implements
   @Override
   public void onResume() {
     super.onResume();
-
+    schoolCensus.setCurrentTitle(Constants.LearningContentListView);
     schoolCensus.setCurrentFragment(this);
 
     mainView = schoolCensus.getMainView();
@@ -509,6 +515,8 @@ public class LearningContentListView extends Fragment implements
       quListList.add(params[0]);
 
       contentObject.setContentList(quListList);
+//      contentObject.setContentList(new ArrayList<Content>());
+
 
       contentManager.addContent(contentObject);
 

@@ -13,7 +13,10 @@ import java.util.UUID;
 public class ContentFile {
 
   private String uuid;
+  private String contentUUID;
   private String content;
+  private byte[] bytes;
+  private String type;
   private String name;
   private String fileName;
   private String filePath;
@@ -101,5 +104,29 @@ public class ContentFile {
 
   public void setUuid(String uuid) {
     this.uuid = uuid;
+  }
+
+  public byte[] getBytes() {
+    return bytes;
+  }
+
+  public void setBytes(byte[] bytes) {
+    this.bytes = bytes;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getContentUUID() {
+    return contentUUID;
+  }
+
+  public void setContentUUID(String contentUUID) {
+    this.contentUUID = contentUUID;
   }
 }

@@ -19,12 +19,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.edu.peers.R;
 import com.edu.peers.managers.UserManager;
+import com.edu.peers.models.User;
 import com.edu.peers.models.UserObject;
 import com.edu.peers.others.Constants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class LoginView extends FragmentActivity
@@ -49,6 +54,8 @@ public class LoginView extends FragmentActivity
   private ProgressDialog progressDialog;
   private Button registerButton;
   private UserObject userObject;
+  private List<User> userList= new ArrayList<>();
+  private UserObject userObjectList;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +68,7 @@ public class LoginView extends FragmentActivity
     schoolCensus.initHome();
     schoolCensus.setState(Constants.NON);
 
-    setContentView(R.layout.school_login_view);
+    setContentView(R.layout.peer_login_view);
     TextView textView = (TextView) findViewById(R.id.txtLink);
     textView.setPaintFlags(textView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
@@ -190,6 +197,7 @@ public class LoginView extends FragmentActivity
 
 
     } else if (v == registerButton) {
+      schoolCensus.setUserObject(null);
       Intent intent = new Intent(LoginView.this, RegistrationView.class);
       startActivity(intent);
     }
@@ -352,8 +360,17 @@ public class LoginView extends FragmentActivity
 
     protected Long doInBackground(Integer... params) {
 
-      userObject = userManager.getDocumentGetDocument(
-          usernameFieldStr);
+      userObjectList = userManager.getDocumentGetDocument(Constants.USERS);
+
+      int size=userObjectList.getUserList().size();
+      for (int y=0;y<size;y++){
+        User user=userObjectList.getUserList().get(y);
+        if (user.getUsername().equalsIgnoreCase(usernameFieldStr)){
+          userObjectList.setPosition(y);
+          userObjectList.setUser(user);
+        }
+
+      }
 
       long totalSize = 0;
       return totalSize;
@@ -364,16 +381,15 @@ public class LoginView extends FragmentActivity
 
       hideProgessDialog();
 
-      if (userObject != null && userObject.getUser().getPassword()
+      if (userObjectList != null && userObjectList.getUser().getPassword()
           .equalsIgnoreCase(passwordFieldStr)) {
 
-
-        schoolCensus.setUserObject(userObject);
+        schoolCensus.setUserObject(userObjectList);
         openSchoolList(1);
 
-
-
       } else {
+
+        Toast.makeText(getApplicationContext(), "Wrong credentials, please register first or try again", Toast.LENGTH_LONG).show();
 
 
       }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="11dp"
+		>
+	<TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Title"
+        android:textStyle="bold"
+        android:textSize="15dp"/>
+    <TextView
+        android:id="@+id/txtDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="7dp"
+        android:text="Description"
+        android:textSize="15dp"/>
+    <Button
+        android:id="@+id/countyReportsButton"
+        style="@style/style_button_one"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/school_round_button_layout"
+        android:padding="5dp"
+        android:minHeight="0dp" android:minWidth="0dp"
+        android:textStyle="normal"
+        android:textSize="14dp"
+        android:layout_margin="0dp"
+        android:text="View"/>
+</LinearLayout>

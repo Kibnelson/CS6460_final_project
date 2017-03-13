@@ -90,8 +90,16 @@ public class ContentFileExpandableListViewAdapter extends
     subject.setText(""+mGroupData.get(groupPosition).get(NAME).getSubject());
 
     User user1=mGroupData.get(groupPosition).get(NAME).getUser();
-    if (user1!=null)
-      user.setText(""+user1.getLastName()+" "+user1.getFirstName());
+
+    if (user1!=null) {
+      if (user1.getRole().equalsIgnoreCase("Instructor"))
+        user.setText(
+            "Instructor: " + user1.getFirstName() + " " + user1.getLastName());
+      else
+        user.setText(
+            "Student: " + user1.getFirstName() + " " + user1.getLastName());
+
+    }
 
     if (ind != null) {
       ImageView indicator = (ImageView) ind;
@@ -146,6 +154,10 @@ public class ContentFileExpandableListViewAdapter extends
     if (user1!=null)
       user.setText(""+user1.getLastName()+" "+user1.getFirstName());
     date.setText("");
+
+    user.setVisibility(View.GONE);
+    date.setVisibility(View.GONE);
+    fileName.setVisibility(View.GONE);
 
     bindViewChild(v, mChildData.get(groupPosition).get(childPosition), mChildFrom, mChildTo,
                   groupPosition, childPosition);

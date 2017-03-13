@@ -4,12 +4,14 @@ import com.edu.peers.others.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by nelson on 28/02/2017.
  */
 
 public class Questions {
+  private String uuid;
   private String index;
   private String questionInput;
   private String questionVoice;
@@ -17,25 +19,31 @@ public class Questions {
   private List<Input> answers;
   private List<String> selectAnswers;
   private List<Input> choices;
+  private List<Input> userSelections;
   private String points;
   private String duration;
-  private User createdBy;
   private List<User> users;
   private String date;
   private User user;
   private List<Input> responses;
+  private String  questionType;
+  private User  selectedUser;
+
 
   public Questions(){
+    this.date= Utils.getCurrentDate();
+    this.uuid= UUID.randomUUID().toString();
   }
 
-  public Questions(String questionInput,String questionWriting,String questionVoice, List<Input> answers,List<Input> choices){
+  public Questions(String questionInput,String questionWriting,String questionVoice, List<Input> answers,List<Input> choices, User user){
     this.questionInput=questionInput;
     this.questionWriting=questionWriting;
     this.questionVoice=questionVoice;
     this.answers=answers;
     this.choices=choices;
     this.date= Utils.getCurrentDate();
-
+    this.uuid= UUID.randomUUID().toString();
+    this.user=user;
   }
   public String getIndex() {
     return index;
@@ -142,5 +150,37 @@ public class Questions {
 
   public void setResponses(List<Input> responses) {
     this.responses = responses;
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  public String getQuestionType() {
+    return questionType;
+  }
+
+  public void setQuestionType(String questionType) {
+    this.questionType = questionType;
+  }
+
+  public User getSelectedUser() {
+    return selectedUser;
+  }
+
+  public void setSelectedUser(User selectedUser) {
+    this.selectedUser = selectedUser;
+  }
+
+  public List<Input> getUserSelections() {
+    return userSelections;
+  }
+
+  public void setUserSelections(List<Input> userSelections) {
+    this.userSelections = userSelections;
   }
 }

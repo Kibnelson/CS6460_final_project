@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -16,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,6 +32,7 @@ import com.edu.peers.dialogs.ScratchPadDialog;
 import com.edu.peers.models.Input;
 import com.edu.peers.models.Questions;
 import com.edu.peers.models.Quiz;
+import com.edu.peers.models.UserObject;
 import com.edu.peers.others.Constants;
 
 import java.util.ArrayList;
@@ -91,6 +92,8 @@ public class QuizListViewContent extends Fragment implements
   public List<Map<String, Questions>> groupData = new ArrayList<Map<String, Questions>>();
   public List<List<Map<String, Input>>> childData = new ArrayList<List<Map<String, Input>>>();
   private QuizExpandableListViewAdapter adapter;
+  private Button attemptQuiz;
+  private UserObject userObject;
 
 
   public static QuizListViewContent newInstance(int position) {
@@ -115,12 +118,12 @@ public class QuizListViewContent extends Fragment implements
     schoolCensus.setCurrentFragment(this);
     schoolCensus.initHome();
     schoolCensus.setState(Constants.STUDENT_SUMMARY_VIEW);
-
+    schoolCensus.setCurrentTitle(Constants.QuizListViewContent);
     quiz = schoolCensus.getQuiz();
+    userObject = schoolCensus.getUserObject();
 
     mainView = schoolCensus.getMainView();
-    mainView.showAddButton();
-    mainView.setAddButtonTag(1);
+    mainView.hideAddButton();
   }
 
   void openDialog(final int index) {
@@ -166,7 +169,14 @@ public class QuizListViewContent extends Fragment implements
     instructions = (TextView) view.findViewById(R.id.instructions);
     createdBy = (TextView) view.findViewById(R.id.createdBy);
     dateCreated = (TextView) view.findViewById(R.id.dateCreated);
+    attemptQuiz = (Button) view.findViewById(R.id.attemptQuiz);
+    attemptQuiz.setOnClickListener(this);
 
+    if (userObject.getUser().getRole().equalsIgnoreCase("Instructor")) {
+      attemptQuiz.setVisibility(View.GONE);
+    } else {
+      attemptQuiz.setVisibility(View.VISIBLE);
+    }
     if (quiz != null) {
 
       quizName.setText(quiz.getName());
@@ -175,10 +185,16 @@ public class QuizListViewContent extends Fragment implements
       instructions.setText(quiz.getInstructions());
       dateCreated.setText(quiz.getTimestamp());
       if (quiz.getUser() != null) {
-        createdBy.setText(
-            "Instructor: " + quiz.getUser().getFirstName() + " " + quiz.getUser().getLastName());
-      } else {
-        createdBy.setText("Instructor ");
+        if (quiz.getUser().getRole().equalsIgnoreCase("Instructor")) {
+          createdBy.setText(
+              "Instructor: " + quiz.getUser().getFirstName() + " " + quiz.getUser().getLastName());
+
+        } else {
+          createdBy.setText(
+              "Student: " + quiz.getUser().getFirstName() + " " + quiz.getUser().getLastName());
+        }
+
+
       }
     }
 
@@ -189,8 +205,11 @@ public class QuizListViewContent extends Fragment implements
 
 
   public void setDrawerAdapter() {
+    List<Questions> questionsList = new ArrayList<>();
 
-    List<Questions> questionsList = quiz.getQuestions();
+    if (userObject.getUser().getRole().equalsIgnoreCase("Instructor")) {
+      questionsList = quiz.getQuestions();
+    }
 
     groupData = new ArrayList<Map<String, Questions>>();
     childData = new ArrayList<List<Map<String, Input>>>();
@@ -219,7 +238,7 @@ public class QuizListViewContent extends Fragment implements
     String childFrom[] = {NAME};
     int childTo[] = {R.id.childname};
 
-      adapter =
+    adapter =
         new QuizExpandableListViewAdapter(
             this,
             groupData,
@@ -265,6 +284,11 @@ public class QuizListViewContent extends Fragment implements
   @Override
   public void onClick(View v) {
 
+    if (v == attemptQuiz) {
+      // Open a quiz attempt dialog
+      mainView.loadView(QuizAttemptView.newInstance(1));
+    }
+
   }
 
   @Override
@@ -294,7 +318,8 @@ public class QuizListViewContent extends Fragment implements
   @Override
   public void onResume() {
     super.onResume();
-
+    schoolCensus.setCurrentTitle(Constants.QuizListViewContent);
+    mainView.showMenuDrawer();
     schoolCensus.setCurrentFragment(this);
 
   }
@@ -382,7 +407,6 @@ public class QuizListViewContent extends Fragment implements
       return totalSize;
     }
 
-
     protected void onPostExecute(Long result) {
       if (progressBar != null) {
         progressBar.setVisibility(View.GONE);
@@ -455,11 +479,68 @@ public class QuizListViewContent extends Fragment implements
 
   }
 
+
+  public void checkCheckedValues1(final int groupPosition, int childPosition) {
+
+    String value = "";
+
+    List<Input> choices = quiz.getQuestions().get(groupPosition).getChoices();
+    ;
+
+    for (int y = 0; y < choices.size(); y++) {
+
+      Input input = choices.get(y);
+      if (y == childPosition && input.getSelected()) {
+        if (value.length() > 0) {
+          value += ",";
+        }
+        value += input.getPosition();
+      }
+
+    }
+
+    final String finalValue = value;
+    mHandler.post(new Runnable() {
+      @Override
+      public void run() {
+
+        adapter.onDataChanged(groupPosition);
+
+        adapter.notifyDataSetChanged();
+
+      }
+    });
+
+  }
+
+  public void checkBoxSelected1(int groupPosition, int childPosition, Boolean checked) {
+
+    List<Input> choices = quiz.getQuestions().get(groupPosition).getChoices();
+    ;
+    for (int y = 0; y < choices.size(); y++) {
+      Input input = choices.get(y);
+      if (y == childPosition && checked) {
+        input.setSelected(true);
+        choices.set(y, input);
+      } else if (y == childPosition && !checked && input.getSelected()) {
+        input.setSelected(false);
+        choices.set(y, input);
+      }
+    }
+    quiz.getQuestions().get(groupPosition).setChoices(choices);
+
+
+  }
+
+
   public void checkBoxSelected(int groupPosition, int childPosition, Boolean checked, Input value) {
 
-    choices=  quiz.getChoices();
+    choices = quiz.getChoices();
+    checkBoxSelected1(groupPosition, childPosition, checked);
 
-    Map<Integer, Input> choicesValues =  choices.get(groupPosition);
+//    quiz.getQuestions().get(groupPosition).getChoices();
+
+    Map<Integer, Input> choicesValues = choices.get(groupPosition);
     if (choicesValues == null) {
       choicesValues = new HashMap<>();
     }
@@ -470,12 +551,11 @@ public class QuizListViewContent extends Fragment implements
 
     checkCheckedValues(groupPosition, childPosition);
 
-    Log.i(Constants.TAG, ">>>>>>>>>>>valuevalue>>>>>>>>>>>>>>>>" + value.getQuestionInput());
-
     Input input = choicesValues.get(childPosition);
     if (input == null) {
       input = value;
     }
+
     input.setSelected(checked);
 
     choicesValues.put(childPosition, input);
@@ -494,7 +574,7 @@ public class QuizListViewContent extends Fragment implements
 
 
   public boolean isCheckCheckedValues(final int groupPosition, int childPosition) {
-    choices =quiz.getChoices();
+    choices = quiz.getChoices();
 
     Map<Integer, Input> choicesValues = choices.get(groupPosition);
     if (choicesValues == null) {
@@ -503,12 +583,14 @@ public class QuizListViewContent extends Fragment implements
 
     Input input = choicesValues.get(childPosition);
 
-    if (input==null)
-      input= new Input();
+    if (input == null) {
+      input = new Input();
+    }
 
     return input.getSelected();
 
   }
+
   public void checkCheckedValues(final int groupPosition, int childPosition) {
 
     String value = "";
@@ -521,13 +603,13 @@ public class QuizListViewContent extends Fragment implements
     for (Map.Entry<Integer, Input> entry : choicesValues.entrySet()) {
 
       if (entry.getValue().getSelected()) {
-        if (value.length()>0)
-          value +=",";
+        if (value.length() > 0) {
+          value += ",";
+        }
         value += entry.getValue().getPosition();
       }
 
     }
-
 
     final String finalValue = value;
     mHandler.post(new Runnable() {
@@ -556,8 +638,9 @@ public class QuizListViewContent extends Fragment implements
     for (Map.Entry<Integer, Input> entry : choicesValues.entrySet()) {
 
       if (entry.getValue().getSelected()) {
-        if (value.length() > 0)
+        if (value.length() > 0) {
           value += ",";
+        }
         value += entry.getValue().getPosition();
       }
 

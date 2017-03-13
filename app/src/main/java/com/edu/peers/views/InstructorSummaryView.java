@@ -224,26 +224,26 @@ public class InstructorSummaryView extends Fragment implements
     ImageView imageView = (ImageView) view
         .findViewById(R.id.profileImage);
 
-    perfomanceBarChart = (BarChart) view.findViewById(R.id.performanceIndicatorBarChart);
-
-    perfomanceBarChart.setDescription("");
-// scaling can now only be done on x- and y-axis separately
-    perfomanceBarChart.setPinchZoom(false);
-    perfomanceBarChart.setDrawBarShadow(false);
-    perfomanceBarChart.setDrawGridBackground(false);
-    xAxis = perfomanceBarChart.getXAxis();
-    xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-//    xAxis.setLabelsToSkip(0);
-    xAxis.setDrawGridLines(false);
-    perfomanceBarChart.getAxisLeft().setDrawGridLines(false);
-    perfomanceBarChart.getLegend().setEnabled(false);
-    perfomanceBarChart.setHighlightIndicatorEnabled(false);
-
-    perfomanceBarChart.getAxisRight().setDrawAxisLine(false);
-    perfomanceBarChart.getAxisRight().setDrawLabels(false);
-    perfomanceBarChart.getAxisRight().setDrawAxisLine(false);
-
-    perfomanceBarChart.setData(setData(5, 4));
+//    perfomanceBarChart = (BarChart) view.findViewById(R.id.performanceIndicatorBarChart);
+//
+//    perfomanceBarChart.setDescription("");
+//// scaling can now only be done on x- and y-axis separately
+//    perfomanceBarChart.setPinchZoom(false);
+//    perfomanceBarChart.setDrawBarShadow(false);
+//    perfomanceBarChart.setDrawGridBackground(false);
+//    xAxis = perfomanceBarChart.getXAxis();
+//    xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+////    xAxis.setLabelsToSkip(0);
+//    xAxis.setDrawGridLines(false);
+//    perfomanceBarChart.getAxisLeft().setDrawGridLines(false);
+//    perfomanceBarChart.getLegend().setEnabled(false);
+//    perfomanceBarChart.setHighlightIndicatorEnabled(false);
+//
+//    perfomanceBarChart.getAxisRight().setDrawAxisLine(false);
+//    perfomanceBarChart.getAxisRight().setDrawLabels(false);
+//    perfomanceBarChart.getAxisRight().setDrawAxisLine(false);
+//
+//    perfomanceBarChart.setData(setData(5, 4));
 //    perfomanceBarChart.setOnChartValueSelectedListener(this);
 
 

@@ -51,9 +51,10 @@ repositories {
 }
 dependencies {
     compile fileTree(dir: 'lib', include: ['*.jar'])
-    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-android',
-            version: '0.14.0')
-    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-core', version: '0.14.0')
+//    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-android', version: '0.14.0')
+//    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-core', version: '0.14.0')
+    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-android', version: 'latest.release')
+    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-core', version: 'latest.release')
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:appcompat-v7:22.2.0'
@@ -62,7 +63,5 @@ dependencies {
     compile 'com.4ert:sfcdialog:0.1.1'
     compile 'com.github.antwankakki:FabricView:latest'
     compile 'com.github.barteksc:android-pdf-viewer:2.4.0'
-
-
 
 }

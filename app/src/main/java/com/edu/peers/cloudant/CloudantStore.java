@@ -4,33 +4,43 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
-import com.cloudant.sync.datastore.BasicDocumentRevision;
-import com.cloudant.sync.datastore.Datastore;
-import com.cloudant.sync.datastore.DatastoreManager;
-import com.cloudant.sync.datastore.DocumentBody;
-import com.cloudant.sync.datastore.MutableDocumentRevision;
-import com.cloudant.sync.datastore.UnsavedStreamAttachment;
-import com.cloudant.sync.query.IndexManager;
-import com.cloudant.sync.replication.Replication;
+import com.cloudant.sync.documentstore.DocumentBodyFactory;
+import com.cloudant.sync.documentstore.DocumentRevision;
+import com.cloudant.sync.documentstore.DocumentStore;
+import com.cloudant.sync.documentstore.DocumentStoreException;
+import com.cloudant.sync.documentstore.DocumentStoreNotOpenedException;
+import com.cloudant.sync.event.Subscribe;
+import com.cloudant.sync.event.notifications.ReplicationCompleted;
+import com.cloudant.sync.event.notifications.ReplicationErrored;
+import com.cloudant.sync.replication.Replicator;
+import com.cloudant.sync.replication.ReplicatorBuilder;
 import com.edu.peers.managers.PersistenDataManager;
 import com.edu.peers.others.Constants;
 import com.edu.peers.views.SchoolCensus;
 
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
+
+//import com.cloudant.sync.datastore.BasicDocumentRevision;
+//import com.cloudant.sync.datastore.Datastore;
+//import com.cloudant.sync.datastore.DatastoreManager;
+//import com.cloudant.sync.datastore.DocumentBody;
+//import com.cloudant.sync.datastore.MutableDocumentRevision;
+//import com.cloudant.sync.datastore.UnsavedStreamAttachment;
+//import com.cloudant.sync.query.IndexManager;
+//import com.cloudant.sync.replication.Replication;
 
 
 /**
@@ -39,21 +49,19 @@ import static java.util.UUID.randomUUID;
 
 public class CloudantStore implements CloudantSaveListener {
 
-  private IndexManager genericIndexManager;
-  private String dataStoreName,environementDataStoreName;
-  private String dataStoreManagerDirectory,environementDataStoreNameDirectory;
+  private String dataStoreName;
+  private String dataStoreManagerDirectory;
   private String databaseName;
   private String apiKey;
   private String apiPassword;
   private String host;
-//  private Replicator mPushReplicator;
   private SchoolCensus schoolCensus;
-  private DatastoreManager manager,managerEnvironment;
   private Context context;
-  private Datastore mDatastore;
-  private Datastore environementDataStore;
+  private DocumentStore mDocumentStore;
   private Handler mHandler;
   private URI uri;
+  private Replicator mPullReplicator;
+  private Replicator mPushReplicator;
 //  private Replicator mPullReplicator;
 
   public CloudantStore() {
@@ -73,16 +81,16 @@ public class CloudantStore implements CloudantSaveListener {
 
   void stopAllReplications() {
 
-//    if (this.mPushReplicator != null) {
-//      this.mPushReplicator.stop();
-//    }
-//
-//    if (this.mPullReplicator != null) {
-//
-//      this.mPullReplicator.stop();
-//
-//
-//    }
+    if (this.mPushReplicator != null) {
+      this.mPushReplicator.stop();
+    }
+
+    if (this.mPullReplicator != null) {
+
+      this.mPullReplicator.stop();
+
+
+    }
 
   }
 
@@ -92,67 +100,62 @@ public class CloudantStore implements CloudantSaveListener {
         Context.MODE_PRIVATE
     );
 
-    File pathEnvironment = context.getDir(
-        environementDataStoreNameDirectory,
-        Context.MODE_PRIVATE
-    );
-
-
-
-    manager = new DatastoreManager(path.getAbsolutePath());
-    managerEnvironment = new DatastoreManager(pathEnvironment.getAbsolutePath());
-
     try {
-      replicationSettings();
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
+      this.mDocumentStore = DocumentStore.getInstance(new File(path, dataStoreName));
+    } catch (DocumentStoreNotOpenedException e) {
+      Log.e(Constants.TAG, "Unable to open DocumentStore", e);
     }
+
+    Log.d(Constants.TAG, "Set up database at " + path.getAbsolutePath());
+
+    // Set up the replicator objects from the app's settings.
+    try {
+      this.reloadReplicationSettings();
+    } catch (URISyntaxException e) {
+      Log.e(Constants.TAG, "Unable to construct remote URI from configuration", e);
+    }
+
+    // Allow us to switch code called by the ReplicationListener into
+    // the main thread so the UI can update safely.
+    this.mHandler = new Handler(Looper.getMainLooper());
+
+    Log.d(Constants.TAG, "TasksModel set up " + path.getAbsolutePath());
+
 
   }
 
 
-  void replicationSettings()
+  /**
+   * <p>Stops running replications and reloads the replication settings from the app's
+   * preferences.</p>
+   */
+  public void reloadReplicationSettings()
       throws URISyntaxException {
 
+    // Stop running replications before reloading the replication
+    // settings.
+    // The stop() method instructs the replicator to stop ongoing
+    // processes, and to stop making changes to the DocumentStore. Therefore,
+    // we don't clear the listeners because their complete() methods
+    // still need to be called once the replications have stopped
+    // for the UI to be updated correctly with any changes made before
+    // the replication was stopped.
     this.stopAllReplications();
-    uri = this.createServerURI();
-    try {
-      this.mDatastore = manager.openDatastore(dataStoreName);
-      this.environementDataStore = manager.openDatastore(environementDataStoreName);
 
-//      mPushReplicator = ReplicatorBuilder.push().from(environementDataStore).to(uri).build();
+    // Set up the new replicator objects
+    URI uri = this.createServerURI();
 
+    mPullReplicator = ReplicatorBuilder.pull().to(mDocumentStore).from(uri).build();
+    mPushReplicator = ReplicatorBuilder.push().from(mDocumentStore).to(uri).build();
 
-//      mPushReplicator.start();
+    mPushReplicator.getEventBus().register(this);
+    mPullReplicator.getEventBus().register(this);
 
-
-//      mPullReplicator = ReplicatorBuilder.pull().from(uri).to(environementDataStore).build();
-//
-//      mPullReplicator.start();
-
-      // Test
-      genericIndexManager = new IndexManager(mDatastore);
-
-      if (genericIndexManager.listIndexes().containsKey("basic")) {
-        genericIndexManager.deleteIndexNamed("basic");
-      }
-
-      List<Object> fieldValues = Arrays.<Object>asList();
-
-      genericIndexManager.ensureIndexed(fieldValues,
-                                        "basic");
-
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
+    Log.d(Constants.TAG, "Set up replicators for URI:" + uri.toString());
   }
-
 
 
   public void pullPicturesForSchool(String schoolId) {
-
 
 //    if (Utils.networkAvailable(context)) {
 //
@@ -171,11 +174,6 @@ public class CloudantStore implements CloudantSaveListener {
   }
 
 
-
-  public IndexManager getIndexManager() {
-    return new IndexManager(mDatastore);
-  }
-
   private URI createServerURI()
       throws URISyntaxException {
 
@@ -187,9 +185,9 @@ public class CloudantStore implements CloudantSaveListener {
   public synchronized void deleteDocumentToDataSTore(String docId) {
 
     try {
-      BasicDocumentRevision retrieved = mDatastore.getDocument(docId);
+      DocumentRevision retrieved = mDocumentStore.database().read(docId);
 
-      mDatastore.deleteDocumentFromRevision(retrieved);
+      mDocumentStore.database().delete(retrieved);
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -198,26 +196,16 @@ public class CloudantStore implements CloudantSaveListener {
 
   public synchronized void updateDocumentToDataSTore(JSONObject data, String docId) {
 
-
-
     try {
 
-      BasicDocumentRevision retrieved = mDatastore.getDocument(docId);
-
-      MutableDocumentRevision update = retrieved.mutableCopy();
-
-      update.body = new EventDocument(data);
-
-//      mDatastore.deleteDocumentFromRevision(retrieved);
-//      mDatastore.createDocumentFromRevision(update);
-      mDatastore.updateDocumentFromRevision(update);
+      DocumentRevision retrieved = mDocumentStore.database().read(docId);
+      retrieved.setBody(DocumentBodyFactory.create(new EventDocument(data).asMap()));
+      // Note that "updated" is the new DocumentRevision with a new revision ID
+      mDocumentStore.database().update(retrieved);
 
     } catch (Exception e) {
-
       e.printStackTrace();
     }
-
-
   }
 
   public synchronized void addDocumentToDataSTore(JSONObject data) {
@@ -240,29 +228,26 @@ public class CloudantStore implements CloudantSaveListener {
       e.printStackTrace();
     }
   }
-  public boolean containsDocumentKey(String key) {
-    return mDatastore.containsDocument(key);
+
+  public boolean containsDocumentKey(String key) throws DocumentStoreException {
+    return mDocumentStore.database().contains(key);
   }
 
-  public synchronized void addDocument(JSONObject data, String key) {
+  public synchronized void addDocument(JSONObject data, String key) throws Exception {
 
-    try {
-      if (mDatastore.containsDocument(key)) {
-        // get doc from store using the key
-        updateDocumentToDataSTore(data, key);
+    if (mDocumentStore.database().getDocumentCount()>0 && mDocumentStore.database().contains(key)) {
+      // get doc from store using the key
+      updateDocumentToDataSTore(data, key);
 
-      } else {
-        // No doc added to cloudant add a new one and store the key to shared preference
+    } else {
 
-        storeDocument(data, key);
-        updateDocumentToDataSTore(data, key);
+      // No doc added to cloudant add a new one and store the key to shared preference
+      storeDocument(data, key);
+//        updateDocumentToDataSTore(data, key);
 
-
-      }
-
-    } catch (Exception e) {
-      e.printStackTrace();
     }
+
+
   }
 
   private String getDocumentId() {
@@ -272,65 +257,69 @@ public class CloudantStore implements CloudantSaveListener {
     return key;
   }
 
-  public BasicDocumentRevision storeDocument(JSONObject data, String uuid) {
-    BasicDocumentRevision basicDocumentRevision = null;
+  public DocumentRevision storeDocument(JSONObject data, String uuid) {
+    DocumentRevision documentRevision = null;
     try {
 
-      MutableDocumentRevision revision = new MutableDocumentRevision();
+      // Create a document with a document id as the constructor argument
+      DocumentRevision rev = new DocumentRevision(uuid);
 
-      revision.docId = uuid.toString();
-      revision.body = new EventDocument(data);
+      rev.setBody(DocumentBodyFactory.create(new EventDocument(data).asMap()));
+//      rev.getAttachments()
+//      Attachment attachment= rev.getAttachments().get("");
+//      attachment.g
 
-      basicDocumentRevision = mDatastore.createDocumentFromRevision(revision);
+      documentRevision = mDocumentStore.database().create(rev);
+
 
     } catch (Exception e) {
       e.printStackTrace();
     }
 
-    return basicDocumentRevision;
+    return documentRevision;
   }
 
-  public BasicDocumentRevision readDocument() {
-    BasicDocumentRevision basicDocumentRevision = null;
+  public DocumentRevision readDocument() {
+    DocumentRevision retrieved = null;
     try {
       PersistenDataManager persistenDataManager = new PersistenDataManager(context);
 
       String key = persistenDataManager.getPersistentData(Constants.PREFS_KEY);
+      retrieved = mDocumentStore.database().read(key);
 
-      if (key != null) {
-        // get doc from store using the key
-        basicDocumentRevision = mDatastore.getDocument(key);
-      } else {
-
-        UUID uuid = randomUUID();
-
-        //  basicDocumentRevision = openDocument(uuid.toString());
-
-      }
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return basicDocumentRevision;
+
+    return retrieved;
   }
 
-  public BasicDocumentRevision getDocument(String key) {
-    BasicDocumentRevision basicDocumentRevision = null;
+  public DocumentRevision getDocument(String key) {
+
+
+    DocumentRevision retrieved = null;
     try {
+      retrieved = mDocumentStore.database().read(key);
 
-      if (key != null) {
-        // get doc from store using the key
-        basicDocumentRevision = mDatastore.getDocument(key);
-      } else {
-
-        UUID uuid = randomUUID();
-
-        basicDocumentRevision = mDatastore.getDocument(uuid.toString());
-
-      }
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return basicDocumentRevision;
+
+    return retrieved;
+  }
+
+  public List<DocumentRevision> getDocument(List<String> key) {
+
+
+    List<DocumentRevision> retrieved = null;
+    try {
+      retrieved = mDocumentStore.database().read(key);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return retrieved;
   }
 
   private void loadCloudantProperties() {
@@ -343,8 +332,6 @@ public class CloudantStore implements CloudantSaveListener {
       this.dataStoreName = props.getProperty("DATASTORE_NAME");
       this.dataStoreManagerDirectory = props.getProperty("DATASTORE_MANAGER_DIR");
 
-      this.environementDataStoreName= props.getProperty("DATASTORE_NAME_ENVIRONMENT");
-      this.environementDataStoreNameDirectory = props.getProperty("DATASTORE_MANAGER_DIR_ENVIRONMENT");
       this.apiKey = props.getProperty("apiKey");
       this.apiPassword = props.getProperty("apiSecret");
       this.databaseName = props.getProperty("dbName");
@@ -357,7 +344,12 @@ public class CloudantStore implements CloudantSaveListener {
 
 
   public int getDocumentCount() {
-    int number = this.mDatastore.getDocumentCount();
+    int number = 0;
+    try {
+      number = this.mDocumentStore.database().getDocumentCount();
+    } catch (DocumentStoreException e) {
+      e.printStackTrace();
+    }
     return number;
   }
 
@@ -389,19 +381,11 @@ public class CloudantStore implements CloudantSaveListener {
 //
 //    }
 
-
   }
 
 
-
-
-
-
-  public void pullDataFilter(final Replication.Filter filter) {
-
-
-
-
+//  public void pullDataFilter(final Replicator.Filter filter) {
+//
 //
 //    if (Utils.networkAvailable(context)) {
 //
@@ -425,8 +409,7 @@ public class CloudantStore implements CloudantSaveListener {
 //
 //      }
 //    }
-  }
-
+//  }
 
 
   public void pullData() {
@@ -455,7 +438,7 @@ public class CloudantStore implements CloudantSaveListener {
   public void deleteLocalDatastore() {
 
     try {
-      manager.deleteDatastore(mDatastore.getDatastoreName());
+      mDocumentStore.delete();
       createDataStore();
     } catch (Exception ee) {
       ee.printStackTrace();
@@ -472,64 +455,41 @@ public class CloudantStore implements CloudantSaveListener {
     this.schoolCensus = schoolCensus;
   }
 
-  public IndexManager getGenericIndexManager() {
-    return genericIndexManager;
+
+
+  //
+  // REPLICATIONLISTENER IMPLEMENTATION
+  //
+
+  /**
+   * Calls the TodoActivity's replicationComplete method on the main thread, as the complete()
+   * callback will probably come from a replicator worker thread.
+   */
+  @Subscribe
+  public void complete(ReplicationCompleted rc) {
+    mHandler.post(new Runnable() {
+      @Override
+      public void run() {
+        Log.i(Constants.TAG, "Replication ReplicationCompleted:");
+      }
+    });
   }
 
+  /**
+   * Calls the TodoActivity's replicationComplete method on the main thread, as the error() callback
+   * will probably come from a replicator worker thread.
+   */
+  @Subscribe
+  public void error(ReplicationErrored re) {
+    Log.e(Constants.TAG, "Replication error:", re.errorInfo);
+    mHandler.post(new Runnable() {
+      @Override
+      public void run() {
+        Log.e(Constants.TAG, "Replication error:");
 
-  public synchronized void addDocumentToLocalDataSTore(JSONObject data, byte[] imageData) {
-
-    try {
-      DocumentBody body = new EventDocument(data);
-      MutableDocumentRevision revision = new MutableDocumentRevision();
-      revision.body = body;
-//      UnsavedFileAttachment att1 = new UnsavedFileAttachment(filtere,
-//                                                             "image/png");
-
-      UnsavedStreamAttachment att1 = new UnsavedStreamAttachment(
-          new ByteArrayInputStream(imageData), Constants.FileName, "image/jpeg");
-
-      revision.attachments.put(att1.name, att1);
-
-      this.environementDataStore.createDocumentFromRevision(revision);
-
-      pushData();
-
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+      }
+    });
   }
-
-
-  public synchronized void addDocumentToLocalDataSTore(JSONObject data) {
-
-    try {
-      DocumentBody body = new EventDocument(data);
-      MutableDocumentRevision revision = new MutableDocumentRevision();
-      revision.body = body;
-
-      this.environementDataStore.createDocumentFromRevision(revision);
-
-      pushData();
-
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-
-  public synchronized  List<BasicDocumentRevision> getAllDocuments() {
-
-    int pageSize = environementDataStore.getDocumentCount();
-
-    return  this.environementDataStore.getAllDocuments(0, pageSize, true);
-
-  }
-
-
-
 
 
 }

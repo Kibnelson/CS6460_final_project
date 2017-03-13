@@ -2,6 +2,7 @@ package com.edu.peers.views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -9,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -33,11 +35,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cloudant.sync.documentstore.DocumentStoreException;
 import com.edu.peers.R;
 import com.edu.peers.adapter.ComboBoxViewAdapter;
 import com.edu.peers.adapter.ComboBoxViewListItem;
 import com.edu.peers.dialogs.CameraViewDialog;
 import com.edu.peers.managers.UserManager;
+import com.edu.peers.models.Quiz;
 import com.edu.peers.models.User;
 import com.edu.peers.models.UserObject;
 import com.edu.peers.others.Base64;
@@ -178,7 +182,9 @@ public class RegistrationView extends FragmentActivity implements
   private String selectedRole;
   private String fNameStr, lNameStr, usernameStr, passwordStr;
   private UserObject userObject;
-  private String bitmapFaceImageString;
+  private String bitmapFaceImageString="";
+  private boolean updateUser=false;
+  private ProgressDialog progressDialog;
 
 
   @Override
@@ -189,6 +195,10 @@ public class RegistrationView extends FragmentActivity implements
     this.mHandler = new Handler(Looper.getMainLooper());
     schoolCensus = (SchoolCensus) getApplication();
     schoolCensus.setState(Constants.USER_REGISTRATION_VIEW);
+
+    userObject = schoolCensus.getUserObject();
+
+
 
     userManager = new UserManager(schoolCensus.getCloudantInstance(), this);
 
@@ -225,6 +235,55 @@ public class RegistrationView extends FragmentActivity implements
     female = (RadioButton) findViewById(R.id.female);
     female.setOnClickListener(this);
 
+    if (userObject !=null && userObject.isEditObject()){
+      title.setText("Update user");
+
+      updateUser=true;
+      User user=userObject.getUser();
+
+      fName.setText(user.getFirstName());
+      lName.setText(user.getLastName());
+      username.setText(user.getUsername());
+      password.setText(user.getPassword());
+      selectedRole=user.getRole();
+
+      selectedGender=user.getGender();
+
+      if (user.getGender().equalsIgnoreCase("Male"))
+        male.setChecked(true);
+
+      if (user.getGender().equalsIgnoreCase("Female"))
+        female.setChecked(true);
+
+      if (user.getRole().equalsIgnoreCase("Student"))
+        student.setChecked(true);
+
+      if (user.getRole().equalsIgnoreCase("Instructor"))
+        instructor.setChecked(true);
+
+      okButton.setText("Update");
+      if (user.getFacephoto()!=null && user.getFacephoto().length()>0) {
+
+        try {
+          byte[] data = Base64.decode(user.getFacephoto());
+          Bitmap profileImage = BitmapFactory.decodeByteArray(data, 0, data.length);
+
+          Resources res = getResources();
+          RoundedBitmapDrawable dr =
+              RoundedBitmapDrawableFactory.create(res, profileImage);
+//          dr.setCornerRadius(Math.max(profileImage.getWidth(), profileImage.getHeight()) / 2.0f);
+          dr.setCircular(true);
+          imageView.setImageDrawable(dr);
+//        patientImage.setImageBitmap(profileImage);
+          imageView.setVisibility(View.VISIBLE);
+
+
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+
+    }
   }
 
 
@@ -273,9 +332,16 @@ public class RegistrationView extends FragmentActivity implements
       if (usernameStr == null || usernameStr.length() == 0) {
         valid = false;
         errorBuffer.append("Please enter username\n");
-      } else if (userManager.checkIfUsernameExists(usernameStr)) {
-        valid = false;
-        errorBuffer.append("Username already exists, please try another one\n");
+      } else{
+        try {
+          if (userManager.checkIfUsernameExists(usernameStr) && !updateUser) {
+            valid = false;
+            errorBuffer.append("Username already exists, please try another one\n");
+          }
+        } catch (DocumentStoreException e) {
+          e.printStackTrace();
+        }
+
       }
       if (passwordStr == null || passwordStr.length() == 0) {
         valid = false;
@@ -297,16 +363,10 @@ public class RegistrationView extends FragmentActivity implements
 
       if (valid) {
 
-        userObject = schoolCensus.getUserObject();
 
-        User
-            user =
-            new User(fNameStr, lNameStr, selectedRole, selectedGender, usernameStr, passwordStr);
-        userObject.setUser(user);
 
-        userManager.addDocument(userObject, usernameStr);
+          new backgroundProcessSave().execute();
 
-        onBackPressed();
 
 
       } else {
@@ -594,5 +654,70 @@ public class RegistrationView extends FragmentActivity implements
     public void onNothingSelected(AdapterView parent) {
       // Do nothing.
     }
+  }
+
+
+  private ProgressDialog showProgessDialog() {
+
+    progressDialog = new ProgressDialog(RegistrationView.this);
+    progressDialog.setMessage("Please wait");
+    progressDialog.show();
+    return progressDialog;
+
+
+  }
+
+  private void hideProgessDialog() {
+
+    progressDialog.dismiss();
+    progressDialog.hide();
+
+  }
+
+
+  private class backgroundProcessSave extends AsyncTask<Quiz, Quiz, Long> {
+
+    protected Long doInBackground(Quiz... params) {
+
+      userObject = schoolCensus.getUserObject();
+
+      User
+          user =
+          new User(fNameStr, lNameStr, selectedRole, selectedGender, usernameStr, passwordStr);
+      user.setFacephoto(bitmapFaceImageString);
+
+
+     UserObject userObject1= userManager.getDocumentGetDocument(Constants.USERS);
+
+      if (userObject1==null)
+        userObject1= new UserObject();
+
+      userObject1.getUserList().add(user);
+
+      userObject1.setUser(user);
+      schoolCensus.setUserObject(userObject1);
+      try {
+        userManager.addDocument(userObject1, Constants.USERS);
+
+      } catch (Exception e) {
+        Log.i(Constants.TAG,"Registration Error"+e.getMessage());
+
+//        Toast.makeText(getApplicationContext(), "Error occurred while saving, please try again", Toast.LENGTH_LONG).show();
+
+        e.printStackTrace();
+      }
+
+      long totalSize = 0;
+      return totalSize;
+    }
+
+
+    protected void onPostExecute(Long result) {
+      hideProgessDialog();      onBackPressed();
+    }
+    protected void onPreExecute() {
+      showProgessDialog();
+    }
+
   }
 }

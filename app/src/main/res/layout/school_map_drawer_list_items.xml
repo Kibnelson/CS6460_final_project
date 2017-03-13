@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="match_parent"
+				android:layout_height="45dp"
+    android:paddingRight="5dp"
+				android:background="#FFFFFF">
+	<!-- title -->
+	<TextView
+			android:id="@+id/header_title"
+			android:textColor="@color/school_list_item_text"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="16dp"
+			android:padding="10dp"
+			android:text="Test Header"
+			/>
+
+	<!-- icon 007670 -->
+
+	<TextView
+			android:id="@+id/more_title"
+			android:background="@drawable/school_round_number_layout"
+			android:textColor="@android:color/white"
+			android:layout_width="30dp"
+			android:layout_height="30dp"
+        android:textSize="16dp"
+			android:gravity="center"
+			android:layout_alignParentRight="true"
+			android:layout_margin="5dp"
+			android:padding="5dp"
+			android:text="1"
+			/>
+
+</RelativeLayout>

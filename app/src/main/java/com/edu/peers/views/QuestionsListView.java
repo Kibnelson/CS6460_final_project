@@ -44,7 +44,8 @@ import java.util.List;
  * Created by nelson on 3/16/15.
  */
 public class QuestionsListView extends Fragment implements
-                                           View.OnClickListener, AdapterView.OnItemClickListener {
+                                                View.OnClickListener,
+                                                AdapterView.OnItemClickListener {
 
   public HashMap<String, ComboBoxViewListItem>
       classArray =
@@ -101,7 +102,7 @@ public class QuestionsListView extends Fragment implements
     schoolCensus.setCurrentFragment(this);
     schoolCensus.initHome();
     schoolCensus.setState(Constants.STUDENT_SUMMARY_VIEW);
-
+    schoolCensus.setCurrentTitle(Constants.QuestionsListView);
     questionManager =
         new QuestionManager(schoolCensus.getCloudantInstance(), getContext());
 
@@ -116,7 +117,7 @@ public class QuestionsListView extends Fragment implements
 
     schoolCensus.setCurrentActivity(getActivity());
     schoolCensus.setCurrentFragment(this);
-   final OneQuestionCreationDialogView
+    final OneQuestionCreationDialogView
         newFragment = OneQuestionCreationDialogView.newInstance(mStackLevel);
 
     newFragment.setQuestionsListView(this);
@@ -168,6 +169,7 @@ public class QuestionsListView extends Fragment implements
 
     return view;
   }
+
   private void loadSpinnerData() {
 
     sampleData.clear();
@@ -181,7 +183,7 @@ public class QuestionsListView extends Fragment implements
       comboBoxViewAdapter = new ComboBoxViewAdapter(getContext(),
                                                     android.R.layout.simple_spinner_item,
                                                     convertToModel(classArray.values()));
-      comboBoxViewAdapter.setHint("Select Subjec");
+      comboBoxViewAdapter.setHint("Select Subject");
     }
 
     spinner.setAdapter(comboBoxViewAdapter);
@@ -202,6 +204,7 @@ public class QuestionsListView extends Fragment implements
 //    startActivity(ivE);
 
     schoolCensus.setQuestions(sampleData.get(position));
+    schoolCensus.setQuestionsUUID(sampleData.get(position).getUuid());
 
     mainView.loadView(QuestionListViewContent.newInstance(1));
 
@@ -279,8 +282,7 @@ public class QuestionsListView extends Fragment implements
     super.onResume();
 
     schoolCensus.setCurrentFragment(this);
-
-
+    schoolCensus.setCurrentTitle(Constants.QuestionsListView);
     mainView = schoolCensus.getMainView();
     mainView.showAddButton();
     mainView.setAddButtonTag(2);
@@ -360,8 +362,26 @@ public class QuestionsListView extends Fragment implements
 
       questionObject = questionManager.getQuestionObject();
 
+      sampleData = new ArrayList<>();
+
       if (questionObject != null) {
-        sampleData = questionObject.getQuestionsList();
+
+        List<Questions> questionsList = questionObject.getQuestionsList();
+
+
+          for (Questions questions : questionsList) {
+            if (questions.getQuestionType() != null) {
+              if (questions.getQuestionType().equalsIgnoreCase(schoolCensus.getQuestionState())) {
+                if (schoolCensus.getQuestionState().equalsIgnoreCase(Constants.PUBLIC))
+                  sampleData.add(questions);
+                else if (schoolCensus.getUserObject().getUser().getUsername().equalsIgnoreCase(questions.getSelectedUser().getUsername())){
+                  sampleData.add(questions);
+                }
+              }
+            }
+          }
+
+
       }
 
       long totalSize = 0;
@@ -404,6 +424,32 @@ public class QuestionsListView extends Fragment implements
 
       questionManager.addQuestion(questionObject);
 
+
+      sampleData = new ArrayList<>();
+
+      if (questionObject != null) {
+
+        List<Questions> questionsList = questionObject.getQuestionsList();
+
+
+        for (Questions questions : questionsList) {
+          if (questions.getQuestionType() != null) {
+            if (questions.getQuestionType().equalsIgnoreCase(schoolCensus.getQuestionState())) {
+
+              if (schoolCensus.getQuestionState().equalsIgnoreCase(Constants.PUBLIC))
+                sampleData.add(questions);
+              else if (schoolCensus.getUserObject().getUser().getUsername().equalsIgnoreCase(questions.getSelectedUser().getUsername())){
+                sampleData.add(questions);
+              }
+
+            }
+          }
+        }
+
+
+      }
+
+
       long totalSize = 0;
       return totalSize;
     }
@@ -426,8 +472,8 @@ public class QuestionsListView extends Fragment implements
 
   }
 
-  public void updateList(){
-    sampleData=  questionObject.getQuestionsList();
+  public void updateList() {
+
     listView.setAdapter(new QuestionListViewAdapter(this, sampleData));
 
   }

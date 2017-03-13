@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <include layout="@layout/school_action_bar_view"/>
+
+
+        <android.support.v4.widget.DrawerLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/drawer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".MainActivity">
+
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/root"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/school_layer_background">
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="center"
+                    android:orientation="vertical">
+
+
+                    <FrameLayout android:id="@+id/main"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:background="@drawable/school_layer_background">
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:orientation="vertical">
+
+
+                            <LinearLayout
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                style="@style/middle_view_background"
+
+                                android:layout_gravity="center"
+                                android:orientation="horizontal">
+
+                                <RelativeLayout
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+
+                                    android:orientation="horizontal">
+
+                                    <AutoCompleteTextView android:id="@+id/searchField"
+                                        android:nextFocusUp="@id/searchField"
+                                        android:nextFocusLeft="@id/searchField"
+
+
+                                                          android:visibility="invisible"
+                                        android:layout_width="200dp"
+                                        android:background="@drawable/school_editfield_background_layout"
+                                        android:drawableRight="@android:drawable/ic_menu_search"
+                                        style="@style/school_filter_search_field"
+                                        android:layout_margin="10dp"
+                                        android:textSize="16dp"
+                                        />
+
+                                    <Spinner
+                                        android:id="@+id/county"
+                                        android:layout_width="200dp"
+                                        android:layout_alignParentRight="true"
+                                        style="@style/spinner_background_layout"
+                                        android:layout_height="35dp"
+                                        android:visibility="invisible"
+                                        android:layout_margin="10dp"
+                                        android:background="@drawable/school_btn_background"
+                                        android:textSize="16dp"/>
+
+                                    <Spinner
+                                        android:id="@+id/measures"
+                                        android:layout_width="200dp"
+                                        android:layout_margin="10dp"
+
+                                        android:layout_toRightOf="@+id/measures"
+                                        style="@style/spinner_background_layout"
+                                        android:layout_height="35dp"
+                                        android:layout_toLeftOf="@+id/county"
+                                        android:background="@drawable/school_btn_background"
+                                        android:visibility="gone"
+                                        android:textSize="16dp"/>
+
+
+                                </RelativeLayout>
+
+                            </LinearLayout>
+
+
+                            <RelativeLayout
+                                android:layout_width="fill_parent"
+                                android:layout_height="fill_parent"
+                                android:orientation="horizontal">
+
+
+
+
+                                <WebView xmlns:android="http://schemas.android.com/apk/res/android"
+                                         android:id="@+id/documentView"
+                                         android:layout_width="fill_parent"
+                                         android:layout_height="fill_parent"
+                                        />
+
+
+                                <LinearLayout
+                                    android:id="@+id/mapSchoolLayout"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="fill_parent"
+                                    android:gravity="center"
+                                    android:visibility="gone"
+                                    android:layout_alignParentLeft="true"
+                                    android:orientation="vertical">
+
+
+                                    <Button
+                                        android:id="@+id/countyReportsButton"
+                                        style="@style/style_button_one"
+                                        android:layout_marginBottom="50dp"
+                                        android:layout_width="200dp"
+                                        android:layout_height="30dp"
+                                        android:background="@drawable/school_round_button_layout"
+                                        android:text="Decision Support"></Button>
+
+                                </LinearLayout>
+
+                                <RelativeLayout android:layout_alignParentLeft="true"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_marginBottom="40dp">
+                                    <ExpandableListView
+                                        android:id="@+id/mapSchoolList"
+                                        android:layout_alignParentBottom="true"
+                                        android:layout_width="300dp"
+                                        android:layout_weight="1"
+                                        android:layout_height="wrap_content"
+                                        android:background="@drawable/school_layer_background"
+                                        android:cacheColorHint="#00000000"
+                                        android:indicatorRight="?android:attr/expandableListPreferredItemIndicatorRight"
+                                        android:groupIndicator="@android:color/transparent"
+
+                                        ></ExpandableListView>
+
+
+                                </RelativeLayout>
+
+
+                                <RelativeLayout android:layout_alignParentBottom="true"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="120dp"
+                                    android:id="@+id/overlay"
+                                    android:layout_marginRight="10dp"
+                                    android:layout_marginBottom="50dp">
+                                    <LinearLayout
+
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+
+                                        android:orientation="vertical">
+
+                                        <LinearLayout
+
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:orientation="horizontal">
+
+
+                                            <!-- title -->
+                                            <TextView
+                                                android:id="@+id/countyName"
+                                                android:textColor="@color/school_list_item_text"
+                                                android:layout_width="15dp"
+                                                android:layout_height="15dp"
+                                                android:background="@color/scorecard_red"
+                                                android:text=""
+                                                />
+
+                                            <!-- icon -->
+
+                                            <TextView
+                                                    android:textColor="@color/blackcolor"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="20dp"
+                                                android:paddingLeft="10dp"
+                                                android:layout_alignParentRight="true"
+                                                android:text="Not Submitted"
+                                                />
+
+                                        </LinearLayout>
+
+                                        <LinearLayout
+
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentRight="true"
+                                            android:orientation="horizontal">
+
+
+                                            <!-- title -->
+                                            <TextView
+                                                android:textColor="@color/school_list_item_text"
+                                                android:layout_width="15dp"
+                                                android:layout_height="15dp"
+                                                android:background="@color/yellocolor"
+                                                android:text=""
+                                                />
+
+                                            <!-- icon -->
+
+                                            <TextView
+                                                android:textColor="@color/school_list_item_text"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="20dp"
+                                                android:layout_alignParentRight="true"
+                                                android:paddingLeft="10dp"
+                                                android:text="Submitted "
+                                                />
+
+                                        </LinearLayout>
+
+
+                                        <LinearLayout
+
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+
+
+                                            android:layout_alignParentRight="true"
+                                            android:orientation="horizontal">
+
+
+                                            <!-- title -->
+                                            <TextView
+                                                    android:textColor="@color/blackcolor"
+                                                android:layout_width="15dp"
+                                                android:layout_height="15dp"
+                                                    android:background="@color/greencolor"
+                                                android:text=""
+                                                />
+
+                                            <!-- icon -->
+
+                                            <TextView
+                                                android:textColor="@color/school_list_item_text"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="20dp"
+                                                android:layout_marginBottom="20dp"
+                                                android:layout_alignParentRight="true"
+                                                android:paddingLeft="10dp"
+                                                android:text="Approved"
+                                                />
+
+                                        </LinearLayout>
+
+
+                                    </LinearLayout>
+                                </RelativeLayout>
+
+                            </RelativeLayout>
+
+
+                        </LinearLayout>
+
+
+                    </FrameLayout>
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <ExpandableListView
+                android:id="@+id/drawer"
+                style="@style/school_list_view"
+                android:layout_width="250dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:choiceMode="singleChoice"
+                android:insetLeft="50dp"
+                android:background="@drawable/school_layer_background"
+                android:cacheColorHint="#00000000"
+                android:listSelector="@drawable/school_list_background_selector"
+
+                android:indicatorRight="?android:attr/expandableListPreferredItemIndicatorRight"
+                android:groupIndicator="@android:color/transparent"
+
+
+                ></ExpandableListView>
+
+
+        </android.support.v4.widget.DrawerLayout>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>
+
+
+
+

@@ -1,6 +1,7 @@
 package com.edu.peers.dialogs;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -31,10 +32,16 @@ import android.widget.Toast;
 import com.edu.peers.R;
 import com.edu.peers.adapter.ComboBoxViewAdapter;
 import com.edu.peers.adapter.ComboBoxViewListItem;
+import com.edu.peers.managers.UserManager;
 import com.edu.peers.models.Input;
 import com.edu.peers.models.Questions;
+import com.edu.peers.models.Quiz;
+import com.edu.peers.models.User;
+import com.edu.peers.models.UserObject;
+import com.edu.peers.models.UserStatistics;
 import com.edu.peers.others.Base64;
 import com.edu.peers.others.Constants;
+import com.edu.peers.others.Utils;
 import com.edu.peers.views.SchoolCensus;
 
 import org.apache.commons.io.FileUtils;
@@ -44,6 +51,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -186,6 +194,10 @@ public class QuestionCreationDialogView extends DialogFragment
       answerSelection4 =
           0;
   private QuizCreationDialogView quizCreationDialogView;
+  private UserObject userObject;
+  private UserManager userManager;
+  private ProgressDialog progressDialog;
+  private Questions questionsObject;
 
   public QuestionCreationDialogView() {
     // Required empty public constructor
@@ -216,7 +228,7 @@ public class QuestionCreationDialogView extends DialogFragment
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 //    getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-    getDialog().setTitle("Create Question -");
+    getDialog().setTitle("Create Question");
     view = inflater.inflate(R.layout.question_creation_dialog, null);
 
     return view;
@@ -228,11 +240,13 @@ public class QuestionCreationDialogView extends DialogFragment
     super.onStart();
 
     this.getDialog().getWindow()
-        .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
     genderValue = null;
 
     schoolCensus = (SchoolCensus) getActivity().getApplication();
+    userObject= schoolCensus.getUserObject();
+    userManager = new UserManager(schoolCensus.getCloudantInstance(), getContext());
 
     qName = (EditText) view.findViewById(R.id.qName);
 
@@ -304,44 +318,93 @@ public class QuestionCreationDialogView extends DialogFragment
     /** When OK Button is clicked, dismiss the school_calendar_view_dialog */
     if (v == addButton) {
 
-      List<Input> choices = new ArrayList<>();
-      // 1 Choice
-      Input input1 = new Input(1, choice_1.getText().toString(), write1String, voice1String);
-      choices.add(input1);
-      // 2 Choice
-      Input input2 = new Input(2, choice_2.getText().toString(), write2String, voice2String);
-      choices.add(input2);
-      // 3 Choice
-      Input input3 = new Input(3, choice_3.getText().toString(), write3String, voice3String);
-      choices.add(input3);
-      // 4 Choice
-      Input input4 = new Input(4, choice_4.getText().toString(), write4String, voice4String);
-      choices.add(input4);
 
-      List<Input> answers = new ArrayList<>();
+      String inputString=qName.getText().toString();
 
-      if (answerSelection1 == 1) {
-        answers.add(new Input(1, choice_1.getText().toString(), write1String, voice1String));
-      }
-      if (answerSelection2 == 2) {
-        answers.add(new Input(2, choice_2.getText().toString(), write2String, voice2String));
-      }
-      if (answerSelection3 == 3) {
-        answers.add(new Input(3, choice_3.getText().toString(), write3String, voice3String));
-      }
-      if (answerSelection4 == 4) {
-        answers.add(new Input(4, choice_4.getText().toString(), write4String, voice4String));
+
+      boolean valid = true;
+      StringBuilder errorBuffer = new StringBuilder();
+      if (( inputString==null || inputString.length() == 0) && ( questionStringWriting.length() == 0) &&    ( questionStringVoice.length() == 0)) {
+        valid = false;
+        errorBuffer.append("Please enter question name\n");
       }
 
-      Questions
-          questions =
-          new Questions(qName.getText().toString(), questionStringWriting, questionStringVoice,
-                        answers, choices);
 
-      quizCreationDialogView.addQuestion(questions);
-      dismiss();
+      if (valid) {
+
+        User user = userObject.getUser();
+
+        List<Input> choices = new ArrayList<>();
+        // 1 Choice
+        Input
+            input1 =
+            new Input(1, choice_1.getText().toString(), write1String, voice1String, user);
+        if (answerSelection1 == 1)
+          input1.setAnswer(true);
+        choices.add(input1);
+        // 2 Choice
+        Input
+            input2 =
+            new Input(2, choice_2.getText().toString(), write2String, voice2String, user);
+        if (answerSelection2 == 2)
+          input2.setAnswer(true);
+
+        choices.add(input2);
+        // 3 Choice
+        Input
+            input3 =
+            new Input(3, choice_3.getText().toString(), write3String, voice3String, user);
+        if (answerSelection3 == 3)
+          input3.setAnswer(true);
+
+        choices.add(input3);
+        // 4 Choice
+        Input
+            input4 =
+            new Input(4, choice_4.getText().toString(), write4String, voice4String, user);
+        if (answerSelection4 == 4)
+          input4.setAnswer(true);
+
+        choices.add(input4);
+
+        List<Input> answers = new ArrayList<>();
+
+        if (answerSelection1 == 1) {
+          answers
+              .add(new Input(1, choice_1.getText().toString(), write1String, voice1String, user));
+        }
+        if (answerSelection2 == 2) {
+          answers
+              .add(new Input(2, choice_2.getText().toString(), write2String, voice2String, user));
+        }
+        if (answerSelection3 == 3) {
+          answers
+              .add(new Input(3, choice_3.getText().toString(), write3String, voice3String, user));
+        }
+        if (answerSelection4 == 4) {
+          answers
+              .add(new Input(4, choice_4.getText().toString(), write4String, voice4String, user));
+        }
+
+        questionsObject =
+            new Questions(qName.getText().toString(), questionStringWriting, questionStringVoice,
+                          answers, choices, getUserObject().getUser());
+
+        List<UserStatistics> questionsAsked = user.getQuestionsAsked();
+        questionsAsked.add(
+            new UserStatistics(Utils.getCurrentDate(), 1, UUID.randomUUID().toString(),
+                               Constants.QUESTIONS_CATEGORY));
+        user.setQuestionsAsked(questionsAsked);
+        userObject.setUser(user);
+        new backgroundProcessSave().execute();
+
+      } else {
+        Toast.makeText(getActivity(), errorBuffer.toString(), Toast.LENGTH_LONG).show();
+
+        return;
+      }
     } else if (v == cancelButton) {
-
+      dismiss();
 
     } else if (v == write_q) {
       if (questionStringWriting.length() == 0) {
@@ -517,6 +580,14 @@ public class QuestionCreationDialogView extends DialogFragment
     this.quizCreationDialogView = quizCreationDialogView;
   }
 
+  public UserObject getUserObject() {
+    return userObject;
+  }
+
+  public void setUserObject(UserObject userObject) {
+    this.userObject = userObject;
+  }
+
 
   private class OnStreamSelected implements
                                  AdapterView.OnItemSelectedListener {
@@ -680,6 +751,59 @@ public class QuestionCreationDialogView extends DialogFragment
 //    scratchPadDialog.setQuestionViewDialogView(this);
     scratchPadDialog.setImageString(imageString);
     scratchPadDialog.show(ft, "school_calendar_view_dialog");
+
+  }
+
+
+  private ProgressDialog showProgessDialog() {
+
+    progressDialog = new ProgressDialog(getContext());
+    progressDialog.setMessage("Please wait");
+    progressDialog.show();
+    return progressDialog;
+
+
+  }
+
+  private void hideProgessDialog() {
+
+    progressDialog.dismiss();
+    progressDialog.hide();
+
+  }
+  private class backgroundProcessSave extends AsyncTask<Quiz, Quiz, Long> {
+
+    protected Long doInBackground(Quiz... params) {
+
+      try {
+        userManager.addDocument(userObject,userObject.getUser().getUsername());
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      long totalSize = 0;
+      return totalSize;
+    }
+
+
+    protected void onPostExecute(Long result) {
+      hideProgessDialog();
+
+      completeStatisticsCreation();
+    }
+
+
+
+    protected void onPreExecute() {
+      showProgessDialog();
+    }
+
+  }
+
+  private void completeStatisticsCreation() {
+    quizCreationDialogView.addQuestion(questionsObject);
+    dismiss();
+
 
   }
 }

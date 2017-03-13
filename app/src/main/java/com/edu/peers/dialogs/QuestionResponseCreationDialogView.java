@@ -1,6 +1,7 @@
 package com.edu.peers.dialogs;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -30,9 +31,19 @@ import android.widget.Toast;
 import com.edu.peers.R;
 import com.edu.peers.adapter.ComboBoxViewAdapter;
 import com.edu.peers.adapter.ComboBoxViewListItem;
+import com.edu.peers.managers.NotificationManager;
+import com.edu.peers.managers.UserManager;
 import com.edu.peers.models.Input;
+import com.edu.peers.models.NotificationObject;
+import com.edu.peers.models.Notifications;
+import com.edu.peers.models.Questions;
+import com.edu.peers.models.Quiz;
+import com.edu.peers.models.User;
+import com.edu.peers.models.UserObject;
+import com.edu.peers.models.UserStatistics;
 import com.edu.peers.others.Base64;
 import com.edu.peers.others.Constants;
+import com.edu.peers.others.Utils;
 import com.edu.peers.views.SchoolCensus;
 import com.edu.peers.views.QuestionListViewContent;
 
@@ -43,6 +54,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -165,6 +177,14 @@ public class QuestionResponseCreationDialogView extends DialogFragment
       answerSelection4 =
           0;
   private QuestionListViewContent questionListViewContent;
+  private UserObject userObject;
+  private UserManager userManager;
+  private ProgressDialog progressDialog;
+  private Input input;
+  private NotificationManager notificationManager;
+  private NotificationObject notificationObject;
+  private Questions question;
+
   public QuestionResponseCreationDialogView() {
     // Required empty public constructor
   }
@@ -194,7 +214,7 @@ public class QuestionResponseCreationDialogView extends DialogFragment
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 //    getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-    getDialog().setTitle("Add response to question");
+    getDialog().setTitle("Respond to question");
     view = inflater.inflate(R.layout.question_response_creation_dialog, null);
 
     return view;
@@ -206,12 +226,18 @@ public class QuestionResponseCreationDialogView extends DialogFragment
     super.onStart();
 
     this.getDialog().getWindow()
-        .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
     genderValue = null;
 
     schoolCensus = (SchoolCensus) getActivity().getApplication();
-
+    userObject= schoolCensus.getUserObject();
+    userManager = new UserManager(schoolCensus.getCloudantInstance(), getContext());
+    notificationManager = new NotificationManager(schoolCensus.getCloudantInstance(), getContext());
+    notificationObject=notificationManager.getNotificationObject();
+    if (notificationObject==null)
+      notificationObject= new NotificationObject();
+    question = schoolCensus.getQuestions();
     qName = (EditText) view.findViewById(R.id.qName);
 
     voice_q = (ImageView) view.findViewById(R.id.voice_q);
@@ -240,14 +266,33 @@ public class QuestionResponseCreationDialogView extends DialogFragment
 
       List<Input> answers = new ArrayList<>();
 
-      Input input = new Input(1,qName.getText().toString(),questionStringWriting,questionStringVoice);
+       input = new Input(1,qName.getText().toString(),questionStringWriting,questionStringVoice,userObject.getUser());
 
-      questionListViewContent.addInput(input);
+      User user=userObject.getUser();
+      List<UserStatistics> questionsAnswered = user.getQuestionsAnswered();
+      questionsAnswered.add(
+          new UserStatistics(Utils.getCurrentDate(), 1, UUID.randomUUID().toString(),
+                             Constants.QUESTIONS_RESPONSE_CATEGORY));
+      user.setQuestionsAnswered(questionsAnswered);
 
-      dismiss();
+
+      if (question.getQuestionType().equalsIgnoreCase(Constants.PRIVATE))
+      {
+        // Create a notification to the target user otherwise create a general notification
+        user.getNotificationsList().add(new Notifications("New response to your personal question, responded by:" + userObject.getUser().getFirstName() + " " + userObject.getUser().getLastName()));
+
+      } else if (question.getQuestionType().equalsIgnoreCase(Constants.PUBLIC))
+      {
+        notificationObject.getNotificationsList().add(new Notifications("There is a new response to question, responded by:"+userObject.getUser().getFirstName() +" "+userObject.getUser().getLastName()));
+      }
+
+      userObject.setUser(user);
+
+      new backgroundProcessSave().execute();
+
+
     } else if (v == cancelButton) {
-
-
+      dismiss();
     } else if (v == write_q) {
       if (questionStringWriting.length() == 0) {
         writeIndex = 1;
@@ -461,5 +506,57 @@ public class QuestionResponseCreationDialogView extends DialogFragment
     scratchPadDialog.setImageString(imageString);
     scratchPadDialog.show(ft, "school_calendar_view_dialog");
 
+  }
+
+  private ProgressDialog showProgessDialog() {
+
+    progressDialog = new ProgressDialog(getContext());
+    progressDialog.setMessage("Please wait");
+    progressDialog.show();
+    return progressDialog;
+
+
+  }
+
+  private void hideProgessDialog() {
+
+    progressDialog.dismiss();
+    progressDialog.hide();
+
+  }
+  private class backgroundProcessSave extends AsyncTask<Quiz, Quiz, Long> {
+
+    protected Long doInBackground(Quiz... params) {
+
+      try {
+        userManager.addDocument(userObject,userObject.getUser().getUsername());
+        notificationManager.addNotification(notificationObject);
+
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      long totalSize = 0;
+      return totalSize;
+    }
+
+
+    protected void onPostExecute(Long result) {
+      hideProgessDialog();
+
+      completeStatisticsCreation();
+    }
+
+
+
+    protected void onPreExecute() {
+      showProgessDialog();
+    }
+
+  }
+
+  private void completeStatisticsCreation() {
+    questionListViewContent.addInput(input);
+    dismiss();
   }
 }

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:id="@+id/LinearLayout01"
+			  android:layout_width="fill_parent"
+			  android:layout_height="fill_parent"
+			  android:layout_gravity="center"
+			  android:layout_centerInParent="true"
+			  android:gravity="center"
+			  android:orientation="vertical">
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				  android:layout_width="match_parent"
+				  android:layout_height="wrap_content"
+				  android:layout_gravity="center"
+				  android:layout_centerInParent="true"
+				  android:gravity="center"
+        android:layout_marginBottom="35dp"
+				  android:orientation="vertical">
+
+		<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:orientation="horizontal">
+
+
+			<TextView
+					android:id="@+id/message"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:gravity="center"
+					android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+					android:textColor="@android:color/white"
+					android:textSize="15dp">
+
+			</TextView>
+
+			<ProgressBar
+					android:id="@+id/progressBar1"
+					style="?android:attr/progressBarStyleInverse"
+					android:layout_alignParentRight="true"
+					android:layout_alignRight="@+id/message"
+					android:visibility="gone"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignBottom="@+id/search"/>
+
+		</LinearLayout>
+
+		<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:orientation="horizontal">
+
+
+			<EditText
+					android:id="@+id/username_field"
+					android:layout_width="280dp"
+					android:layout_height="40dp"
+					style="@style/school_edittext_center"
+					android:layout_gravity="center"
+					android:hint="Enter Username"
+					android:background="@drawable/school_round_editfield_layout"/>
+		</LinearLayout>
+
+		<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:layout_margin="10dp"
+            android:paddingTop="5dp"
+				android:orientation="horizontal">
+			<EditText
+					android:id="@+id/password_field"
+					android:layout_width="280dp"
+					android:layout_height="40dp"
+					style="@style/school_edittext_center"
+					android:layout_gravity="center"
+					android:hint="Enter Password"
+					android:background="@drawable/school_round_editfield_layout"
+					android:inputType="textPassword"/>
+		</LinearLayout>
+
+		<LinearLayout
+				android:id="@+id/button_layout"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:orientation="vertical">
+
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+
+					android:gravity="center"
+					android:orientation="horizontal">
+				<Button
+						android:id="@+id/ok_button"
+						style="@style/style_button_one"
+						android:layout_width="150dp"
+						android:layout_height="40dp"
+						android:background="@drawable/school_round_button_layout"
+						android:text="Sign In"></Button>
+				<Button
+						android:id="@+id/registerButton"
+						style="@style/style_button_one"
+						android:layout_width="150dp"
+						android:layout_height="40dp"
+						android:background="@drawable/school_round_button_layout"
+						android:text="Register"></Button>
+			</LinearLayout>
+
+			<TextView
+					android:id="@+id/txtLink"
+					style="@style/school_tab_title_text"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_margin="10dp"
+					android:visibility="gone"
+					android:text="Forgot Username/Password?"
+					android:autoLink="all"/>
+
+		</LinearLayout>
+	</LinearLayout>
+</LinearLayout>

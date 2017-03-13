@@ -1,6 +1,7 @@
 package com.edu.peers.dialogs;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -19,9 +20,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,12 +34,21 @@ import android.widget.Toast;
 import com.edu.peers.R;
 import com.edu.peers.adapter.ComboBoxViewAdapter;
 import com.edu.peers.adapter.ComboBoxViewListItem;
+import com.edu.peers.managers.NotificationManager;
+import com.edu.peers.managers.UserManager;
 import com.edu.peers.models.Input;
+import com.edu.peers.models.NotificationObject;
+import com.edu.peers.models.Notifications;
 import com.edu.peers.models.Questions;
+import com.edu.peers.models.Quiz;
+import com.edu.peers.models.User;
+import com.edu.peers.models.UserObject;
+import com.edu.peers.models.UserStatistics;
 import com.edu.peers.others.Base64;
 import com.edu.peers.others.Constants;
-import com.edu.peers.views.SchoolCensus;
+import com.edu.peers.others.Utils;
 import com.edu.peers.views.QuestionsListView;
+import com.edu.peers.views.SchoolCensus;
 
 import org.apache.commons.io.FileUtils;
 
@@ -44,6 +57,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -51,7 +65,7 @@ import java.util.List;
  */
 
 public class OneQuestionCreationDialogView extends DialogFragment
-    implements View.OnClickListener, Camera.PictureCallback {
+    implements View.OnClickListener, Camera.PictureCallback ,AdapterView.OnItemClickListener{
 
   private static final int MESSAGE_SHOW_MSG = 1;
   private static final int MESSAGE_SHOW_IMAGE = 2;
@@ -150,7 +164,7 @@ public class OneQuestionCreationDialogView extends DialogFragment
   private Spinner subjects;
   private EditText duration;
   private EditText instructions;
-  private Button questions;
+  private Questions questions;
   private String selectedSubject;
   private String qNameStr;
   private String durationStr;
@@ -166,6 +180,26 @@ public class OneQuestionCreationDialogView extends DialogFragment
       answerSelection4 =
           0;
   private QuestionsListView questionsListView;
+  private UserObject userObject;
+  private ProgressDialog progressDialog;
+  private UserManager userManager;
+  private LinearLayout targetUserLayout;
+  private RadioButton privateType;
+  private RadioButton publicType;
+  private String questionType="";
+  private AutoCompleteTextView targetUser;
+  private static final String[] COUNTRIES = new String[] {
+      "Belgium", "France", "Italy", "Germany", "Spain"
+  };
+  public  String[] language ={"C","C++","Java",".NET","iPhone","Android","ASP.NET","PHP"};
+  private String selectedUser="";
+  private List<String> usersList=new ArrayList<>();
+  private List<String> userNameList=new ArrayList<>();
+  private User userMatch;
+  private NotificationManager notificationManager;
+  private NotificationObject notificationObject;
+  private Notifications privateNotification;
+
 
   public OneQuestionCreationDialogView() {
     // Required empty public constructor
@@ -196,7 +230,7 @@ public class OneQuestionCreationDialogView extends DialogFragment
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 //    getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-    getDialog().setTitle("Create Question --");
+    getDialog().setTitle("Ask a question");
     view = inflater.inflate(R.layout.one_question_creation_dialog, null);
 
     return view;
@@ -208,11 +242,32 @@ public class OneQuestionCreationDialogView extends DialogFragment
     super.onStart();
 
     this.getDialog().getWindow()
-        .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
     genderValue = null;
 
     schoolCensus = (SchoolCensus) getActivity().getApplication();
+    userManager = new UserManager(schoolCensus.getCloudantInstance(), getContext());
+    notificationManager = new NotificationManager(schoolCensus.getCloudantInstance(), getContext());
+    notificationObject=notificationManager.getNotificationObject();
+    if (notificationObject==null)
+      notificationObject= new NotificationObject();
+
+    userObject=schoolCensus.getUserObject();
+
+    for (User user:userObject.getUserList()){
+
+      String userType="";
+      if (user.getRole().equalsIgnoreCase("Instructor"))
+        userType="I";
+      else
+        userType="S";
+
+      usersList.add(user.getFirstName() +" "+user.getLastName()+":"+userType);
+      userNameList.add(user.getUsername());
+
+
+    }
 
     qName = (EditText) view.findViewById(R.id.qName);
 
@@ -222,13 +277,28 @@ public class OneQuestionCreationDialogView extends DialogFragment
     write_q = (ImageView) view.findViewById(R.id.write_q);
     write_q.setOnClickListener(this);
 
-
-
     cancelButton = (Button) view.findViewById(R.id.cancel);
     cancelButton.setOnClickListener(this);
 
     addButton = (Button) view.findViewById(R.id.ok_button);
     addButton.setOnClickListener(this);
+
+    targetUserLayout = (LinearLayout) view.findViewById(R.id.targetUserLayout);
+    targetUserLayout.setVisibility(View.GONE);
+
+    privateType = (RadioButton) view.findViewById(R.id.privateType);
+    privateType.setOnClickListener(this);
+
+    publicType = (RadioButton) view.findViewById(R.id.publicType);
+    publicType.setOnClickListener(this);
+
+    targetUser= (AutoCompleteTextView) view.findViewById(R.id.targetUser);
+    targetUser.setOnItemClickListener(this);
+
+    targetUser.setThreshold(1);//will start working from first character
+    ArrayAdapter<String> adapter = new ArrayAdapter<String>
+        (getContext(),android.R.layout.simple_list_item_1,usersList);
+    targetUser.setAdapter(adapter);
 
   }
 
@@ -243,15 +313,70 @@ public class OneQuestionCreationDialogView extends DialogFragment
       List<Input> answers = new ArrayList<>();
 
 
-      Questions
-          questions =
-          new Questions(qName.getText().toString(), questionStringWriting, questionStringVoice,
-                        answers, choices);
 
-      questionsListView.addQuestion(questions);
-      dismiss();
+      if (questionType.length()==0){
+        Toast.makeText(getActivity(), "Please select question type",
+                       Toast.LENGTH_LONG).show();
+
+      } else if (questionType.equalsIgnoreCase(Constants.PRIVATE)&& userMatch==null) {
+        Toast.makeText(getActivity(), "Please select another target user or make the question public",
+                       Toast.LENGTH_LONG).show();
+
+      }
+      else if (questionType.equalsIgnoreCase(Constants.PRIVATE) && selectedUser.length()==0){
+        Toast.makeText(getActivity(), "Please select the target user",
+                       Toast.LENGTH_LONG).show();
+
+      } else {
+
+
+
+        questions =
+            new Questions(qName.getText().toString(), questionStringWriting, questionStringVoice,
+                          answers, choices, userObject.getUser());
+        questions.setQuestionType(questionType);
+        questions.setSelectedUser(userMatch);
+        User user = userObject.getUser();
+        List<UserStatistics> questionsAsked = user.getQuestionsAsked();
+        questionsAsked.add(
+            new UserStatistics(Utils.getCurrentDate(), 1, UUID.randomUUID().toString(),
+                               Constants.QUESTIONS_CATEGORY));
+        user.setQuestionsAsked(questionsAsked);
+
+        if (questionType.equalsIgnoreCase(Constants.PRIVATE))
+        {
+          // Create a notification to the target user otherwise create a general notification
+
+          privateNotification=new Notifications("New question posted to "+ userMatch.getFirstName() +" "+userMatch.getLastName()+" from:"+userObject.getUser().getFirstName() +" "+userObject.getUser().getLastName());
+
+
+        } else if (questionType.equalsIgnoreCase(Constants.PUBLIC))
+        {
+          notificationObject.getNotificationsList().add(new Notifications("New question posted by:"+userObject.getUser().getFirstName() +" "+userObject.getUser().getLastName()));
+        }
+
+
+        userObject.setUser(user);
+
+        new backgroundProcessSave().execute();
+
+
+//      questionsListView.addQuestion(questions);
+//      dismiss();
+
+      }
     } else if (v == cancelButton) {
 
+      dismiss();
+
+    } else if (v == privateType) {
+      questionType=Constants.PRIVATE;
+      targetUserLayout.setVisibility(View.VISIBLE);
+
+    } else if (v == publicType) {
+
+      targetUserLayout.setVisibility(View.GONE);
+      questionType=Constants.PUBLIC;
 
     } else if (v == write_q) {
       if (questionStringWriting.length() == 0) {
@@ -270,7 +395,82 @@ public class OneQuestionCreationDialogView extends DialogFragment
 
 
   }
+  private void completeQuestionCreation() {
+    questionsListView.addQuestion(questions);
+    dismiss();
+  }
+  private ProgressDialog showProgessDialog() {
 
+    progressDialog = new ProgressDialog(getContext());
+    progressDialog.setMessage("Please wait");
+    progressDialog.show();
+    return progressDialog;
+
+
+  }
+
+  private void hideProgessDialog() {
+
+    progressDialog.dismiss();
+    progressDialog.hide();
+
+  }
+
+  @Override
+  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+    selectedUser=targetUser.getAdapter().getItem(position).toString();
+
+    userMatch=Utils.getUserWithUsername(userObject.getUserList(),userNameList.get(position));
+
+
+
+  }
+
+  private class backgroundProcessSave extends AsyncTask<Quiz, Quiz, Long> {
+
+    protected Long doInBackground(Quiz... params) {
+
+      try {
+
+        List<User> userList=  userObject.getUserList();
+
+        int size=userList.size();
+
+        for (int y=0;y<size;y++){
+          User user1=userList.get(y);
+          if (user1.getUsername().equalsIgnoreCase(userMatch.getUsername())){
+            user1.getNotificationsList().add(privateNotification);
+            userList.set(y,user1);}
+        }
+
+        userObject.setUserList(userList);
+
+        userManager.addDocument(userObject,Constants.USERS);
+        notificationManager.addNotification(notificationObject);
+
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      long totalSize = 0;
+      return totalSize;
+    }
+
+
+    protected void onPostExecute(Long result) {
+      hideProgessDialog();
+
+      completeQuestionCreation();
+    }
+
+
+
+    protected void onPreExecute() {
+      showProgessDialog();
+    }
+
+  }
   void openRecordDialog() {
     mStackLevel++;
     FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -339,6 +539,14 @@ public class OneQuestionCreationDialogView extends DialogFragment
 
   public void setQuestionsListView(QuestionsListView questionsListView) {
     this.questionsListView = questionsListView;
+  }
+
+  public UserObject getUserObject() {
+    return userObject;
+  }
+
+  public void setUserObject(UserObject userObject) {
+    this.userObject = userObject;
   }
 
 

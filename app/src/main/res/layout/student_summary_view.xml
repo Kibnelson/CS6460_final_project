@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			 android:id="@+id/root"
+			 android:layout_width="fill_parent"
+			 android:layout_height="fill_parent"
+			 android:background="@drawable/school_layer_background">
+
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_gravity="center"
+			android:orientation="vertical">
+
+
+		<FrameLayout
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:background="@drawable/school_layer_background">
+
+			<LinearLayout
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:orientation="vertical">
+
+
+				<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"
+
+						android:orientation="vertical">
+
+
+					<LinearLayout
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:gravity="center"
+							android:background="@drawable/school_grid_layout"
+							android:layout_gravity="center"
+							android:orientation="horizontal">
+
+
+					</LinearLayout>
+
+					<LinearLayout android:layout_width="match_parent"
+								  android:layout_height="wrap_content"
+								  android:orientation="horizontal">
+
+						<LinearLayout
+								android:layout_width="0dp"
+								android:layout_height="fill_parent"
+								android:orientation="horizontal"
+								android:layout_weight="3"
+								android:layout_margin="10dp"
+								android:background="@drawable/school_grid_layout"
+								>
+
+							<RelativeLayout
+									android:layout_width="fill_parent"
+									android:layout_height="wrap_content"
+									android:orientation="horizontal">
+
+
+								<LinearLayout
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:orientation="horizontal"
+										android:layout_gravity="center|left"
+										android:gravity="left|center"
+										>
+
+									<ImageView
+											android:layout_width="100dp"
+											android:layout_height="100dp"
+											android:layout_gravity="center"
+											android:gravity="center"
+											android:layout_weight="1"
+											android:id="@+id/imageView"
+											android:layout_margin="10dp"
+											android:src="@drawable/school_profile_empty_image">
+
+									</ImageView>
+									<LinearLayout
+											android:layout_width="wrap_content"
+											android:layout_height="wrap_content"
+											android:orientation="vertical">
+										<TextView
+												android:layout_width="wrap_content"
+												android:layout_height="wrap_content"
+												android:id="@+id/studentName"
+
+												style="@style/school_gray_label_text"
+												android:textColor="@android:color/black"
+                                            android:textSize="20dp"
+                                            android:textStyle="bold"
+												android:text="Mary Kariuki">
+
+										</TextView>
+										<LinearLayout
+												android:layout_width="wrap_content"
+												android:layout_height="wrap_content"
+												android:orientation="horizontal">
+											<TextView
+													android:layout_width="wrap_content"
+													android:layout_height="wrap_content"
+
+													android:id="@+id/gender"
+													style="@style/school_gray_label_text"
+													android:textColor="@android:color/black"
+
+													android:text="Female">
+
+											</TextView>
+
+
+											<LinearLayout
+													android:id="@+id/delete_divider"
+													android:layout_width="1dp"
+													android:orientation="horizontal"
+													android:layout_marginTop="5dp"
+													android:layout_marginLeft="10dp"
+													android:layout_marginRight="10dp"
+													android:layout_height="15dp"
+													android:background="@drawable/school_action_bar_icon_divider"
+													/>
+											<TextView
+													android:layout_width="wrap_content"
+													android:layout_height="wrap_content"
+													android:id="@+id/role"
+													style="@style/school_bold_label_text"
+													android:textColor="@android:color/black"
+
+													android:text="5 Sparrow"></TextView>
+										</LinearLayout>
+									</LinearLayout>
+
+
+								</LinearLayout>
+
+
+								<LinearLayout
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:orientation="vertical"
+										android:layout_alignParentRight="true"
+										android:layout_gravity="center_vertical"
+										android:layout_centerVertical="true"
+										>
+
+									<ImageView
+											android:id="@+id/userEdit"
+											android:layout_width="50dp"
+											android:layout_centerInParent="true"
+											android:layout_height="50dp"
+											android:src="@drawable/school_edit_black">
+
+									</ImageView>
+								</LinearLayout>
+
+							</RelativeLayout>
+
+
+						</LinearLayout>
+
+
+					</LinearLayout>
+
+					<ScrollView android:id="@+id/ScrollView01"
+								android:layout_width="fill_parent"
+								android:layout_height="wrap_content"
+							>
+						<LinearLayout
+								android:layout_width="fill_parent"
+								android:layout_height="fill_parent"
+								android:orientation="horizontal">
+
+							<LinearLayout android:layout_weight="1"
+										  android:layout_width="fill_parent"
+										  android:layout_height="fill_parent"
+										  android:orientation="horizontal">
+
+								<LinearLayout android:layout_width="fill_parent"
+											  android:layout_height="500dp"
+											  android:layout_weight="1"
+											  android:layout_marginTop="10dp"
+											  android:layout_marginLeft="10dp"
+											  android:layout_marginRight="10dp"
+											  android:background="@drawable/school_grid_layout">
+
+									<LinearLayout
+											android:layout_width="fill_parent"
+											android:layout_height="500dp"
+											android:orientation="vertical">
+
+
+										<LinearLayout android:layout_weight="1"
+													  android:layout_width="fill_parent"
+													  android:layout_height="500dp"
+													  android:orientation="vertical">
+											<RelativeLayout
+													android:layout_width="fill_parent"
+													android:layout_height="20dp"
+													android:layout_margin="5dip"
+													android:gravity="center_horizontal">
+
+
+												<TextView
+														android:textColor="@color/blackcolor"
+														android:layout_width="wrap_content"
+														android:layout_centerHorizontal="true"
+														android:layout_height="30dp"
+														android:textSize="14dp"
+														android:text="User Activity"
+														/>
+
+
+											</RelativeLayout>
+											<com.github.mikephil.charting.charts.CombinedChart
+													android:id="@+id/combinedChart"
+													android:layout_width="match_parent"
+													android:layout_height="400dp"/>
+
+										</LinearLayout>
+
+
+
+									</LinearLayout>
+
+								</LinearLayout>
+
+
+
+							</LinearLayout>
+						</LinearLayout>
+					</ScrollView>
+				</LinearLayout>
+
+
+			</LinearLayout>
+
+
+		</FrameLayout>
+
+
+	</LinearLayout>
+
+</FrameLayout>

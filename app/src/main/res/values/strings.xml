@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="app_name">Edu Peer</string>
+	<string name="hello_world">Hello world!</string>
+	<string name="action_settings">Settings</string>
+	<string name="title_activity_school_dashboard">SchoolDashboard</string>
+	<string name="dummy_section_text">Section %1d is just a dummy section.</string>
+	<string name="demo_external_activity">Demo External Activity</string>
+	<string name="demo_collection">Demo Collection</string>
+	<string name="crash_toast_text">Ooooops ! I crashed, but a report has been sent to my developer
+		to help fix the issue !
+	</string>
+	<string name="crash_dialog_title">CrashTest has crashed</string>
+	<string name="crash_dialog_text">An unexpected error occurred forcing the
+		application to stop. Please help us fix this by sending us error data,
+		all you have to do is click OK.
+	</string>
+	<string name="crash_dialog_comment_prompt">You might add your comments about the problem
+		below:
+	</string>
+	<string name="crash_dialog_ok_toast">Thank you !</string>
+	<string name="delete">Delete</string>
+	<string name="edit">Edit</string>
+	<string name="like">Like</string>
+	<string name="thumpsup">Thumbs up</string>
+	<string name="thumpsdown">Thumbs down</string>
+	<string name="recommend">Recommend</string>
+	<string name="title_activity_dashboard">Dashboard</string>
+	<string name="title_section1">Section 1</string>
+	<string name="title_section2">Section 2</string>
+	<string name="title_section3">Section 3</string>
+	<string name="drawer_open">Open navigation drawer</string>
+	<string name="drawer_close">Close navigation drawer</string>
+
+
+
+	<!--  FS28DemoActivity -->
+	<string name="hello">FS28 bluetooth demo program Ver3.0</string>
+
+	<string name="scanning">Scanning for devices &#8230;</string>
+	<string name="select_device">Select a device to connect</string>
+	<string name="none_paired">No devices have been paired</string>
+	<string name="none_found">No devices found</string>
+	<string name="title_paired_devices">Paired Devices</string>
+	<string name="title_other_devices">Other Available Devices</string>
+	<string name="button_scan">Scan for devices</string>
+	<string name="In">In</string>
+	<string name="Out">Out</string>
+	<string name="Open_BT_Comm">Open BT Comm</string>
+	<string name="Save">Save</string>
+	<string name="Message"></string>
+	<string name="ImageDes"></string>
+	<string name="textView1">Please select the file format to save.</string>
+	<string name="radioBitmap">Bitmap</string>
+	<string name="radioWSQ">WSQ</string>
+	<string name="radioSample">Sample (binary)</string>
+	<string name="textView2">File name: </string>
+	<string name="buttonOK">OK</string>
+	<string name="greyzone_suggest_retake_iris">The image is not matchable due to, e.g., occlusion, reflection, side-gazing, or blurriness.\r\nPlease re-capture another image and try again.</string>
+	<string name="no_match_found">This person is not in the enrollment database</string>
+
+</resources>

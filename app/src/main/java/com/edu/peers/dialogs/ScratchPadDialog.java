@@ -26,7 +26,6 @@ import com.agsw.FabricView.FabricView;
 import com.edu.peers.R;
 import com.edu.peers.others.Base64;
 import com.edu.peers.views.SchoolCensus;
-import com.edu.peers.views.UserRegistrationView;
 
 import java.io.IOException;
 
@@ -54,7 +53,6 @@ public class ScratchPadDialog extends DialogFragment
   private SchoolCensus schoolCensus;
   //  private StudentRegistrationView studentRegistrationView;
   private byte[] originalImagedata;
-  private UserRegistrationView userRegistrationView;
   private Camera.CameraInfo cameraInfo;
 
   private static final String LOG_TAG = "AudioRecordTest";
@@ -284,10 +282,7 @@ public class ScratchPadDialog extends DialogFragment
       } catch (IOException e) {
         e.printStackTrace();
       }
-
     }
-
-
   }
 
 
@@ -299,22 +294,7 @@ public class ScratchPadDialog extends DialogFragment
     this.cameraFrontOrBack = cameraFrontOrBack;
   }
 
-
-  public void setStudentRegistrationView() {
-//      StudentRegistrationView studentRegistrationView) {
-//    this.studentRegistrationView = studentRegistrationView;
-  }
-
-
-  public UserRegistrationView getUserRegistrationView() {
-    return userRegistrationView;
-  }
-
-  public void setUserRegistrationView(
-      UserRegistrationView userRegistrationView) {
-    this.userRegistrationView = userRegistrationView;
-  }
-
+  
   @Override
   public void onRecordStart() {
     Log.d("TAG", "onRecordStart");

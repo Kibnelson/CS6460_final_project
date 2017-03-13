@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/root"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:background="@drawable/school_layer_background"
+		android:orientation="vertical"
+		>
+
+	<FrameLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			>
+
+
+		<ScrollView android:id="@+id/ScrollView01"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_margin="2dp"
+				>
+
+			<LinearLayout
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:orientation="vertical">
+
+				<LinearLayout
+						android:id="@+id/title_layout"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_gravity="center"
+						android:orientation="horizontal">
+
+					<ImageView
+							android:id="@+id/title_icon"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:src="@drawable/school_dialog_icon_image"></ImageView>
+
+					<TextView
+							android:id="@+id/title"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_gravity="center"
+							android:textColor="@android:color/black"
+							android:textSize="18dp"
+							android:text="Student Registration"
+							android:textStyle="bold"></TextView>
+				</LinearLayout>
+
+				<ImageView
+						android:id="@+id/divider"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:background="@drawable/school_horizontal_divider"></ImageView>
+
+				<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+
+						android:gravity="center"
+						android:background="@drawable/school_list_background"
+						android:orientation="horizontal">
+
+					<LinearLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_margin="5dp"
+							android:gravity="center"
+							android:orientation="vertical">
+
+						<TextView
+								android:layout_width="140dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="left"
+								android:gravity="left"
+								android:text="First Name"
+
+								android:textColor="@android:color/black"
+								android:textSize="15dp"
+								android:textStyle="bold"></TextView>
+
+						<EditText
+								android:id="@+id/first_name_field"
+								android:textColor="@android:color/black"
+								android:background="@drawable/school_rectangle_editfield_layout"
+								android:layout_width="150dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center"/>
+					</LinearLayout>
+
+					<LinearLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+
+							android:gravity="center" android:layout_margin="5dp"
+							android:orientation="vertical">
+
+						<TextView
+								android:layout_width="140dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="left"
+								android:gravity="left"
+								android:text="Last Name"
+								android:textColor="@android:color/black"
+								android:textSize="15dp"
+								android:textStyle="bold"></TextView>
+
+						<EditText
+								android:id="@+id/last_name_field"
+								android:layout_width="150dp"
+								android:textColor="@android:color/black"
+								android:background="@drawable/school_rectangle_editfield_layout"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center"/>
+					</LinearLayout>
+
+				</LinearLayout>
+
+
+				<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:orientation="horizontal">
+
+					<LinearLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:gravity="center"
+							android:layout_margin="5dp"
+							android:orientation="vertical">
+
+						<TextView
+								android:layout_width="140dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="left"
+								android:gravity="left"
+								android:text="Student Number"
+
+								android:textColor="@android:color/black"
+								android:textSize="15dp"
+								android:textStyle="bold">
+
+						</TextView>
+
+						<EditText
+								android:id="@+id/student_number_field"
+								android:textColor="@android:color/black"
+								android:background="@drawable/school_rectangle_editfield_layout"
+								android:layout_width="150dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center"/>
+					</LinearLayout>
+
+					<LinearLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:gravity="center" android:layout_margin="5dp"
+							android:orientation="vertical">
+
+						<TextView
+								android:layout_width="140dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="left"
+								android:gravity="left"
+								android:text="Gender"
+								android:textColor="@android:color/black"
+								android:textSize="15dp"
+								android:textStyle="bold"></TextView>
+
+						<RadioGroup
+								android:id="@+id/gender_layout"
+								android:layout_width="150dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center"
+								android:orientation="horizontal">
+
+							<RadioButton
+									android:id="@+id/female"
+									style="@style/school_radio_button"
+									android:layout_width="85dp"
+									android:layout_gravity="center"
+									android:layout_height="wrap_content"
+
+									android:textColor="@android:color/black"
+									android:button="@drawable/school_radio_button_selector"
+									android:text="Female"/>
+
+							<RadioButton
+									android:id="@+id/male"
+									style="@style/school_radio_button"
+									android:textColor="@android:color/black"
+									android:layout_width="80dp"
+									android:layout_gravity="center"
+									android:layout_height="wrap_content"
+									android:button="@drawable/school_radio_button_selector"
+									android:text="Male"/>
+						</RadioGroup>
+					</LinearLayout>
+
+				</LinearLayout>
+
+
+				<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+
+						android:gravity="center"
+						android:background="@drawable/school_list_background"
+						android:orientation="horizontal">
+
+					<LinearLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:layout_margin="5dp"
+							android:gravity="center"
+							android:orientation="vertical">
+
+						<TextView
+								android:layout_width="140dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="left"
+								android:gravity="left"
+								android:text="Class"
+
+								android:textColor="@android:color/black"
+								android:textSize="15dp"
+								android:textStyle="bold"></TextView>
+						<Spinner
+								style="@style/school_edittext"
+								android:id="@+id/students_class"
+								android:paddingLeft="5dp"
+								android:layout_alignParentRight="true"
+								android:layout_width="150dp"
+								android:layout_height="42dp"
+								android:background="@android:drawable/btn_dropdown"
+								android:textSize="16dp"/>
+
+					</LinearLayout>
+
+					<LinearLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+
+							android:gravity="center" android:layout_margin="5dp"
+							android:orientation="vertical">
+
+						<TextView
+								android:layout_width="140dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="left"
+								android:gravity="left"
+								android:text="Stream"
+								android:textColor="@android:color/black"
+								android:textSize="15dp"
+								android:textStyle="bold"></TextView>
+
+
+						<Spinner
+								style="@style/school_edittext"
+								android:id="@+id/students_stream"
+								android:paddingLeft="5dp"
+								android:layout_alignParentRight="true"
+								android:layout_width="150dp"
+								android:layout_height="42dp"
+								android:background="@android:drawable/btn_dropdown"
+								android:textSize="16dp"/>
+
+					</LinearLayout>
+
+				</LinearLayout>
+
+				<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+
+						android:gravity="center"
+						android:orientation="horizontal">
+
+					<LinearLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:layout_margin="5dp"
+							android:gravity="center"
+							android:orientation="vertical">
+
+						<TextView
+								android:layout_width="140dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center"
+								android:gravity="center"
+								android:text="Face"
+
+								android:textColor="@android:color/black"
+								android:textSize="15dp"
+								android:textStyle="bold"></TextView>
+
+
+						<ImageView
+								android:id="@+id/face_photo"
+								android:layout_width="100dp"
+								android:layout_height="100dp"
+								android:layout_gravity="center"
+								android:gravity="center"
+								android:layout_weight="1"
+								android:src="@drawable/school_profile_empty_image"/>
+
+					</LinearLayout>
+
+					<LinearLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+
+							android:gravity="center" android:layout_margin="5dp"
+							android:orientation="vertical">
+
+						<TextView
+								android:layout_width="140dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center"
+								android:gravity="center"
+								android:text="Right Thumb "
+								android:textColor="@android:color/black"
+								android:textSize="15dp"
+								android:textStyle="bold"></TextView>
+
+
+						<ImageView
+								android:id="@+id/rightFingerPrintImage"
+								android:layout_width="100dp"
+								android:layout_height="100dp"
+								android:layout_gravity="center"
+								android:gravity="center"
+								android:layout_weight="1"
+								android:src="@drawable/school_finger_image"/>
+					</LinearLayout>
+
+				</LinearLayout>
+
+
+				<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+
+						android:background="@drawable/school_list_background"
+						android:gravity="center"
+						android:orientation="horizontal">
+
+					<LinearLayout
+							android:id="@+id/button_layout"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+
+							android:gravity="center"
+							android:layout_gravity="center"
+							android:orientation="horizontal">
+
+						<Button
+								android:id="@+id/ok_button"
+								style="@style/style_button_one"
+								android:layout_width="100dp"
+								android:layout_height="30dp"
+								android:layout_marginBottom="4dp"
+								android:layout_marginRight="10dp"
+								android:layout_marginTop="4dp"
+								android:background="@drawable/school_round_button_layout"
+								android:text="Save">
+
+						</Button>
+
+						<Button
+								android:id="@+id/cancel_button"
+								style="@style/style_button_one"
+								android:layout_width="75dp"
+								android:layout_height="30dp"
+								android:layout_marginBottom="4dp"
+								android:layout_marginTop="4dp"
+								android:background="@drawable/school_round_button_layout"
+								android:text="Cancel">
+
+						</Button>
+					</LinearLayout>
+
+				</LinearLayout>
+
+
+			</LinearLayout>
+
+
+		</ScrollView>
+
+
+	</FrameLayout>
+
+</LinearLayout>
+

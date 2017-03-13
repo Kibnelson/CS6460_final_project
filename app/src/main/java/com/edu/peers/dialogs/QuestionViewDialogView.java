@@ -32,6 +32,7 @@ import com.edu.peers.adapter.ComboBoxViewAdapter;
 import com.edu.peers.adapter.ComboBoxViewListItem;
 import com.edu.peers.models.Input;
 import com.edu.peers.models.Questions;
+import com.edu.peers.models.UserObject;
 import com.edu.peers.others.Base64;
 import com.edu.peers.views.SchoolCensus;
 
@@ -182,7 +183,7 @@ public class QuestionViewDialogView extends DialogFragment
           0;
   private QuizCreationDialogView quizCreationDialogView;
   private Questions question;
-
+  private UserObject userObject;
   public QuestionViewDialogView() {
     // Required empty public constructor
   }
@@ -212,7 +213,7 @@ public class QuestionViewDialogView extends DialogFragment
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 //    getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-    getDialog().setTitle("Create Question -");
+    getDialog().setTitle("View Question");
     view = inflater.inflate(R.layout.question_view_dialog, null);
 
     return view;
@@ -224,11 +225,13 @@ public class QuestionViewDialogView extends DialogFragment
     super.onStart();
 
     this.getDialog().getWindow()
-        .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
     genderValue = null;
 
     schoolCensus = (SchoolCensus) getActivity().getApplication();
+
+    userObject= schoolCensus.getUserObject();
 
     question = schoolCensus.getQuestion();
 
@@ -251,6 +254,7 @@ public class QuestionViewDialogView extends DialogFragment
 
     checkbox_choice_1 = (CheckBox) view.findViewById(R.id.checkbox_choice_1);
     checkbox_choice_1.setOnClickListener(this);
+    checkbox_choice_1.setVisibility(View.GONE);
 
     // 2 choice
     choice_2 = (TextView) view.findViewById(R.id.choice_2);
@@ -263,7 +267,7 @@ public class QuestionViewDialogView extends DialogFragment
 
     checkbox_choice_2 = (CheckBox) view.findViewById(R.id.checkbox_choice_2);
     checkbox_choice_2.setOnClickListener(this);
-
+    checkbox_choice_2.setVisibility(View.GONE);
     // 3 choice
     choice_3 = (TextView) view.findViewById(R.id.choice_3);
 
@@ -275,7 +279,7 @@ public class QuestionViewDialogView extends DialogFragment
 
     checkbox_choice_3 = (CheckBox) view.findViewById(R.id.checkbox_choice_3);
     checkbox_choice_3.setOnClickListener(this);
-
+    checkbox_choice_3.setVisibility(View.GONE);
     // 4 choice
     choice_4 = (TextView) view.findViewById(R.id.choice_4);
 
@@ -287,13 +291,14 @@ public class QuestionViewDialogView extends DialogFragment
 
     checkbox_choice_4 = (CheckBox) view.findViewById(R.id.checkbox_choice_4);
     checkbox_choice_4.setOnClickListener(this);
+    checkbox_choice_4.setVisibility(View.GONE);
 
     cancelButton = (Button) view.findViewById(R.id.cancel);
     cancelButton.setOnClickListener(this);
 
     // Update fields
 
-    if (question!=null) {
+    if (question != null) {
       qName.setText(question.getQuestionInput());
       if (question.getQuestionWriting().length() > 0) {
         write_q.setBackgroundColor(Color.parseColor("#007670"));
@@ -312,25 +317,28 @@ public class QuestionViewDialogView extends DialogFragment
           write1String = input.getQuestionWriting();
           voice1String = input.getQuestionVoice();
           write_choice_1.setBackgroundColor(Color.parseColor("#007670"));
-         voice_choice_1.setBackgroundColor(Color.parseColor("#007670"));
+          voice_choice_1.setBackgroundColor(Color.parseColor("#007670"));
         } else if (input.getPosition() == 2 && input.getQuestionInput().length() > 0
-            && input.getQuestionVoice().length() > 0 && input.getQuestionWriting().length() > 0) {
+                   && input.getQuestionVoice().length() > 0
+                   && input.getQuestionWriting().length() > 0) {
           write_choice_2.setBackgroundColor(Color.parseColor("#007670"));
           voice_choice_2.setBackgroundColor(Color.parseColor("#007670"));
 
           write2String = input.getQuestionWriting();
           voice2String = input.getQuestionVoice();
           choice_2.setText(input.getQuestionInput());
-        }else if (input.getPosition() == 3 && input.getQuestionInput().length() > 0
-            && input.getQuestionVoice().length() > 0 && input.getQuestionWriting().length() > 0) {
+        } else if (input.getPosition() == 3 && input.getQuestionInput().length() > 0
+                   && input.getQuestionVoice().length() > 0
+                   && input.getQuestionWriting().length() > 0) {
           write_choice_3.setBackgroundColor(Color.parseColor("#007670"));
           voice_choice_3.setBackgroundColor(Color.parseColor("#007670"));
 
           write3String = input.getQuestionWriting();
           voice3String = input.getQuestionVoice();
           choice_3.setText(input.getQuestionInput());
-        }else if (input.getPosition() == 4 && input.getQuestionInput().length() > 0
-            && input.getQuestionVoice().length() > 0 && input.getQuestionWriting().length() > 0) {
+        } else if (input.getPosition() == 4 && input.getQuestionInput().length() > 0
+                   && input.getQuestionVoice().length() > 0
+                   && input.getQuestionWriting().length() > 0) {
           write4String = input.getQuestionWriting();
           voice4String = input.getQuestionVoice();
           write_choice_4.setBackgroundColor(Color.parseColor("#007670"));
@@ -350,11 +358,11 @@ public class QuestionViewDialogView extends DialogFragment
       dismiss();
     } else if (v == write_q) {
 
-
       if (questionStringWriting.length() > 0) {
         openWriteDialog(questionStringWriting);
       } else {
-        Toast.makeText(getActivity(), "There is no handwritten information", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "There is no handwritten information", Toast.LENGTH_LONG)
+            .show();
       }
 
     } else if (v == voice_q) {
@@ -377,7 +385,8 @@ public class QuestionViewDialogView extends DialogFragment
       if (write1String.length() > 0) {
         openWriteDialog(write1String);
       } else {
-        Toast.makeText(getActivity(), "There is no handwritten information", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "There is no handwritten information", Toast.LENGTH_LONG)
+            .show();
       }
     } else if (v == voice_choice_2) {
       if (voice2String.length() > 0) {
@@ -392,7 +401,8 @@ public class QuestionViewDialogView extends DialogFragment
       if (write2String.length() > 0) {
         openWriteDialog(write2String);
       } else {
-        Toast.makeText(getActivity(), "There is no handwritten information", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "There is no handwritten information", Toast.LENGTH_LONG)
+            .show();
       }
     } else if (v == voice_choice_3) {
       if (voice3String.length() > 0) {
@@ -404,7 +414,8 @@ public class QuestionViewDialogView extends DialogFragment
       if (write3String.length() > 0) {
         openWriteDialog(write3String);
       } else {
-        Toast.makeText(getActivity(), "There is no handwritten information", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "There is no handwritten information", Toast.LENGTH_LONG)
+            .show();
       }
     } else if (v == voice_choice_4) {
       if (voice4String.length() > 0) {
@@ -416,7 +427,8 @@ public class QuestionViewDialogView extends DialogFragment
       if (write4String.length() > 0) {
         openWriteDialog(write4String);
       } else {
-        Toast.makeText(getActivity(), "There is no handwritten information", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "There is no handwritten information", Toast.LENGTH_LONG)
+            .show();
       }
     } else if (v == checkbox_choice_1) {
       answerSelection1 = 1;

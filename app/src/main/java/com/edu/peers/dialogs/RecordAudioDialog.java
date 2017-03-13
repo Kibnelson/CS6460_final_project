@@ -24,7 +24,7 @@ import com.edu.peers.R;
 import com.edu.peers.others.Base64;
 import com.edu.peers.others.Utils;
 import com.edu.peers.views.SchoolCensus;
-import com.edu.peers.views.UserRegistrationView;
+import com.edu.peers.views.RegistrationView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -54,7 +54,7 @@ public class RecordAudioDialog extends DialogFragment
   private SchoolCensus schoolCensus;
   //  private StudentRegistrationView studentRegistrationView;
   private byte[] originalImagedata;
-  private UserRegistrationView userRegistrationView;
+  private RegistrationView registrationView;
   private Camera.CameraInfo cameraInfo;
 
   private static final String LOG_TAG = "AudioRecordTest";
@@ -326,15 +326,6 @@ public class RecordAudioDialog extends DialogFragment
         e.printStackTrace();
       }
     }
-  }
-
-  public UserRegistrationView getUserRegistrationView() {
-    return userRegistrationView;
-  }
-
-  public void setUserRegistrationView(
-      UserRegistrationView userRegistrationView) {
-    this.userRegistrationView = userRegistrationView;
   }
 
   @Override

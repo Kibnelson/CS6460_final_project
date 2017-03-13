@@ -4,14 +4,19 @@ import com.google.gson.Gson;
 
 import android.content.Context;
 
-import com.cloudant.sync.datastore.BasicDocumentRevision;
+import com.cloudant.sync.documentstore.DocumentRevision;
+import com.cloudant.sync.documentstore.DocumentStoreException;
 import com.edu.peers.cloudant.CloudantStore;
-import com.edu.peers.others.AppException;
-import com.edu.peers.others.Hash;
+import com.edu.peers.models.User;
 import com.edu.peers.models.UserObject;
+import com.edu.peers.others.AppException;
+import com.edu.peers.others.Constants;
+import com.edu.peers.others.Hash;
 
-import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nelson on 6/15/15.
@@ -44,32 +49,40 @@ public class UserManager {
     return false;
   }
 
-  public void addDocument(UserObject userObject, String userName) {
+  public void addDocument(UserObject userObject, String userName) throws Exception {
+
+//    PersistenDataManager persistenDataManager = new PersistenDataManager(context);
+//    String key = persistenDataManager.getPersistentData(userName);
+//    if (key == null) {
+//      persistenDataManager.addPersistentData(userName, userName);
+//
+//    }
+
+
+      JSONObject jsonObject = new JSONObject(new Gson().toJson(userObject));
+
+      cloudantStore.addDocument(jsonObject, userName);
+
+  }
+
+  public void updateDocument(UserObject userObject, String userName) throws Exception {
 
     PersistenDataManager persistenDataManager = new PersistenDataManager(context);
     String key = persistenDataManager.getPersistentData(userName);
     if (key == null) {
       persistenDataManager.addPersistentData(userName, userName);
     }
-
-    try {
       JSONObject jsonObject = new JSONObject(new Gson().toJson(userObject));
 
       cloudantStore.addDocument(jsonObject, key);
-    } catch (JSONException e) {
-      e.printStackTrace();
-    }
+
   }
   public UserObject getDocumentGetDocument(String schoolId) {
-    BasicDocumentRevision basicDocumentRevision;
+    DocumentRevision basicDocumentRevision;
     UserObject
         userObject = null;
-    PersistenDataManager persistenDataManager = new PersistenDataManager(context);
-    String key = persistenDataManager.getPersistentData(schoolId);
-
-
     try {
-      basicDocumentRevision = cloudantStore.getDocument(key);
+      basicDocumentRevision = cloudantStore.getDocument(schoolId);
 
       if (basicDocumentRevision != null) {
         userObject =
@@ -82,8 +95,45 @@ public class UserManager {
     return userObject;
   }
 
+  public List<UserObject> getDocumentGetDocument(List<String> schoolId) {
+    List<DocumentRevision> basicDocumentRevision;
+    List<UserObject>
+        userObjectList = new ArrayList<>();
 
-  public boolean checkIfUsernameExists(String userName) {
+    try {
+      basicDocumentRevision = cloudantStore.getDocument(schoolId);
+
+      for (DocumentRevision documentRevision: basicDocumentRevision){
+
+        if (documentRevision != null) {
+         UserObject userObject =
+              new Gson().fromJson(documentRevision.getBody().toString(), UserObject.class);
+          userObjectList.add(userObject);
+
+        }
+
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return userObjectList;
+  }
+
+
+  public boolean checkIfUsernameExists(String userName) throws DocumentStoreException {
+    boolean userNameExists = false;
+    UserObject userObjectList = getDocumentGetDocument(Constants.USERS);
+
+
+    if (userObjectList!=null) {
+      for (User user : userObjectList.getUserList()) {
+        if (user.getUsername().equalsIgnoreCase(userName)) {
+          userNameExists = true;
+        }
+      }
+    }
 
 //
 //    boolean userNameExists = false;
@@ -111,7 +161,8 @@ public class UserManager {
 ////    } else {
 ////      userNameExists = true;
 ////    }
-    return cloudantStore.containsDocumentKey(userName);
+//    return cloudantStore.containsDocumentKey(userName);
+    return userNameExists;
   }
 
   public int getDocumentCount() {

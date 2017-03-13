@@ -4,14 +4,13 @@ import com.google.gson.Gson;
 
 import android.content.Context;
 
-import com.cloudant.sync.datastore.BasicDocumentRevision;
+import com.cloudant.sync.documentstore.DocumentRevision;
 import com.edu.peers.cloudant.CloudantStore;
+import com.edu.peers.models.NotificationObject;
 import com.edu.peers.others.AppException;
 import com.edu.peers.others.Constants;
 import com.edu.peers.others.Hash;
-import com.edu.peers.models.NotificationObject;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -50,18 +49,18 @@ public class NotificationManager {
     try {
       JSONObject jsonObject = new JSONObject(new Gson().toJson(notificationObject));
 
-      cloudantStore.addDocument(jsonObject, Constants.QUIZ);
-    } catch (JSONException e) {
+      cloudantStore.addDocument(jsonObject, Constants.NOTIFICATIONS);
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
   public NotificationObject getNotificationObject() {
-    BasicDocumentRevision basicDocumentRevision;
+    DocumentRevision basicDocumentRevision;
     NotificationObject
         notificationObject = null;
 
     try {
-      basicDocumentRevision = cloudantStore.getDocument(Constants.QUIZ);
+      basicDocumentRevision = cloudantStore.getDocument(Constants.NOTIFICATIONS);
 
       if (basicDocumentRevision != null) {
         notificationObject =

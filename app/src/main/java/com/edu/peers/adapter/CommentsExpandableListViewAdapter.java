@@ -111,10 +111,15 @@ public class CommentsExpandableListViewAdapter extends
 
       User user1 = input.getUser();
 
-      if (user1 != null)
-        user.setText(user1.getFirstName() + " " + user1.getLastName());
-      else
-        user.setText("Instructor");
+      if (user1 != null){
+        if (user1.getRole().equalsIgnoreCase("Instructor"))
+          user.setText(
+              "Instructor: " + user1.getFirstName() + " " +user1.getLastName());
+        else
+          user.setText(
+              "Student: " + user1.getFirstName() + " " + user1.getLastName());
+
+      }
 
     }
 

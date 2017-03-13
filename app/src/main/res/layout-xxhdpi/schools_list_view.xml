@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			 android:id="@+id/root"
+			 android:layout_width="fill_parent"
+			 android:layout_height="fill_parent"
+			 android:background="@drawable/school_layer_background">
+
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_gravity="center"
+			android:orientation="vertical">
+
+		<include layout="@layout/school_action_bar_view"/>
+
+		<FrameLayout
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:background="@drawable/school_layer_background">
+
+			<LinearLayout
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:orientation="vertical">
+
+
+				<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"
+
+						android:orientation="vertical">
+
+					<LinearLayout
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:gravity="center"
+							style="@style/middle_view_background"
+							android:layout_gravity="center"
+							android:orientation="horizontal">
+
+						<RelativeLayout
+								android:layout_width="fill_parent"
+								android:layout_height="wrap_content"
+								android:layout_margin="5dp"
+								android:orientation="horizontal">
+
+							<EditText
+									android:id="@+id/searchField"
+									android:layout_width="150dp"
+									android:background="@drawable/school_editfield_background_layout"
+									android:drawableRight="@android:drawable/ic_menu_search"
+									style="@style/school_filter_search_field"
+									/>
+							<Spinner
+									style="@style/school_edittext"
+									android:layout_width="150dp"
+									android:layout_height="42dp"
+									android:id="@+id/county"
+									android:background="@android:drawable/btn_dropdown"/>
+
+						</RelativeLayout>
+
+					</LinearLayout>
+
+					<LinearLayout
+
+							android:id="@+id/progressBarSchools"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:gravity="center"
+							android:layout_gravity="center"
+							android:orientation="horizontal">
+
+
+						<ProgressBar
+								style="@style/progressbar_field"/>
+
+					</LinearLayout>
+					<include layout="@layout/school_list_divider"/>
+
+					<ListView
+							android:id="@+id/schools_list_view"
+							style="@style/school_list_view"
+
+
+							android:background="@drawable/school_layer_background"
+
+
+							android:listSelector="@drawable/school_list_background_selector"></ListView>
+				</LinearLayout>
+
+
+			</LinearLayout>
+
+
+		</FrameLayout>
+	</LinearLayout>
+
+</FrameLayout>

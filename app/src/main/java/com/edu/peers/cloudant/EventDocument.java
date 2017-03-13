@@ -1,6 +1,7 @@
 package com.edu.peers.cloudant;
 
-import com.cloudant.sync.datastore.DocumentBody;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,7 +15,7 @@ import java.util.Map;
  * Created by nelson on 3/18/15.
  */
 
-public class EventDocument implements DocumentBody {
+public class EventDocument {
 
   private static String TAG = "EventDocument";
   private JSONObject event_data;
@@ -23,7 +24,6 @@ public class EventDocument implements DocumentBody {
     this.event_data = jsonData;
   }
 
-  @Override
   public Map<String, Object> asMap() {
     HashMap<String, Object> resp = new HashMap<String, Object>();
     if(event_data != null){
@@ -37,10 +37,9 @@ public class EventDocument implements DocumentBody {
         }
       }
     }
-    return resp;
+    return new Gson().fromJson(event_data.toString(), new TypeToken<HashMap<String, Object>>(){}.getType());
   }
 
-  @Override
   public byte[] asBytes() {
     if(event_data != null) return event_data.toString().getBytes();
     else return new byte[0];

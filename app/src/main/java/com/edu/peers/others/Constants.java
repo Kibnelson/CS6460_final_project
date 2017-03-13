@@ -10,6 +10,24 @@ public class Constants {
   public static final String STUDENT_ROLE = "Student";
   public static final String INSTRUCTOR_ROLE = "Instructor";
 
+
+
+  public static final String PUBLIC = "PUBLIC";
+  public static final String PRIVATE = "PRIVATE";
+
+  // Categories for user statistics
+  public static final String QUIZ_CATEGORY = "QUIZ_CATEGORY";
+  public static final String QUESTIONS_CATEGORY = "QUESTIONS_CATEGORY";
+  public static final String CONTENT_CATEGORY = "CONTENT_CATEGORY";
+  public static final String COMMENTS_CATEGORY = "COMMENTS_CATEGORY";
+  public static final String QUESTIONS_RESPONSE_CATEGORY = "QUESTIONS_RESPONSE_CATEGORY";
+
+  public static final String QUESTIONS = "QUESTIONS";
+
+  public static final String NOTIFICATIONS = "NOTIFICATIONS";
+  public static final String CONTENT_FILES = "efa41919-6efb-4d3a-9ebd-84c85f81b47f1";
+  public static final String CONTENT_FILES_COMMENTS = "efa41919-6efb-4d3a-9ebd-84c85f81b47f2";
+  public static final String QUESTIONS_COMMENTS = "efa41919-6efb-4d3a-9ebd-84c85f81b47f=3";
   ////////////////////////////
 
   public static final int NON = -1;
@@ -99,6 +117,7 @@ public class Constants {
 //  public static final String BLOCK_CHAIN = "http://192.168.43.50:3000/chain";
   public static final String BLOCK_CHAIN = "http://192.168.43.50:3000/chaincode";
   public static final String QUIZ = "QUIZ";
+  public static final String GRADEBOOK = "GRADEBOOK";
 //  public static final String BLOCK_CHAIN = "http://10.0.1.4:3000/chaincode";
 
   // Cloudant
@@ -204,6 +223,12 @@ public class Constants {
 
 
 
-
-
+  //View
+  public static String StudentsSummaryView="StudentsSummaryView";
+  public static String InstructorsSummaryView="InstructorsSummaryView";
+  public static String QuizListViewContent="QuizListViewContent";
+  public static String QuizListView="QuizListView";
+  public static String QuestionsListViewContent="QuestionsListViewContent";
+  public static String QuestionsListView="QuestionListView";
+  public static String LearningContentListView="LearningContentListView";
 }

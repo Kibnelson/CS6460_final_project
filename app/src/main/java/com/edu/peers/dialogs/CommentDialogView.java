@@ -1,6 +1,7 @@
 package com.edu.peers.dialogs;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -30,19 +31,25 @@ import android.widget.Toast;
 import com.edu.peers.R;
 import com.edu.peers.adapter.ComboBoxViewAdapter;
 import com.edu.peers.adapter.ComboBoxViewListItem;
+import com.edu.peers.managers.UserManager;
 import com.edu.peers.models.Input;
+import com.edu.peers.models.Quiz;
+import com.edu.peers.models.User;
+import com.edu.peers.models.UserObject;
+import com.edu.peers.models.UserStatistics;
 import com.edu.peers.others.Base64;
 import com.edu.peers.others.Constants;
-import com.edu.peers.views.SchoolCensus;
+import com.edu.peers.others.Utils;
 import com.edu.peers.views.DocumentView;
+import com.edu.peers.views.SchoolCensus;
 
 import org.apache.commons.io.FileUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -165,6 +172,10 @@ public class CommentDialogView extends DialogFragment
       answerSelection4 =
           0;
   private DocumentView documentView;
+  private UserManager userManager;
+  private UserObject userObject;
+  private Input input;
+  private ProgressDialog progressDialog;
 
   public CommentDialogView() {
     // Required empty public constructor
@@ -207,11 +218,15 @@ public class CommentDialogView extends DialogFragment
     super.onStart();
 
     this.getDialog().getWindow()
-        .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
     genderValue = null;
 
     schoolCensus = (SchoolCensus) getActivity().getApplication();
+
+    userManager = new UserManager(schoolCensus.getCloudantInstance(), getContext());
+
+    userObject=schoolCensus.getUserObject();
 
     qName = (EditText) view.findViewById(R.id.qName);
 
@@ -237,15 +252,15 @@ public class CommentDialogView extends DialogFragment
     /** When OK Button is clicked, dismiss the school_calendar_view_dialog */
     if (v == addButton) {
 
-      List<Input> choices = new ArrayList<>();
+       input = new Input(1,qName.getText().toString(),questionStringWriting,questionStringVoice,userObject.getUser());
 
-      List<Input> answers = new ArrayList<>();
+      User user =userObject.getUser();
+      List<UserStatistics> comments=user.getComments();
+      comments.add(new UserStatistics(Utils.getCurrentDate(), 1, UUID.randomUUID().toString(), Constants.COMMENTS_CATEGORY));
+      user.setComments(comments);
+      userObject.setUser(user);
+      new backgroundProcessSave().execute();
 
-
-      Input input = new Input(1,qName.getText().toString(),questionStringWriting,questionStringVoice);
-
-      documentView.addInput(input);
-      dismiss();
     } else if (v == cancelButton) {
 
 
@@ -457,4 +472,58 @@ public class CommentDialogView extends DialogFragment
     scratchPadDialog.show(ft, "school_calendar_view_dialog");
 
   }
+
+
+  private ProgressDialog showProgessDialog() {
+
+    progressDialog = new ProgressDialog(getContext());
+    progressDialog.setMessage("Please wait");
+    progressDialog.show();
+    return progressDialog;
+
+
+  }
+
+  private void hideProgessDialog() {
+
+    progressDialog.dismiss();
+    progressDialog.hide();
+
+  }
+  private class backgroundProcessSave extends AsyncTask<Quiz, Quiz, Long> {
+
+    protected Long doInBackground(Quiz... params) {
+
+      try {
+        userManager.addDocument(userObject,userObject.getUser().getUsername());
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      long totalSize = 0;
+      return totalSize;
+    }
+
+
+    protected void onPostExecute(Long result) {
+      hideProgessDialog();
+
+      completeStatisticsCreation();
+    }
+
+
+
+    protected void onPreExecute() {
+      showProgessDialog();
+    }
+
+  }
+
+  private void completeStatisticsCreation() {
+
+
+    documentView.addInput(input);
+    dismiss();
+  }
+
 }

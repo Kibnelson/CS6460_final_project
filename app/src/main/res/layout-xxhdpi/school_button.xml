@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/countyReportsButton"
+		style="@style/style_button_one"
+		android:layout_marginBottom="50dp"
+		android:layout_width="60dp"
+		android:layout_height="30dp"
+		android:background="@drawable/school_round_button_layout"
+    android:padding="8dp"
+    android:minHeight="0dp" android:minWidth="0dp"
+    android:textStyle="normal"
+    android:textSize="14dp"
+		android:text="View"></Button>

@@ -1,6 +1,7 @@
 package com.edu.peers.dialogs;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -26,25 +27,37 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.keenfin.sfcdialog.SimpleFileChooser;
+import com.cloudant.sync.documentstore.UnsavedStreamAttachment;
 import com.edu.peers.R;
 import com.edu.peers.adapter.ComboBoxViewAdapter;
 import com.edu.peers.adapter.ComboBoxViewListItem;
 import com.edu.peers.adapter.ContentFileListViewAdapter;
+import com.edu.peers.managers.NotificationManager;
+import com.edu.peers.managers.UserManager;
 import com.edu.peers.models.Content;
 import com.edu.peers.models.ContentFile;
+import com.edu.peers.models.NotificationObject;
+import com.edu.peers.models.Notifications;
+import com.edu.peers.models.Quiz;
+import com.edu.peers.models.User;
+import com.edu.peers.models.UserObject;
+import com.edu.peers.models.UserStatistics;
 import com.edu.peers.others.Base64;
 import com.edu.peers.others.Constants;
-import com.edu.peers.views.SchoolCensus;
+import com.edu.peers.others.Utils;
 import com.edu.peers.views.LearningContentListView;
 import com.edu.peers.views.MainView;
+import com.edu.peers.views.SchoolCensus;
+import com.keenfin.sfcdialog.SimpleFileChooser;
 
 import org.apache.commons.io.FileUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -159,6 +172,12 @@ public class ContentCreationDialogView extends DialogFragment
   private EditText tags;
   private MainView mainView;
   private LearningContentListView learningContentListView;
+  private UserObject userObject;
+  private ProgressDialog progressDialog;
+  private UserManager userManager;
+  private Content content;
+  private NotificationManager notificationManager;
+  private NotificationObject notificationObject;
 
   public ContentCreationDialogView() {
     // Required empty public constructor
@@ -201,11 +220,17 @@ public class ContentCreationDialogView extends DialogFragment
     super.onStart();
 
     this.getDialog().getWindow()
-        .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
     genderValue = null;
 
     schoolCensus = (SchoolCensus) getActivity().getApplication();
+    userObject= schoolCensus.getUserObject();
+    userManager = new UserManager(schoolCensus.getCloudantInstance(), getContext());
+    notificationManager = new NotificationManager(schoolCensus.getCloudantInstance(), getContext());
+    notificationObject=notificationManager.getNotificationObject();
+    if (notificationObject==null)
+      notificationObject= new NotificationObject();
 
     mainView = schoolCensus.getMainView();
 
@@ -303,11 +328,23 @@ public class ContentCreationDialogView extends DialogFragment
       if (valid) {
 
 
-        Content content = new Content(contentTitleStr,selectedSubject,contentFiles,null);
 
-        learningContentListView.addContent(content);
 
-        dismiss();
+
+        content = new Content(contentTitleStr,selectedSubject,contentFiles,userObject.getUser());
+
+
+        User user =userObject.getUser();
+        List<UserStatistics> contentUpload=user.getContentUpload();
+        contentUpload.add(new UserStatistics(Utils.getCurrentDate(), 1, UUID.randomUUID().toString(), Constants.QUESTIONS_CATEGORY));
+        user.setContentUpload(contentUpload);
+        userObject.setUser(user);
+
+        notificationObject.getNotificationsList().add(new Notifications("New learning content uploaded:" + userObject.getUser().getFirstName() + " " + userObject.getUser().getLastName()));
+
+
+        new backgroundProcessSave().execute();
+
 
       } else {
         Toast.makeText(getActivity(), errorBuffer.toString(), Toast.LENGTH_LONG).show();
@@ -334,6 +371,12 @@ public class ContentCreationDialogView extends DialogFragment
   }
 
   public void addContentfile(ContentFile contentFile) {
+
+    UnsavedStreamAttachment att2 = new UnsavedStreamAttachment(
+        new ByteArrayInputStream(contentFile.getBytes()), contentFile.getType());
+
+    String att2Name = "cute_cat.jpg";
+
     contentFiles.add(contentFile);
 
     data.add(contentFile);
@@ -350,7 +393,7 @@ public class ContentCreationDialogView extends DialogFragment
         // File is chosen
 
 
-        if (file!=null) {
+        if (file!=null && file.getName().contains(".pdf")) {
 
           ContentFile content = new ContentFile();
           Log.i(Constants.TAG, "File" + file.getPath());
@@ -362,7 +405,10 @@ public class ContentCreationDialogView extends DialogFragment
             byte[] bytes = FileUtils.readFileToByteArray(file);
 
             String encoded = Base64.encodeBytes(bytes);
+
             content.setContent(encoded);
+            content.setBytes(bytes);
+            content.setType("application/pdf");
             content.setFileName(file.getName());
             content.setFilePath(file.getPath());
 
@@ -370,7 +416,9 @@ public class ContentCreationDialogView extends DialogFragment
           } catch (Exception e) {
             e.printStackTrace();
           }
-        }
+        } else
+          Toast.makeText(getActivity(), "Please upload pdf documents only, other document type will be added later",
+                         Toast.LENGTH_LONG).show();
 
       }
 
@@ -668,5 +716,56 @@ public class ContentCreationDialogView extends DialogFragment
     }
   }
 
+  private ProgressDialog showProgessDialog() {
+
+    progressDialog = new ProgressDialog(getContext());
+    progressDialog.setMessage("Please wait");
+    progressDialog.show();
+    return progressDialog;
+
+
+  }
+
+  private void hideProgessDialog() {
+
+    progressDialog.dismiss();
+    progressDialog.hide();
+
+  }
+  private class backgroundProcessSave extends AsyncTask<Quiz, Quiz, Long> {
+
+    protected Long doInBackground(Quiz... params) {
+
+      try {
+        userManager.addDocument(userObject,userObject.getUser().getUsername());
+        notificationManager.addNotification(notificationObject);
+
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      long totalSize = 0;
+      return totalSize;
+    }
+
+
+    protected void onPostExecute(Long result) {
+      hideProgessDialog();
+
+      completeStatisticsCreation();
+    }
+
+
+
+    protected void onPreExecute() {
+      showProgessDialog();
+    }
+
+  }
+
+  private void completeStatisticsCreation() {
+    learningContentListView.addContent(content);
+    dismiss();
+  }
 
 }

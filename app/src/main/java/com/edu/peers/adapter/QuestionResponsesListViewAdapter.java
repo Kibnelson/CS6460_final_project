@@ -9,11 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edu.peers.R;
 import com.edu.peers.models.Input;
+import com.edu.peers.models.User;
 import com.edu.peers.views.QuestionListViewContent;
 
 import java.util.List;
@@ -50,12 +52,14 @@ public class QuestionResponsesListViewAdapter extends BaseAdapter {
       homeListItem = new View(mContext.getContext());
       LayoutInflater inflater = (LayoutInflater) mContext
           .getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-      homeListItem = inflater.inflate(R.layout.child_row_questions_responses,
+      homeListItem = inflater.inflate(R.layout.child_row_questions_responses_inputs,
                                       parent, false);
     } else {
       homeListItem = convertView;
     }
     Input item = items.get(position);
+    TextView groupPositionChild = (TextView) homeListItem
+        .findViewById(R.id.groupPositionChild);
     TextView textView = (TextView) homeListItem
         .findViewById(R.id.childname);
     TextView textViewOne = (TextView) homeListItem
@@ -63,13 +67,58 @@ public class QuestionResponsesListViewAdapter extends BaseAdapter {
     TextView textViewUser = (TextView) homeListItem
         .findViewById(R.id.user);
 
+    ImageView recommend = (ImageView) homeListItem
+        .findViewById(R.id.recommend);
+    recommend.setVisibility(View.GONE);
+
+    LinearLayout thumbsupLayout = (LinearLayout) homeListItem
+        .findViewById(R.id.thumbsupLayout);
+//    thumbsupLayout.setVisibility(View.GONE);
+
+    LinearLayout thumbsdownLayout = (LinearLayout) homeListItem
+        .findViewById(R.id.thumbsdownLayout);
+
+
+    if (item.getRecommended()!=null && item.getRecommended())
+      recommend.setVisibility(View.VISIBLE);
+
+
+    TextView thumbsup = (TextView) homeListItem
+        .findViewById(R.id.thumbsup);
+
+    thumbsup.setText(""+item.getThumbsUp());
+
+
+    TextView thumbsdown = (TextView) homeListItem
+        .findViewById(R.id.thumbsdown);
+
+    thumbsdown.setText(""+item.getThumbsDown());
+
+
+
+
+
 
     int index=position+1;
-    textView.setText(index+" : "+item.getQuestionInput());
+    groupPositionChild.setText(""+index);
+    textView.setText(item.getQuestionInput());
     textViewOne.setText(item.getDate());
-    if(item.getUser()!=null)
-    textViewUser.setText(item.getUser().getFirstName()+" "+item.getUser().getLastName());
-    else textViewUser.setText("By :");
+
+    User user1=item.getUser();
+
+
+    if (user1 != null){
+      if (user1.getRole().equalsIgnoreCase("Instructor"))
+        textViewUser.setText(
+            "Instructor: " + user1.getFirstName() + " " +user1.getLastName());
+      else
+        textViewUser.setText(
+            "Student: " + user1.getFirstName() + " " + user1.getLastName());
+
+    }
+
+
+
 
     final ImageView voice_q = (ImageView) homeListItem.findViewById(R.id.voice_q_c);
     voice_q.setOnClickListener(new View.OnClickListener() {

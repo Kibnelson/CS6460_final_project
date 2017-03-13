@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			 android:id="@+id/root"
+			 android:layout_width="fill_parent"
+			 android:layout_height="fill_parent"
+			 android:background="@drawable/school_layer_background">
+
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_gravity="center"
+			android:orientation="vertical">
+
+		<!--<include layout="@layout/school_action_bar_view"/>-->
+
+		<FrameLayout
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:background="@drawable/school_layer_background">
+
+			<LinearLayout
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:orientation="vertical">
+
+
+				<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"
+
+						android:orientation="vertical">
+
+
+					<LinearLayout
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+
+							android:gravity="center"
+							android:background="@drawable/school_list_background"
+							android:orientation="horizontal">
+
+						<LinearLayout
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_margin="5dp"
+								android:gravity="center"
+								android:orientation="vertical">
+
+							<TextView
+									android:layout_width="140dp"
+									android:layout_height="wrap_content"
+									android:layout_gravity="left"
+									android:gravity="left"
+									android:text="Quiz Name"
+
+									android:textColor="@android:color/black"
+									android:textSize="15dp"
+									android:textStyle="bold"></TextView>
+
+
+
+							<TextView
+									android:id="@+id/quizName"
+									android:layout_width="150dp"
+									android:layout_height="wrap_content"
+									android:layout_gravity="left"
+									android:gravity="left"
+									android:text="Quiz A"
+									android:textColor="@android:color/black"
+									android:textSize="15dp"/>
+
+						</LinearLayout>
+
+						<LinearLayout
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+
+								android:gravity="center" android:layout_margin="5dp"
+								android:orientation="vertical">
+
+							<TextView
+									android:layout_width="140dp"
+									android:layout_height="wrap_content"
+									android:layout_gravity="left"
+									android:gravity="left"
+									android:text="Subject"
+
+									android:textColor="@android:color/black"
+									android:textSize="15dp"
+									android:textStyle="bold"></TextView>
+
+
+
+							<TextView
+									android:id="@+id/subject"
+									android:layout_width="150dp"
+									android:layout_height="wrap_content"
+									android:layout_gravity="left"
+									android:gravity="left"
+									android:text="Quiz A"
+									android:textColor="@android:color/black"
+									android:textSize="15dp"/>
+
+						</LinearLayout>
+
+					</LinearLayout>
+					<LinearLayout
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+
+							android:gravity="center"
+							android:background="@drawable/school_list_background"
+							android:orientation="horizontal">
+
+						<LinearLayout
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_margin="5dp"
+								android:gravity="center"
+								android:orientation="vertical">
+
+							<TextView
+									android:layout_width="140dp"
+									android:layout_height="wrap_content"
+									android:layout_gravity="left"
+									android:gravity="left"
+									android:text="Duration"
+
+									android:textColor="@android:color/black"
+									android:textSize="15dp"
+									android:textStyle="bold"></TextView>
+
+
+
+							<TextView
+									android:id="@+id/duration"
+									android:layout_width="150dp"
+									android:layout_height="wrap_content"
+									android:layout_gravity="left"
+									android:gravity="left"
+									android:text="1 Hours"
+									android:textColor="@android:color/black"
+									android:textSize="15dp"/>
+
+						</LinearLayout>
+
+						<LinearLayout
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+
+								android:gravity="center" android:layout_margin="5dp"
+								android:orientation="vertical">
+
+							<TextView
+									android:layout_width="140dp"
+									android:layout_height="wrap_content"
+									android:layout_gravity="left"
+									android:gravity="left"
+									android:text="Date created"
+
+									android:textColor="@android:color/black"
+									android:textSize="15dp"
+									android:textStyle="bold"></TextView>
+
+
+
+							<TextView
+									android:id="@+id/dateCreated"
+									android:layout_width="150dp"
+									android:layout_height="wrap_content"
+									android:layout_gravity="left"
+									android:gravity="left"
+									android:text="Quiz A"
+									android:textColor="@android:color/black"
+									android:textSize="15dp"/>
+
+						</LinearLayout>
+
+					</LinearLayout>
+
+
+					<LinearLayout
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+
+							android:gravity="center"
+							android:background="@drawable/school_list_background"
+							android:orientation="horizontal">
+
+						<LinearLayout
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_margin="5dp"
+								android:gravity="center"
+								android:orientation="horizontal">
+
+							<TextView
+									android:layout_width="140dp"
+									android:layout_height="wrap_content"
+									android:layout_gravity="left"
+									android:gravity="left"
+									android:text="Instructions"
+
+									android:textColor="@android:color/black"
+									android:textSize="15dp"
+									android:textStyle="bold"></TextView>
+
+
+
+							<TextView
+									android:id="@+id/instructions"
+									android:layout_width="150dp"
+									android:layout_height="wrap_content"
+									android:layout_gravity="left"
+									android:gravity="left"
+									android:text="1 Hours"
+									android:textColor="@android:color/black"
+									android:textSize="15dp"/>
+
+						</LinearLayout>
+
+
+
+					</LinearLayout>
+					<LinearLayout
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+
+							android:gravity="center"
+							android:background="@drawable/school_list_background"
+							android:orientation="horizontal">
+
+						<LinearLayout
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_margin="5dp"
+								android:gravity="center"
+								android:orientation="horizontal">
+
+							<TextView
+									android:layout_width="140dp"
+									android:layout_height="wrap_content"
+									android:layout_gravity="left"
+									android:gravity="left"
+									android:text="Created by"
+
+									android:textColor="@android:color/black"
+									android:textSize="15dp"
+									android:textStyle="bold"></TextView>
+
+
+
+							<TextView
+									android:id="@+id/createdBy"
+									android:layout_width="150dp"
+									android:layout_height="wrap_content"
+									android:layout_gravity="left"
+									android:gravity="left"
+									android:text="1 Hours"
+									android:textColor="@android:color/black"
+									android:textSize="15dp"/>
+
+						</LinearLayout>
+
+
+
+					</LinearLayout>
+
+
+
+					<LinearLayout
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+
+							android:gravity="center"
+							android:background="@drawable/school_list_background"
+							android:orientation="horizontal">
+
+						<LinearLayout
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_margin="5dp"
+								android:gravity="center"
+								android:orientation="horizontal">
+
+							<TextView
+									android:layout_width="140dp"
+									android:layout_height="wrap_content"
+									android:layout_gravity="left"
+									android:gravity="left"
+									android:text="Marks"
+
+									android:textColor="@android:color/black"
+									android:textSize="15dp"
+									android:textStyle="bold"></TextView>
+
+
+
+							<TextView
+									android:id="@+id/marks"
+									android:layout_width="150dp"
+									android:layout_height="wrap_content"
+									android:layout_gravity="left"
+									android:gravity="left"
+									android:text="1/2"
+									android:textColor="@android:color/black"
+									android:textSize="15dp"/>
+
+						</LinearLayout>
+
+
+
+					</LinearLayout>
+
+					<LinearLayout
+
+							android:id="@+id/progressBarSchools"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:gravity="center"
+							android:layout_gravity="center"
+							android:orientation="horizontal">
+
+
+						<ProgressBar
+								style="@style/progressbar_field"/>
+
+					</LinearLayout>
+
+
+					<include layout="@layout/school_list_divider"/>
+
+
+					<RelativeLayout android:layout_alignParentLeft="true"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_marginLeft="10dp"
+									android:layout_marginTop="10dp"
+									android:layout_marginBottom="40dp">
+						<ExpandableListView
+								android:id="@+id/quiz"
+								android:layout_alignParentTop="true"
+								android:layout_width="fill_parent"
+								android:layout_weight="1"
+								android:layout_height="wrap_content"
+								android:background="@drawable/school_layer_background"
+								android:cacheColorHint="#00000000"
+								android:indicatorRight="?android:attr/expandableListPreferredItemIndicatorRight"
+								android:groupIndicator="@android:color/transparent"
+
+								></ExpandableListView>
+
+
+					</RelativeLayout>
+
+
+
+				</LinearLayout>
+
+
+			</LinearLayout>
+
+
+		</FrameLayout>
+	</LinearLayout>
+
+</FrameLayout>

@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -102,6 +103,8 @@ public class QuizListView extends Fragment implements
     schoolCensus.initHome();
     schoolCensus.setState(Constants.STUDENT_SUMMARY_VIEW);
 
+    schoolCensus.setCurrentTitle(Constants.QuizListView);
+
     quizManager =
         new QuizManager(schoolCensus.getCloudantInstance(), getContext());
 
@@ -120,11 +123,8 @@ public class QuizListView extends Fragment implements
     mHandler.post(new Runnable() {
       @Override
       public void run() {
-
         mStackLevel++;
-
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-
         QuizCreationDialogView
             newFragment = QuizCreationDialogView.newInstance(mStackLevel);
         newFragment.show(ft, "StudentDataDialog111");
@@ -135,9 +135,7 @@ public class QuizListView extends Fragment implements
   }
 
   public void addQuiz(Quiz quiz) {
-
     new backgroundProcessSave().execute(quiz);
-
   }
 
   @Override
@@ -238,6 +236,8 @@ public class QuizListView extends Fragment implements
   }
 
   void AppendList(List<Quiz> str) {
+
+    Log.i(Constants.TAG,">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     listView.setAdapter(new QuizListViewAdapter(this, str));
   }
 
@@ -255,7 +255,7 @@ public class QuizListView extends Fragment implements
       comboBoxViewAdapter = new ComboBoxViewAdapter(getContext(),
                                                     android.R.layout.simple_spinner_item,
                                                     convertToModel(classArray.values()));
-      comboBoxViewAdapter.setHint("Select County");
+      comboBoxViewAdapter.setHint("Select Subject");
     }
 
     spinner.setAdapter(comboBoxViewAdapter);
@@ -278,10 +278,13 @@ public class QuizListView extends Fragment implements
   @Override
   public void onResume() {
     super.onResume();
-
+    schoolCensus.setCurrentTitle(Constants.QuizListView);
     schoolCensus.setCurrentFragment(this);
 
+
+
     add(sampleData);
+
     new backgroundProcess().execute();
   }
 

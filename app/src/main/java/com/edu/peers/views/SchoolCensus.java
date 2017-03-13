@@ -19,6 +19,7 @@ import com.edu.peers.dialogs.CustomAlertDialogBuilder;
 import com.edu.peers.models.ContentFile;
 import com.edu.peers.models.Questions;
 import com.edu.peers.models.Quiz;
+import com.edu.peers.models.User;
 import com.edu.peers.models.UserObject;
 import com.edu.peers.network.VolleyManager;
 import com.edu.peers.others.Constants;
@@ -48,6 +49,7 @@ public class SchoolCensus extends MultiDexApplication {
   private LoginView loginView;
   private ProgressDialog progressDialog;
   private int selectedSchoolIndex;
+  private int quizIndex;
   private int selectedUserIndex;
   private int selectedClassroomIndex;
   private int selectedClassroomStreamIndex;
@@ -58,11 +60,13 @@ public class SchoolCensus extends MultiDexApplication {
   private String password;
   private Quiz quiz;
   private Questions questions;
+  private String questionsUUID;
   private Questions question;
   private ContentFile contentFile;
   private String contentUUID;
   private String contentFileUUID;
-
+  private String questionState;
+  private User userQiuz=null;
   private int currentYear;
 
 
@@ -380,6 +384,41 @@ public class SchoolCensus extends MultiDexApplication {
 
   public void setContentFileUUID(String contentFileUUID) {
     this.contentFileUUID = contentFileUUID;
+  }
+
+  public String getQuestionsUUID() {
+    return questionsUUID;
+  }
+
+  public void setQuestionsUUID(String questionsUUID) {
+    this.questionsUUID = questionsUUID;
+  }
+
+  public void getUserWithUsername(String s) {
+  }
+
+  public String getQuestionState() {
+    return questionState;
+  }
+
+  public void setQuestionState(String questionState) {
+    this.questionState = questionState;
+  }
+
+  public int getQuizIndex() {
+    return quizIndex;
+  }
+
+  public void setQuizIndex(int quizIndex) {
+    this.quizIndex = quizIndex;
+  }
+
+  public User getUserQiuz() {
+    return userQiuz;
+  }
+
+  public void setUserQiuz(User userQiuz) {
+    this.userQiuz = userQiuz;
   }
 }
 

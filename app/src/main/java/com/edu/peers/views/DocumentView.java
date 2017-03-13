@@ -27,8 +27,11 @@ import com.edu.peers.adapter.CommentsExpandableListViewAdapter;
 import com.edu.peers.dialogs.CommentDialogView;
 import com.edu.peers.dialogs.RecordAudioDialog;
 import com.edu.peers.dialogs.ScratchPadDialog;
+import com.edu.peers.managers.ContentCommentsManager;
 import com.edu.peers.managers.ContentManager;
 import com.edu.peers.models.Content;
+import com.edu.peers.models.ContentComments;
+import com.edu.peers.models.ContentCommentsObject;
 import com.edu.peers.models.ContentFile;
 import com.edu.peers.models.ContentObject;
 import com.edu.peers.models.Input;
@@ -84,11 +87,16 @@ public class DocumentView extends Fragment implements
   private LearningContentListView learningContentListView;
   private MainView mainView;
   private ContentManager contentManager;
+  private ContentCommentsManager contentCommentsManager;
   private ContentObject contentObject;
   private List<Content> sampleData;
   private LinearLayout progressBar;
-  private String contentFileUUID;
-  private String contentUUID;
+  private String contentFileUUID = null;
+  private String contentUUID = null;
+  private Content contentFound = null;
+  private ContentFile contentFileFound;
+  private ContentCommentsObject contentObjectComments;
+  private List<ContentComments> contentCommentsList;
 
   public static DocumentView newInstance(int position) {
     DocumentView f = new DocumentView();
@@ -108,6 +116,9 @@ public class DocumentView extends Fragment implements
     mainView = schoolCensus.getMainView();
     contentManager =
         new ContentManager(schoolCensus.getCloudantInstance(), getContext());
+    contentCommentsManager =
+        new ContentCommentsManager(schoolCensus.getCloudantInstance(), getContext());
+
     contentFileUUID = schoolCensus.getContentFileUUID();
     contentUUID = schoolCensus.getContentUUID();
   }
@@ -117,19 +128,13 @@ public class DocumentView extends Fragment implements
                            Bundle savedInstanceState) {
 
     view = inflater.inflate(R.layout.document_view, null);
-
     commentButton = (Button) view.findViewById(R.id.commentButton);
     commentButton.setOnClickListener(this);
-
     progressBar = (LinearLayout) view.findViewById(R.id.progressBarSchools);
-
     progressBar.setVisibility(View.GONE);
-
     closeDocument = (Button) view.findViewById(R.id.closeDocument);
     closeDocument.setOnClickListener(this);
-
     this.mHandler = new Handler(Looper.getMainLooper());
-
     documentName = (TextView) view.findViewById(R.id.documentName);
     pdfView = (com.github.barteksc.pdfviewer.PDFView) view.findViewById(R.id.pdfviewer);
     documentView = (ImageView) view.findViewById(R.id.imageView);
@@ -141,7 +146,6 @@ public class DocumentView extends Fragment implements
 
   public void loadDocument() {
     if (contentFile != null) {
-      events = contentFile.getInputList();
       documentStatusList = (ExpandableListView) view.findViewById(R.id.documentStatusList);
 
       setDocumentList();
@@ -159,6 +163,7 @@ public class DocumentView extends Fragment implements
         mFileName += "/test----1111----" + contentFile.getFileName();
 
         try {
+
           File file2 = new File(mFileName);
           FileOutputStream os = new FileOutputStream(file2, true);
           os.write(Base64.decode(content));
@@ -421,6 +426,18 @@ public class DocumentView extends Fragment implements
 
       contentObject = contentManager.getContentObject();
 
+      contentObjectComments = contentCommentsManager.getContentObjectComments();
+      events = new ArrayList<>();
+
+      if (contentObjectComments != null) {
+        contentCommentsList = contentObjectComments.getContentCommentsList();
+
+        for (ContentComments contentComments : contentCommentsList) {
+          events.add(contentComments.getInput());
+
+        }
+      }
+
       if (contentObject != null) {
         sampleData = contentObject.getContentList();
       }
@@ -451,52 +468,21 @@ public class DocumentView extends Fragment implements
 
   public class backgroundProcessSave extends AsyncTask<Input, Input, Long> {
 
+
     protected Long doInBackground(Input... params) {
 
       Input input = params[0];
-      if (contentObject == null) {
-        contentObject = new ContentObject();
-      }
 
-      List<Content> quListList = contentObject.getContentList();
+      if (contentUUID != null && contentFileUUID != null) {
 
-      int contentIndex = -1;
-      int contentFileIndex = -1;
+        if (contentObjectComments==null)
+          contentObjectComments =new ContentCommentsObject();
 
-      for (int y = 0; y < quListList.size(); y++) {
+        List<ContentComments> contentCommentsList = contentObjectComments.getContentCommentsList();
+        contentCommentsList.add(new ContentComments(contentUUID, contentFileUUID, input));
+        contentObjectComments.setContentCommentsList(contentCommentsList);
+        contentCommentsManager.addContentComment(contentObjectComments);
 
-        Content content = quListList.get(y);
-
-        if (content.getUuid().equalsIgnoreCase(contentUUID)) {
-          contentIndex = y;
-
-          List<ContentFile> contentFileList = content.getContentFileList();
-
-          for (int k = 0; k < contentFileList.size(); k++) {
-            ContentFile contentFile1 = contentFileList.get(k);
-
-            if (contentFile1.getUuid().equalsIgnoreCase(contentFileUUID)) {
-
-              contentFileIndex = k;
-
-              List<Input> inputList = contentFile1.getInputList();
-              inputList.add(input);
-              contentFile1.setInputList(inputList);
-
-              contentFileList.set(k, contentFile1);
-              content.setContentFileList(contentFileList);
-              quListList.set(y, content);
-
-            }
-
-          }
-        }
-
-      }
-
-      if (contentFileIndex != -1 && contentIndex != -1) {
-        contentObject.setContentList(quListList);
-        contentManager.addContent(contentObject);
 
       }
 

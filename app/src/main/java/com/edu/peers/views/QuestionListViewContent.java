@@ -32,8 +32,13 @@ import com.edu.peers.adapter.QuizExpandableListViewAdapter;
 import com.edu.peers.dialogs.QuestionResponseCreationDialogView;
 import com.edu.peers.dialogs.RecordAudioDialog;
 import com.edu.peers.dialogs.ScratchPadDialog;
+import com.edu.peers.managers.QuestionManager;
+import com.edu.peers.managers.QuestionsResponsesManager;
 import com.edu.peers.models.Input;
 import com.edu.peers.models.Questions;
+import com.edu.peers.models.QuestionsResponses;
+import com.edu.peers.models.QuestionsResponsesObject;
+import com.edu.peers.models.UserObject;
 import com.edu.peers.others.Constants;
 
 import java.util.ArrayList;
@@ -57,7 +62,7 @@ public class QuestionListViewContent extends Fragment implements
       new HashMap<String, ComboBoxViewListItem>();
   public ComboBoxViewListItem[] comboBoxViewListItems;
   private List<Input> array_sort = new ArrayList<>();
-  private List<Input> sampleData = new ArrayList<>();
+//  private List<Input> sampleData = new ArrayList<>();
   private SchoolCensus schoolCensus;
   private TextView title;
   private long totalSize = 0;
@@ -98,6 +103,13 @@ public class QuestionListViewContent extends Fragment implements
   private ImageView write_choice_1;
   private String voiceInputString, writeInputString;
   private List<Input> questionsList;
+  private List<QuestionsResponses> questionsResponsesList;
+  private QuestionManager questionManager;
+  private QuestionsResponsesManager questionsResponsesManager;
+  private String questionsUUID;
+  private QuestionsResponsesObject questionsResponsesObject;
+  private int inputPosition;
+  private UserObject userObject;
 
 
   public static QuestionListViewContent newInstance(int position) {
@@ -122,14 +134,31 @@ public class QuestionListViewContent extends Fragment implements
     schoolCensus.setCurrentFragment(this);
     schoolCensus.initHome();
     schoolCensus.setState(Constants.STUDENT_SUMMARY_VIEW);
+    schoolCensus.setCurrentTitle(Constants.QuestionsListViewContent);
+
+   userObject= schoolCensus.getUserObject();
+
+    questionManager =
+        new QuestionManager(schoolCensus.getCloudantInstance(), getContext());
+
+    questionsResponsesManager =
+        new QuestionsResponsesManager(schoolCensus.getCloudantInstance(), getContext());
+
 
     questions = schoolCensus.getQuestions();
-    sampleData = questions.getResponses();
-    questionsList = questions.getResponses();
+    questionsUUID = schoolCensus.getQuestionsUUID();
+//    sampleData = questions.getResponses();
+//    questionsList = questions.getResponses();
+
+    questionsList= new ArrayList<>();
+    questionsResponsesList= new ArrayList<>();
 
     mainView = schoolCensus.getMainView();
     mainView.showAddButton();
     mainView.setAddButtonTag(3);
+
+
+
   }
 
   void openDialog(final int index) {
@@ -149,7 +178,6 @@ public class QuestionListViewContent extends Fragment implements
         mStackLevel++;
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-
         newFragment.show(ft, "StudentDataDialog111");
 
       }
@@ -165,15 +193,8 @@ public class QuestionListViewContent extends Fragment implements
     view = inflater.inflate(R.layout.question_list_view_content, null);
 
     listView = (ListView) view.findViewById(R.id.questions_list_view);
-
-//    listView.setAdapter(new QuizListViewAdapter(this, sampleData));
-    listView.setAdapter(new QuestionResponsesListViewAdapter(this, questionsList));
-    registerForContextMenu(listView);
-
-//    listView.setOnItemClickListener(this);
-//
-//    listView.setOnItemClickListener(this);ononCreateContextMenuCreateContextMenu
-
+    progressBar = (LinearLayout) view.findViewById(R.id.progressBarSchools);
+    progressBar.setVisibility(View.GONE);
     input = (TextView) view.findViewById(R.id.input);
     voice_choice_1 = (ImageView) view.findViewById(R.id.voice_choice_1);
     voice_choice_1.setOnClickListener(this);
@@ -202,13 +223,19 @@ public class QuestionListViewContent extends Fragment implements
 
       dateCreated.setText(questions.getDate());
       if (questions.getUser() != null) {
-        createdBy.setText(
-            "Instructor: " + questions.getUser().getFirstName() + " " + questions.getUser()
-                .getLastName());
+        if (questions.getUser().getRole().equalsIgnoreCase("Instructor"))
+          createdBy.setText(
+              "Instructor: " + questions.getUser().getFirstName() + " " + questions.getUser().getLastName());
+        else
+          createdBy.setText(
+              "Student: " + questions.getUser().getFirstName() + " " + questions.getUser().getLastName());
+
       } else {
         createdBy.setText("Instructor ");
       }
     }
+
+    new backgroundProcess().execute();
 
     return view;
   }
@@ -290,7 +317,7 @@ public class QuestionListViewContent extends Fragment implements
   @Override
   public void onResume() {
     super.onResume();
-
+    schoolCensus.setCurrentTitle(Constants.QuestionsListViewContent);
     schoolCensus.setCurrentFragment(this);
 
   }
@@ -304,11 +331,27 @@ public class QuestionListViewContent extends Fragment implements
         (AdapterView.AdapterContextMenuInfo) menuInfo;
 
     if (v.getId() == R.id.questions_list_view) {
-      menu.setHeaderTitle(sampleData.get(info.position).getQuestionInput());
-      MenuInflater inflater = this.getActivity().getMenuInflater();
-      MenuItem item = menu.findItem(R.id.recommend);
 
-      inflater.inflate(R.menu.menu, menu);
+      if (userObject.getUser().getRole().equalsIgnoreCase("Instructor")){
+
+
+        menu.setHeaderTitle(questionsList.get(info.position).getQuestionInput());
+        MenuInflater inflater = this.getActivity().getMenuInflater();
+        MenuItem item = menu.findItem(R.id.recommend);
+
+        inflater.inflate(R.menu.menu_instructors, menu);
+      }
+      else{
+
+
+        menu.setHeaderTitle(questionsList.get(info.position).getQuestionInput());
+        MenuInflater inflater = this.getActivity().getMenuInflater();
+        MenuItem item = menu.findItem(R.id.recommend);
+        inflater.inflate(R.menu.menu_students, menu);
+
+      }
+
+
 
     }
   }
@@ -320,16 +363,28 @@ public class QuestionListViewContent extends Fragment implements
         info =
         (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
     int index = info.position;
+    inputPosition=index;
+    QuestionsResponses input=questionsResponsesList.get(info.position);
     switch (item.getItemId()) {
 
       case R.id.recommend:
+
+        input.getInput().setRecommended(true);
+        new backgroundProcessSaveUpdate().execute(input);
         return true;
       case R.id.thumbsup:
-//        deleteConfirmation(sampleData.get(index).id.toString());
+        int current=input.getInput().getThumbsUp();
+        int newNumber=current+1;
+        input.getInput().setThumbsUp(newNumber);
+        new backgroundProcessSaveUpdate().execute(input);
         return true;
       case R.id.thumbsdown:
-//        deleteConfirmation(sampleData.get(index).id.toString());
+        current=input.getInput().getThumbsDown();
+        newNumber=current-1;
+        input.getInput().setThumbsDown(newNumber);
+        new backgroundProcessSaveUpdate().execute(input);
         return true;
+
       default:
         return super.onContextItemSelected(item);
     }
@@ -355,10 +410,29 @@ public class QuestionListViewContent extends Fragment implements
   }
 
 
+
+
   private class backgroundProcess extends AsyncTask<Integer, Integer, Long> {
 
     protected Long doInBackground(Integer... params) {
-//      loadSchoolData();
+      questionsList= new ArrayList<>();
+      questionsResponsesList =new ArrayList<>();
+
+      questionsResponsesObject= questionsResponsesManager.getQuestionsResponsesObject();
+      if (questionsResponsesObject!=null) {
+        List<QuestionsResponses>
+            questionsResponsesList1 =
+            questionsResponsesObject.getQuestionsResponsesList();
+
+        for (QuestionsResponses questionsResponses:questionsResponsesList1){
+          if (questionsResponses.getQuestionUUID().equalsIgnoreCase(questionsUUID))
+          {
+            questionsList.add(questionsResponses.getInput());
+            questionsResponsesList.add(questionsResponses);
+          }
+        }
+
+      }
       long totalSize = 0;
       return totalSize;
     }
@@ -374,6 +448,9 @@ public class QuestionListViewContent extends Fragment implements
 
       }
 
+      loadDataToView();
+
+
       listView.invalidateViews();
     }
 
@@ -383,6 +460,12 @@ public class QuestionListViewContent extends Fragment implements
       }
     }
 
+  }
+
+  private void loadDataToView() {
+
+    listView.setAdapter(new QuestionResponsesListViewAdapter(this, questionsList));
+    registerForContextMenu(listView);
   }
 
   private class OnStudentSelected implements
@@ -437,11 +520,93 @@ public class QuestionListViewContent extends Fragment implements
   }
 
   public void addInput(Input input){
-
-
     questionsList.add(input);
-
     listView.setAdapter(new QuestionResponsesListViewAdapter(this, questionsList));
+    new backgroundProcessSave().execute(input);
+  }
+  private class backgroundProcessSave extends AsyncTask<Input, Input, Long> {
+
+    protected Long doInBackground(Input... params) {
+
+      Input  input=params[0];
+
+      questionsResponsesObject= questionsResponsesManager.getQuestionsResponsesObject();
+
+      if (questionsResponsesObject==null) {
+        questionsResponsesObject= new QuestionsResponsesObject();
+      }
+      List<QuestionsResponses>
+          questionsResponsesList =
+          questionsResponsesObject.getQuestionsResponsesList();
+
+      questionsResponsesList.add( new QuestionsResponses(questionsUUID,input));
+
+      questionsResponsesObject.setQuestionsResponsesList(questionsResponsesList);
+      questionsResponsesManager.addQuestionResponse(questionsResponsesObject);
+
+
+      long totalSize = 0;
+      return totalSize;
+    }
+
+
+    protected void onPostExecute(Long result) {
+      if (progressBar != null) {
+        progressBar.setVisibility(View.GONE);
+      }
+
+    }
+
+    protected void onPreExecute() {
+      if (progressBar != null) {
+        progressBar.setVisibility(View.VISIBLE);
+      }
+    }
+
+  }
+  private class backgroundProcessSaveUpdate extends AsyncTask<QuestionsResponses, QuestionsResponses, Long> {
+
+    protected Long doInBackground(QuestionsResponses... params) {
+
+      QuestionsResponses  input=params[0];
+
+      questionsResponsesObject= questionsResponsesManager.getQuestionsResponsesObject();
+
+      if (questionsResponsesObject==null) {
+        questionsResponsesObject= new QuestionsResponsesObject();
+      }
+      List<QuestionsResponses>
+          questionsResponsesList =
+          questionsResponsesObject.getQuestionsResponsesList();
+
+//      questionsResponsesList.add( new QuestionsResponses(questionsUUID,input));
+
+      questionsResponsesList.set(inputPosition,input);
+
+
+      questionsResponsesObject.setQuestionsResponsesList(questionsResponsesList);
+      questionsResponsesManager.addQuestionResponse(questionsResponsesObject);
+
+
+      long totalSize = 0;
+      return totalSize;
+    }
+
+
+    protected void onPostExecute(Long result) {
+      if (progressBar != null) {
+        progressBar.setVisibility(View.GONE);
+      }
+
+      new backgroundProcess().execute();
+
+    }
+
+    protected void onPreExecute() {
+      if (progressBar != null) {
+        progressBar.setVisibility(View.VISIBLE);
+      }
+    }
 
   }
 

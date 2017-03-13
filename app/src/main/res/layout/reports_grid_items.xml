@@ -1,0 +1,41 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="wrap_content"
+			  android:layout_height="wrap_content"
+			  android:orientation="vertical">
+
+	<LinearLayout
+			android:layout_width="190dp"
+			android:layout_height="150dp"
+			android:gravity="center"
+			android:padding="15dp"
+			android:background="@drawable/school_grid_layout"
+			android:layout_gravity="center"
+			android:orientation="vertical">
+
+
+		<TextView
+				android:id="@+id/descriptionOne"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="% PRESENT STUDENTS"
+				android:textColor="@color/school_grid_text_selector"
+				android:gravity="left"
+				android:layout_gravity="left"
+				android:textSize="15sp"/>
+		<TextView
+				android:id="@+id/descriptionTwo"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="@color/school_grid_text_selector"
+				android:gravity="left"
+
+				android:layout_gravity="left"
+				android:text="75%"
+				android:textSize="30sp">
+		</TextView>
+
+
+	</LinearLayout>
+
+
+</LinearLayout>

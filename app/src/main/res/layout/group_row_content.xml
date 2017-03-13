@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="fill_parent"
+			  android:layout_height="wrap_content"
+			  android:orientation="horizontal">
+
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:orientation="horizontal">
+
+		<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="10dp"
+				android:layout_gravity="center_vertical"
+				android:orientation="vertical">
+
+			<RelativeLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:orientation="horizontal">
+
+
+				<LinearLayout
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:orientation="horizontal">
+
+					<TextView
+							android:id="@+id/groupPosition"
+							style="@style/list_item_text"
+							android:layout_alignParentLeft="true"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+
+							android:layout_gravity="left|center"
+							android:gravity="left|center"
+							android:text="1"
+							android:textColor="@color/school_list_item_text"/>
+
+					<TextView
+							android:id="@+id/titleName"
+							style="@style/list_item_text"
+							android:layout_alignParentLeft="true"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+
+							android:layout_gravity="left|center"
+							android:gravity="left|center"
+							android:text="testyyyy"
+							android:textColor="@color/school_list_item_text"/>
+
+
+				</LinearLayout>
+			</RelativeLayout>
+
+			<RelativeLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:orientation="horizontal">
+
+
+				<LinearLayout
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="left"
+						android:orientation="horizontal">
+				<TextView
+						android:id="@+id/subject"
+						style="@style/list_item_text"
+						android:layout_alignParentLeft="true"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="left|center"
+						android:gravity="left|center"
+						android:text="testyyyy"
+						android:textColor="@color/school_list_item_text"/>
+
+					<View
+							android:layout_width="1dip"
+							android:layout_height="match_parent"
+							android:background="#393b3e"
+							android:layout_centerHorizontal="true"/>
+
+
+
+				<TextView
+						android:id="@+id/user"
+						style="@style/list_item_text"
+						android:layout_alignParentLeft="true"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="left|center"
+						android:gravity="left|center"
+						android:text="testyyyy"
+						android:textColor="@color/school_list_item_text"/>
+
+
+				</LinearLayout>
+
+
+
+			</RelativeLayout>
+
+
+		</LinearLayout>
+
+		<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="10dp"
+				android:layout_gravity="center_vertical"
+				android:orientation="vertical">
+
+
+			<RelativeLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:orientation="horizontal">
+
+
+
+
+				<ImageView
+						android:src="@drawable/expander_group"
+						android:id="@+id/explist_indicator"
+						android:layout_width="50dp"
+						android:layout_height="50dp"
+						android:gravity="center"
+
+						android:layout_alignParentRight="true"
+						/>
+
+
+			</RelativeLayout>
+
+
+		</LinearLayout>
+
+
+	</LinearLayout>
+
+</LinearLayout>

@@ -2,7 +2,6 @@ package com.edu.peers.cloudant;
 
 import android.content.Context;
 
-import com.cloudant.sync.datastore.BasicDocumentRevision;
 import com.edu.peers.others.Utils;
 
 import org.json.JSONArray;
@@ -10,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -26,7 +24,7 @@ public class EventAggregator {
     public EventAggregator(CloudantStore cloudantStore,Context context) {
         this.appContext = context;
         this.cloudantStore = cloudantStore;
-        this.imei = Utils.getIMEI(context);
+//        this.imei = Utils.getIMEI(context);
     }
 
     public Object openDocument() {
@@ -89,33 +87,6 @@ public class EventAggregator {
 
     }
 
-    public synchronized void sendToCloudant(JSONObject retMap, byte[] fileName) {
-        try {
-            cloudantStore.addDocumentToLocalDataSTore(retMap, fileName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public synchronized void sendToCloudant(JSONObject retMap) {
-        try {
-            cloudantStore.addDocumentToLocalDataSTore(retMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public synchronized void sendToCloudantWithExit(JSONObject retMap, Thread thread, Throwable ex,
-                                                    Thread.UncaughtExceptionHandler defaultUEH) {
-        try {
-            cloudantStore.addDocumentToLocalDataSTore(retMap);
-
-            defaultUEH.uncaughtException(thread, ex);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
     public int getDocCount() {
@@ -132,11 +103,6 @@ public class EventAggregator {
 
     }
 
-  public List<BasicDocumentRevision> getAllDocuments() {
-
-    return  cloudantStore.getAllDocuments();
-
-  }
 
 
 }

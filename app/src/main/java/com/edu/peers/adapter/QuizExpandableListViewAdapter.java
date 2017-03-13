@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +50,7 @@ public class QuizExpandableListViewAdapter extends
   private QuizListViewContent mContext;
   private OnDataChangeListener mOnDataChangeListener;
   private TextView groupPositionTextView;
+  private LinearLayout selectedAnswersLayout;
 
   public QuizExpandableListViewAdapter(QuizListViewContent context,
                                        List<? extends Map<String, Questions>> groupData,
@@ -79,10 +81,13 @@ public class QuizExpandableListViewAdapter extends
     View ind = v.findViewById(R.id.explist_indicator);
 
 
-
-
     selectedAnswers = (TextView) v.findViewById(R.id.selectedAnswers);
     groupPositionTextView = (TextView) v.findViewById(R.id.groupPosition);
+    selectedAnswersLayout = (LinearLayout) v.findViewById(R.id.selectedAnswersLayout);
+
+
+
+
 
     int position=groupPosition+1;
     groupPositionTextView.setText(""+position);
@@ -153,6 +158,9 @@ public class QuizExpandableListViewAdapter extends
         drawable.setState(GROUP_STATE_SETS[stateSetIndex]);
       }
     }
+
+    selectedAnswersLayout.setVisibility(View.GONE);
+
     bindViewGroup(v, mGroupData.get(groupPosition), mGroupFrom, mGroupTo);
     return v;
   }
@@ -234,11 +242,12 @@ public class QuizExpandableListViewAdapter extends
 
     final CheckBox explist_indicator = (CheckBox) v.findViewById(R.id.childCheckbox);
 
-      explist_indicator.setChecked(mContext.isCheckCheckedValues(groupPosition,childPosition));
+//      explist_indicator.setChecked(mContext.isCheckCheckedValues(groupPosition,childPosition));
 
     explist_indicator.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+
          mContext.checkBoxSelected(groupPosition,childPosition,explist_indicator.isChecked(),mChildData.get(groupPosition).get(childPosition).get(NAME));
 
 

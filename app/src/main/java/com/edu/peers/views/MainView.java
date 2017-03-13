@@ -9,13 +9,13 @@ import com.google.android.gms.maps.model.Marker;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,7 +36,13 @@ import com.edu.peers.adapter.ComboBoxViewAdapter;
 import com.edu.peers.adapter.ComboBoxViewListItem;
 import com.edu.peers.adapter.MainViewExpandableListViewAdapter;
 import com.edu.peers.cloudant.EventAggregator;
+import com.edu.peers.managers.NotificationManager;
+import com.edu.peers.managers.UserManager;
 import com.edu.peers.models.MenuObject;
+import com.edu.peers.models.NotificationObject;
+import com.edu.peers.models.Notifications;
+import com.edu.peers.models.Quiz;
+import com.edu.peers.models.User;
 import com.edu.peers.models.UserObject;
 import com.edu.peers.others.Constants;
 import com.edu.peers.services.BackgroundService;
@@ -45,6 +51,9 @@ import com.edu.peers.services.ServiceCallbacks;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by nelson on 7/21/15.
@@ -63,7 +72,7 @@ public class MainView extends FragmentActivity
   public String[] schools;
   public Marker[] markers;
   public boolean spinnerCountyTouched, spinnerMeasuresTouched;
-  public Button refreshButton,editButton1,transferButton;
+  public Button refreshButton, editButton1, transferButton;
   private ArrayList<String> menuData = new ArrayList<>();
   private Fragment currentFragment = null;
   private ComboBoxViewAdapter subCountyViewAdapter, measuresViewAdapter;
@@ -115,6 +124,12 @@ public class MainView extends FragmentActivity
   private int mNotifCount = 0;
   private RelativeLayout main_widget;
   private ImageView icon;
+  private int userView = -1;
+  private ScheduledExecutorService scheduledExecutorService;
+  private NotificationManager notificationManager;
+  private UserManager userManager;
+  private int totalNotifications = 0;
+  private TextView txt_count;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -125,8 +140,12 @@ public class MainView extends FragmentActivity
     schoolCensus = (SchoolCensus) getApplication();
     schoolCensus.setMainView(this);
 
-    main_widget  = (RelativeLayout) findViewById(R.id.main_widget);
+    notificationManager =
+        new NotificationManager(schoolCensus.getCloudantInstance(), getApplicationContext());
+    userManager =
+        new UserManager(schoolCensus.getCloudantInstance(), getApplicationContext());
 
+    main_widget = (RelativeLayout) findViewById(R.id.main_widget);
 
     icon = (ImageView) findViewById(R.id.icon);
     icon.setOnClickListener(this);
@@ -138,7 +157,6 @@ public class MainView extends FragmentActivity
     transferButton = (Button) findViewById(R.id.transfer);
     transferButton.setVisibility(View.GONE);
     transferButton.setOnClickListener(this);
-
 
     editButton1 = (Button) findViewById(R.id.edit);
     editButton1.setVisibility(View.GONE);
@@ -172,7 +190,7 @@ public class MainView extends FragmentActivity
     addButtonDivider = (LinearLayout) findViewById(R.id.add_divider);
 
     title = (TextView) findViewById(R.id.title);
-
+    txt_count = (TextView) findViewById(R.id.txt_count);
 
     schoolList = new ArrayList<>();
 //    schoolList.add();
@@ -207,23 +225,31 @@ public class MainView extends FragmentActivity
 
     userObject = schoolCensus.getUserObject();
 
+    if (userObject.getUser().getRole().equalsIgnoreCase(Constants.INSTRUCTOR_ROLE)) {
 
-    if (userObject.getUser().getRole().equalsIgnoreCase(Constants.INSTRUCTOR_ROLE)){
+      userView = 1;
       menuData.add("Dashboard");
       menuData.add("Quizzes");
-      menuData.add("Questions");
-      menuData.add("Seat arrangement");
+      menuData.add("Public Questions");
+      menuData.add("Private Questions");
+      menuData.add("Students Grade Book");
       menuData.add("Learning material");
-      menuData.add("Notifications");
+      menuData.add("General Notifications");
+      menuData.add("Personal Notifications");
+      menuData.add("Seat arrangement");
+      menuData.add("Ranking");
 
-    } else  if (userObject.getUser().getRole().equalsIgnoreCase(Constants.STUDENT_ROLE)){
-
+    } else if (userObject.getUser().getRole().equalsIgnoreCase(Constants.STUDENT_ROLE)) {
+      userView = 2;
       menuData.add("Dashboard");
       menuData.add("Quizzes");
+      menuData.add("Public Questions");
+      menuData.add("Private Questions");
       menuData.add("Grade Book");
-      menuData.add("Questions");
-      menuData.add("Notifications");
-
+      menuData.add("Learning material");
+      menuData.add("General Notifications");
+      menuData.add("Personal Notifications");
+      menuData.add("Ranking");
     }
     eventAggregator =
         new EventAggregator(schoolCensus.getCloudantInstance(),
@@ -231,13 +257,22 @@ public class MainView extends FragmentActivity
 
     setDrawerAdapter();
 
-
     mDrawerLayout.closeDrawer(expandableListView);
-
 
     setAddButtonTag(2);
 
-    loadView(StudentSummaryView.newInstance(0));
+    startService();
+
+    if (userView == 1) {
+
+      loadView(InstructorsSummaryView.newInstance(0));
+
+    } else if (userView == 2) {
+
+      loadView(StudentsSummaryView.newInstance(0));
+
+    }
+
 
   }
 
@@ -259,9 +294,8 @@ public class MainView extends FragmentActivity
             subList,
             R.layout.child_row,
             new String[]{"shadeName"},
-            new int[]{R.id.childname},schoolList
+            new int[]{R.id.childname}, schoolList
         );
-
 
     mapListview.setTag(1);
 
@@ -311,7 +345,7 @@ public class MainView extends FragmentActivity
   }
 
   public void setHomeTitle() {
-    title.setText("School Hub");
+    title.setText("Edu Peer");
   }
 
 
@@ -324,13 +358,15 @@ public class MainView extends FragmentActivity
     } else if (v == icon) {
 
       Toast t = Toast.makeText(getApplicationContext(),
-                               "Its here ", Toast.LENGTH_SHORT);
+                               "Please use the side menu to choose notifications option",
+                               Toast.LENGTH_SHORT);
       t.show();
+
 
     } else if (v == logoutButton) {
 
       logout();
-    }else if (v == addButton) {
+    } else if (v == addButton) {
 
       int tag = (int) addButton.getTag();
       if (tag == 1) {
@@ -340,11 +376,15 @@ public class MainView extends FragmentActivity
         QuestionsListView quizListView = (QuestionsListView) schoolCensus.getCurrentFragment();
         quizListView.openDialog(-1);
       } else if (tag == 3) {
-        QuestionListViewContent quizListView = (QuestionListViewContent) schoolCensus.getCurrentFragment();
+        QuestionListViewContent
+            quizListView =
+            (QuestionListViewContent) schoolCensus.getCurrentFragment();
         quizListView.openDialog(-1);
 
-      }else if (tag == 4) {
-        LearningContentListView quizListView = (LearningContentListView) schoolCensus.getCurrentFragment();
+      } else if (tag == 4) {
+        LearningContentListView
+            quizListView =
+            (LearningContentListView) schoolCensus.getCurrentFragment();
         quizListView.openDialog(-1);
 
       }
@@ -359,7 +399,6 @@ public class MainView extends FragmentActivity
     Intent intent = new Intent(getApplicationContext(), LoginView.class);
     startActivity(intent);
   }
-
 
 
   public void disableMenuDrawer() {
@@ -444,12 +483,10 @@ public class MainView extends FragmentActivity
 
     int tag = (int) parent.getTag();
 
-    if (tag == 1) {
-
-//      if (schoolCensus.getRole() == 1) {
+    schoolCensus.setUserQiuz(null);
 
 
-      Log.i(Constants.TAG,"position====="+position);
+    if (userObject.getUser().getRole().equalsIgnoreCase(Constants.INSTRUCTOR_ROLE)) {
 
       if (position == 0) {
 
@@ -457,35 +494,110 @@ public class MainView extends FragmentActivity
         Intent intent = new Intent(getApplicationContext(), MainView.class);
         startActivity(intent);
 
-      }else if (position == 1) {
+      } else if (position == 1) {
 
         closeOpenDrawer();
         loadView(QuizListView.newInstance(1));
 
-      }else if (position == 2) {
+      } else if (position == 2) {
 
+        schoolCensus.setQuestionState(Constants.PUBLIC);
         closeOpenDrawer();
         loadView(QuestionsListView.newInstance(1));
 
-      }else if (position == 3) {
+      } else if (position == 3) {
+
+        schoolCensus.setQuestionState(Constants.PRIVATE);
+        closeOpenDrawer();
+        loadView(QuestionsListView.newInstance(1));
+
+      } else if (position == 4) {
 
         closeOpenDrawer();
 
-        loadView(NotificationsListView.newInstance(1));
+        loadView(StudentsListView.newInstance(1));
 
-      }else if (position == 4) {
+      } else if (position == 5) {
 
         closeOpenDrawer();
         loadView(LearningContentListView.newInstance(1));
 
-      }else if (position == 5) {
-
+      } else if (position == 6) {
+        schoolCensus.setQuestionState(Constants.PUBLIC);
         closeOpenDrawer();
 
         loadView(NotificationsListView.newInstance(1));
 
+      } else if (position == 7) {
+        schoolCensus.setQuestionState(Constants.PRIVATE);
+        closeOpenDrawer();
+        loadView(NotificationsListView.newInstance(1));
+
+      }else if (position == 8) {
+        // Seat arrangement
+
+      }else if (position == 9) {
+        // Seat arrangement
+        closeOpenDrawer();
+        loadView(RankingQuizListView.newInstance(1));
       }
+
+
+    } else if (userObject.getUser().getRole().equalsIgnoreCase(Constants.STUDENT_ROLE)) {
+
+      if (position == 0) {
+
+        closeOpenDrawer();
+        Intent intent = new Intent(getApplicationContext(), MainView.class);
+        startActivity(intent);
+
+      } else if (position == 1) {
+
+        closeOpenDrawer();
+        loadView(QuizListView.newInstance(1));
+
+      } else if (position == 2) {
+
+        schoolCensus.setQuestionState(Constants.PUBLIC);
+        closeOpenDrawer();
+        loadView(QuestionsListView.newInstance(1));
+
+      } else if (position == 3) {
+
+        schoolCensus.setQuestionState(Constants.PRIVATE);
+        closeOpenDrawer();
+        loadView(QuestionsListView.newInstance(1));
+
+      } else if (position == 4) {
+
+        closeOpenDrawer();
+
+        loadView(GradebookQuizListView.newInstance(1));
+
+      } else if (position == 5) {
+
+        closeOpenDrawer();
+        loadView(LearningContentListView.newInstance(1));
+
+      } else if (position == 6) {
+        schoolCensus.setQuestionState(Constants.PUBLIC);
+        closeOpenDrawer();
+        loadView(NotificationsListView.newInstance(1));
+
+      } else if (position == 7) {
+        schoolCensus.setQuestionState(Constants.PRIVATE);
+        closeOpenDrawer();
+        loadView(NotificationsListView.newInstance(1));
+
+      }else if (position == 8) {
+        // Seat arrangement
+        closeOpenDrawer();
+        loadView(RankingQuizListView.newInstance(1));
+      }
+
+
     }
+
     return true;
   }
 
@@ -499,48 +611,55 @@ public class MainView extends FragmentActivity
 
   @Override
   public void onBackPressed() {
-    Log.i(Constants.TAG, ">>>>>>>>>>>>>>>>>>>>>>");
-    if (schoolList.size() == 1) {
 
-      if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.SchoolHomeGridView)) {
+    if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.InstructorsSummaryView)
+        || schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentsSummaryView)) {
+      logout();
+    } else if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.QuizListViewContent)) {
 
-        Log.i(Constants.TAG, ">>>>>>>>>>>>>>>>>>>>>>");
-        // Exit to login
+      loadView(QuizListView.newInstance(1));
 
-        //  logout();
-      }else  if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentProfileView)) {
+    } else if (schoolCensus.getCurrentTitle()
+                   .equalsIgnoreCase(Constants.QuizListView) || schoolCensus.getCurrentTitle()
+                   .equalsIgnoreCase(Constants.LearningContentListView)) {
 
-//        loadView(StudentsGridView.newInstance(1));
-      }else  if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentAttendanceWizardView)) {
+      if (userView == 1) {
 
-//        loadView(StudentsGridView.newInstance(1));
+        loadView(InstructorsSummaryView.newInstance(0));
 
-      }  else  if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentGridView)) {
+      } else if (userView == 2) {
+
+        loadView(StudentsSummaryView.newInstance(0));
+
+      }
+
+    } else if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentGridView)) {
 
 //        loadView(StudentsGradesHomeGridView.newInstance(1));
 
-      }   else  if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentsGradeHomeGridView)) {
+    } else if (schoolCensus.getCurrentTitle()
+        .equalsIgnoreCase(Constants.StudentsGradeHomeGridView)) {
 
 //        loadView(StudentsHomeGridView.newInstance(1));
 
-      }  else  if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentsGradeHomeGridView)) {
+    } else if (schoolCensus.getCurrentTitle()
+        .equalsIgnoreCase(Constants.StudentsGradeHomeGridView)) {
 
 //        loadView(StudentsHomeGridView.newInstance(1));
 
-      }else  if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentsHomeGridView)) {
+    } else if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentsHomeGridView)) {
 
 //        loadView(MainHomeGridView.newInstance(1));
 
-      }else  if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentTransferWizardView)) {
+    } else if (schoolCensus.getCurrentTitle()
+        .equalsIgnoreCase(Constants.StudentTransferWizardView)) {
 
 //        loadView(StudentsHomeGridView.newInstance(1));
 
-      } else {
-        super.onBackPressed();
-      }
     } else {
       super.onBackPressed();
     }
+
   }
 
   public void showMenuDrawer() {
@@ -566,6 +685,7 @@ public class MainView extends FragmentActivity
   public void hideEditButton() {
     editButton1.setVisibility(View.GONE);
   }
+
   public void setTitle(String name) {
 
     title.setText(name);
@@ -646,18 +766,6 @@ public class MainView extends FragmentActivity
     refreshButton.setVisibility(View.GONE);
   }
 
-//  public void showDownloadProgressBar() {
-//
-//    downloadProgress.setVisibility(View.VISIBLE);
-//    downloadProgress.setOnClickListener(this);
-//  }
-//
-//
-//  public void hideDownloadProgressBar() {
-//
-//    downloadProgress.setVisibility(View.GONE);
-//  }
-
   public void showDownloadProgressBar() {
 
 //    if (progressDialog == null) {
@@ -714,10 +822,6 @@ public class MainView extends FragmentActivity
     super.onResume();
 
     refreshButton.setVisibility(View.GONE);
-
-
-
-
 
 
   }
@@ -804,5 +908,91 @@ public class MainView extends FragmentActivity
   }
 
 
+  public Runnable timeChecker = new Runnable() {
+    @Override
+    public void run() {
+
+      try {
+        checkNotifications();
+      } catch (Exception e) {
+      }
+    }
+
+
+  };
+
+  public void startService() {
+    scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+    scheduledExecutorService.scheduleWithFixedDelay(timeChecker, 0, 20, TimeUnit.SECONDS);
+  }
+
+  private void checkNotifications() {
+
+    new backgroundProcessSave().execute();
+
+  }
+
+  private void updateNotificationCount() {
+    txt_count.setText("" + totalNotifications);
+  }
+
+  private class backgroundProcessSave extends AsyncTask<Quiz, Quiz, Long> {
+
+    protected Long doInBackground(Quiz... params) {
+
+      try {
+
+        int personalQuestions = 0;
+        int generalQuestions = 0;
+        NotificationObject notificationObject = notificationManager.getNotificationObject();
+        UserObject userObject1 = userManager.getDocumentGetDocument(Constants.USERS);
+
+        for (User user : userObject1.getUserList()) {
+
+          if (user.getUsername()
+              .equalsIgnoreCase(schoolCensus.getUserObject().getUser().getUsername())) {
+            for (Notifications notifications : user.getNotificationsList()) {
+
+              if (notifications!=null && notifications.getRead()!=null) {
+                 if (!notifications.getRead()) {
+                  personalQuestions++;
+                }
+              }
+
+            }
+          }
+        }
+        for (Notifications notifications : notificationObject.getNotificationsList()) {
+          if (notifications!=null && notifications.getRead()!=null) {
+            if (!notifications.getRead()) {
+              generalQuestions++;
+            }
+          }
+
+        }
+
+        totalNotifications = personalQuestions + generalQuestions;
+
+
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      long totalSize = 0;
+      return totalSize;
+    }
+
+
+    protected void onPostExecute(Long result) {
+      updateNotificationCount();
+
+
+    }
+
+
+    protected void onPreExecute() {
+    }
+
+  }
 
 }

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/school_login_view_style"
+    android:layout_gravity="center"
+    android:layout_centerInParent="true"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+    <ScrollView
+        android:id="@+id/ScrollView01"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <ImageView
+                    android:id="@+id/logo"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/peer_collaboration"
+                    android:layout_centerInParent="true"
+                    />
+
+                <TextView
+                    android:id="@+id/schools_title"
+                    style="@style/school_login_view_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:textStyle="bold"
+                    android:text="Edu Peer"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/school_round_view"
+                android:layout_gravity="center"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:layout_marginTop="15dp"
+
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:id="@+id/tab_one_text"
+                        android:layout_width="200dp"
+                        android:layout_height="40dp"
+                        android:gravity="center"
+                        style="@style/school_tab_title_text"
+                        android:layout_gravity="center"
+                        android:text="USE USERNAME "
+                        android:background="@drawable/school_tab_unselect_background_color"
+                        />
+
+                    <TextView
+                        android:id="@+id/tab_two_text"
+                        android:layout_width="200dp"
+                        android:layout_height="40dp"
+                        android:gravity="center"
+                        style="@style/school_tab_title_text"
+                        android:layout_gravity="center"
+                        android:text="USE FINGERPRINT"
+                        android:background="@drawable/school_tab_unselect_background_color"
+                        />
+
+                </LinearLayout>
+
+                <com.edu.peers.views.SafeViewFlipper
+                    android:id="@+id/flipper"
+                    android:layout_width="400dp"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="center">
+
+                    <include layout="@layout/school_login_username_view"/>
+
+                    <!--<include layout="@layout/school_login_fingerprint_view"/>-->
+
+                </com.edu.peers.views.SafeViewFlipper>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

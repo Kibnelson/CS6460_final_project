@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/root"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:background="@drawable/school_layer_background_registration"
+		android:orientation="vertical"
+		>
+
+	<FrameLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			>
+
+
+		<ScrollView android:id="@+id/ScrollView01"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+				>
+
+			<LinearLayout
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:orientation="vertical">
+
+				<LinearLayout
+						android:visibility="gone"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:background="@drawable/school_list_background"
+
+						android:gravity="center"
+						android:orientation="horizontal">
+
+					<LinearLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							style="@style/school_list_background_layout"
+							android:gravity="center"
+							android:orientation="vertical">
+
+						<TextView
+								android:layout_width="140dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="left"
+								android:gravity="left"
+								style="@style/school_text_color"
+								android:text="First Name">
+						</TextView>
+
+						<EditText
+								android:id="@+id/first_name_field"
+								android:layout_width="150dp"
+								style="@style/school_text_color"
+								android:background="@drawable/school_rectangle_editfield_layout"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center"/>
+					</LinearLayout>
+
+					<LinearLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							style="@style/school_list_background_layout"
+							android:gravity="center"
+							android:orientation="vertical">
+
+						<TextView
+								android:layout_width="140dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="left"
+								android:gravity="left"
+								android:text="Last Name"
+
+								style="@style/school_text_color"></TextView>
+
+						<EditText
+								android:id="@+id/last_name_field"
+								android:layout_width="150dp"
+								style="@style/school_text_color"
+								android:background="@drawable/school_rectangle_editfield_layout"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center"/>
+					</LinearLayout>
+
+				</LinearLayout>
+
+
+				<LinearLayout
+
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:background="@drawable/school_list_background"
+
+						android:gravity="center"
+						android:orientation="horizontal"
+						>
+
+					<LinearLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:gravity="center"
+							style="@style/school_list_background_layout"
+							android:orientation="vertical">
+
+						<TextView
+								android:layout_width="140dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="left"
+								android:gravity="left"
+								android:text="New Password"
+								style="@style/school_text_color">
+
+						</TextView>
+
+
+						<EditText
+								android:id="@+id/new_password_field"
+								style="@style/school_text_color"
+								android:background="@drawable/school_rectangle_editfield_layout"
+								android:layout_width="150dp"
+								android:inputType="textPassword"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center"/>
+
+
+					</LinearLayout>
+
+					<LinearLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							style="@style/school_list_background_layout"
+							android:gravity="center"
+							android:orientation="vertical">
+
+						<TextView
+								android:layout_width="140dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="left"
+								android:gravity="left"
+								android:text="Confirm Password"
+								style="@style/school_text_color"></TextView>
+
+
+						<EditText
+								android:id="@+id/confirm_new_password_field"
+								style="@style/school_text_color"
+								android:background="@drawable/school_rectangle_editfield_layout"
+								android:layout_width="150dp"
+								android:inputType="textPassword"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center"/>
+
+
+					</LinearLayout>
+
+				</LinearLayout>
+
+
+				<LinearLayout
+						android:visibility="gone"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+
+						android:gravity="center"
+						android:orientation="horizontal">
+
+					<LinearLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:layout_margin="5dp"
+							android:gravity="center"
+							android:orientation="vertical">
+
+						<TextView
+								android:layout_width="140dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center"
+								android:gravity="center"
+								android:text="Face"
+
+								android:textColor="@android:color/black"
+								android:textSize="15dp"
+								android:textStyle="bold"></TextView>
+
+
+						<ImageView
+
+								android:id="@+id/face_photo"
+								android:background="@drawable/school_list_background"
+
+								android:layout_width="200dp"
+								android:layout_height="200dp"
+								android:layout_gravity="center"
+								android:gravity="center"
+								android:layout_weight="1"
+								android:src="@drawable/school_profile_empty_image"/>
+
+					</LinearLayout>
+
+					<LinearLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+
+							android:gravity="center" android:layout_margin="5dp"
+							android:orientation="vertical">
+
+						<TextView
+								android:layout_width="140dp"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center"
+								android:gravity="center"
+								android:text="Right Thumb "
+								android:textColor="@android:color/black"
+								android:textSize="15dp"
+								android:textStyle="bold"></TextView>
+
+						<ImageView
+								android:background="@drawable/school_list_background"
+
+								android:id="@+id/fingerPrintImage"
+								android:layout_width="200dp"
+								android:layout_height="200dp"
+								android:layout_gravity="center"
+								android:gravity="center"
+								android:layout_weight="1"
+								android:src="@drawable/school_attendance_black"/>
+					</LinearLayout>
+
+				</LinearLayout>
+
+
+				<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+
+						android:background="@drawable/school_list_background"
+						android:gravity="center"
+						android:orientation="horizontal">
+
+					<LinearLayout
+							android:id="@+id/button_layout"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+
+							android:gravity="center"
+							android:layout_gravity="center"
+							android:orientation="horizontal">
+
+						<Button
+								android:id="@+id/ok_button"
+								style="@style/style_button_one"
+								android:layout_width="100dp"
+								android:layout_height="30dp"
+								android:layout_marginBottom="4dp"
+								android:layout_marginRight="10dp"
+								android:layout_marginTop="4dp"
+								android:background="@drawable/school_round_button_layout"
+								android:text="Save">
+
+						</Button>
+					</LinearLayout>
+
+				</LinearLayout>
+
+
+			</LinearLayout>
+
+
+		</ScrollView>
+
+
+	</FrameLayout>
+
+</LinearLayout>
+

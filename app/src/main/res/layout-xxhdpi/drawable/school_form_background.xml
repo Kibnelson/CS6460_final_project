@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+	   android:shape="rectangle">
+	<!-- use this for transparent -->
+	<!-- <solid android:color="#00000000" /> -->
+	<!-- use this for a background colour -->
+
+	<!--<item name="android:background">#959492</item>-->
+	<solid android:color="#d7d6d4"/>
+	<stroke
+			android:width="1dip"
+			android:color="#959492"/>
+</shape>

@@ -4,14 +4,13 @@ import com.google.gson.Gson;
 
 import android.content.Context;
 
-import com.cloudant.sync.datastore.BasicDocumentRevision;
+import com.cloudant.sync.documentstore.DocumentRevision;
 import com.edu.peers.cloudant.CloudantStore;
+import com.edu.peers.models.ContentObject;
 import com.edu.peers.others.AppException;
 import com.edu.peers.others.Constants;
 import com.edu.peers.others.Hash;
-import com.edu.peers.models.ContentObject;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -49,19 +48,18 @@ public class ContentManager {
 
     try {
       JSONObject jsonObject = new JSONObject(new Gson().toJson(contentObject));
-
-      cloudantStore.addDocument(jsonObject, Constants.QUIZ);
-    } catch (JSONException e) {
+      cloudantStore.addDocument(jsonObject, Constants.CONTENT_FILES);
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
   public ContentObject getContentObject() {
-    BasicDocumentRevision basicDocumentRevision;
+    DocumentRevision basicDocumentRevision;
     ContentObject
         contentObject = null;
 
     try {
-      basicDocumentRevision = cloudantStore.getDocument(Constants.QUIZ);
+      basicDocumentRevision = cloudantStore.getDocument(Constants.CONTENT_FILES);
 
       if (basicDocumentRevision != null) {
         contentObject =

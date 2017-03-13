@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			 android:id="@+id/content_frame"
+			 android:layout_gravity="center"
+			 android:gravity="center"
+			 android:layout_width="350dp"
+			 android:layout_height="350dp">
+
+
+	<TextureView
+			android:id="@+id/surfaceView1"
+			android:layout_gravity="center"
+			android:gravity="center"
+			android:layout_width="350dp"
+			android:layout_height="350dp">
+	</TextureView>
+
+	<Button
+			style="@style/camera_dialog_button"
+			android:layout_width="40dp"
+			android:layout_height="40dp"
+			android:layout_gravity="center"
+			android:gravity="center"
+			android:background="@drawable/school_plus_image"/>
+
+
+	<LinearLayout
+
+			android:id="@+id/progressBar"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:layout_gravity="center"
+			android:orientation="horizontal">
+
+
+		<ProgressBar
+				style="?android:attr/progressBarStyleLarge"
+				android:layout_width="60dp"
+				android:layout_height="60dp"/>
+
+	</LinearLayout>
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+
+
+			android:gravity="center|bottom"
+			android:layout_gravity="center|bottom"
+			android:orientation="horizontal">
+
+		<LinearLayout
+				android:id="@+id/button_layout"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+
+				android:orientation="horizontal">
+
+
+			<Button
+					android:id="@+id/take_button"
+					style="@style/style_button_one"
+					android:layout_width="100dp"
+					android:layout_height="30dp"
+					android:layout_marginBottom="4dp"
+					android:layout_marginRight="10dp"
+					android:layout_marginTop="4dp"
+					android:background="@drawable/school_round_button_layout"
+					android:text="Capture"/>
+
+			<Button
+					android:id="@+id/cancel_button"
+					style="@style/style_button_one"
+					android:layout_width="100dp"
+					android:layout_height="30dp"
+					android:layout_marginBottom="4dp"
+					android:layout_marginRight="10dp"
+					android:layout_marginTop="4dp"
+					android:background="@drawable/school_round_button_layout"
+					android:text="Save"/>
+
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+</FrameLayout>
+
+
+

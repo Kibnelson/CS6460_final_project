@@ -50,6 +50,12 @@
 				android:configChanges="orientation|keyboardHidden|screenSize">
 		</activity>
 
+		<activity
+				android:name="com.edu.peers.views.RegistrationView"
+				android:windowSoftInputMode="stateAlwaysHidden"
+				android:configChanges="orientation|keyboardHidden|screenSize">
+		</activity>
+
 		<service android:name="com.edu.peers.services.BackgroundService"/>
 
 

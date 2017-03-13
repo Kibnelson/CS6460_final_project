@@ -30,8 +30,10 @@ import com.edu.peers.adapter.ComboBoxViewListItem;
 import com.edu.peers.adapter.NotificationListViewAdapter;
 import com.edu.peers.dialogs.QuizCreationDialogView;
 import com.edu.peers.managers.NotificationManager;
+import com.edu.peers.managers.UserManager;
 import com.edu.peers.models.NotificationObject;
 import com.edu.peers.models.Notifications;
+import com.edu.peers.models.UserObject;
 import com.edu.peers.others.Constants;
 
 import java.util.ArrayList;
@@ -79,6 +81,9 @@ public class NotificationsListView extends Fragment implements
   private int mStackLevel;
   private NotificationManager notificationManager;
   private NotificationObject notificationObject;
+  private UserObject userObjectList;
+  private UserManager userManager;
+  private String notificationUUID;
 
   public static NotificationsListView newInstance(int position) {
     NotificationsListView f = new NotificationsListView();
@@ -101,9 +106,13 @@ public class NotificationsListView extends Fragment implements
     schoolCensus.setCurrentFragment(this);
     schoolCensus.initHome();
     schoolCensus.setState(Constants.STUDENT_SUMMARY_VIEW);
+    userObjectList= schoolCensus.getUserObject();
+
 
     notificationManager =
         new NotificationManager(schoolCensus.getCloudantInstance(), getContext());
+    userManager =
+        new UserManager(schoolCensus.getCloudantInstance(), getContext());
 
     mainView = schoolCensus.getMainView();
     mainView.hideAddButton();
@@ -177,9 +186,16 @@ public class NotificationsListView extends Fragment implements
 //    Intent ivE = new Intent(this, SchoolHomeGridView.class);
 //    Intent ivE = new Intent(this, MapView.class);
 //    startActivity(ivE);
-
     Notifications notifications=sampleData.get(position);
     notifications.setRead(true);
+
+    if ( schoolCensus.getQuestionState().equalsIgnoreCase(Constants.PRIVATE)){
+      userObjectList.getUserList().get(userObjectList.getPosition()).getNotificationsList().set(position,notifications);
+    } else if ( schoolCensus.getQuestionState().equalsIgnoreCase(Constants.PUBLIC)){
+      notificationUUID=  notifications.getUuid();
+      userObjectList.getUserList().get(userObjectList.getPosition()).getNotificationsId().add(notificationUUID);
+    }
+
     sampleData.set(position,notifications);
 
     new backgroundProcessSave().execute(1);
@@ -353,11 +369,34 @@ public class NotificationsListView extends Fragment implements
     protected Long doInBackground(Integer... params) {
 
       notificationObject = notificationManager.getNotificationObject();
+      UserObject userObject = userManager.getDocumentGetDocument(Constants.USERS);
+      userObject.setPosition(userObjectList.getPosition());
+      userObject.setUser(userObjectList.getUser());
+      userObjectList=userObject;
+      schoolCensus.setUserObject(userObjectList);
 
-      if (notificationObject != null) {
-        sampleData = notificationObject.getNotificationsList();
+      if ( schoolCensus.getQuestionState().equalsIgnoreCase(Constants.PRIVATE)){
+
+//        List<User> userList=  userObject.getUserList();
+//
+//        int size=userList.size();
+//
+//        for (int y=0;y<size;y++){
+//          User user1=userList.get(y);
+//
+//          if (user1.getUsername().equalsIgnoreCase(userObjectList.getUser().getUsername())) {
+//
+//            break;
+//          }
+//        }
+
+        sampleData=userObjectList.getUser().getNotificationsList();
+      } else if ( schoolCensus.getQuestionState().equalsIgnoreCase(Constants.PUBLIC)){
+
+        if (notificationObject != null) {
+          sampleData = notificationObject.getNotificationsList();
+        }
       }
-
       long totalSize = 0;
       return totalSize;
     }
@@ -386,11 +425,21 @@ public class NotificationsListView extends Fragment implements
 
     protected Long doInBackground(Integer... params) {
 
+      if ( schoolCensus.getQuestionState().equalsIgnoreCase(Constants.PRIVATE)){
+        try {
+          userManager.addDocument(userObjectList, Constants.USERS);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
 
-      notificationObject = notificationManager.getNotificationObject();
-      notificationObject.setNotificationsList(sampleData);
+      } else if ( schoolCensus.getQuestionState().equalsIgnoreCase(Constants.PUBLIC)){
+        notificationObject = notificationManager.getNotificationObject();
+        notificationObject.setNotificationsList(sampleData);
+        notificationManager.addNotification(notificationObject);
+      }
 
-      notificationManager.addNotification(notificationObject);
+
+
       long totalSize = 0;
       return totalSize;
     }
@@ -400,6 +449,9 @@ public class NotificationsListView extends Fragment implements
       if (progressBar != null) {
         progressBar.setVisibility(View.GONE);
       }
+
+      new backgroundProcess().execute();
+
 
     }
 

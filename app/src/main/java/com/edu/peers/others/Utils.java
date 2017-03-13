@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.edu.peers.BuildConfig;
 import com.edu.peers.adapter.ComboBoxViewListItem;
+import com.edu.peers.models.User;
 
 import org.joda.time.DateTime;
 import org.json.JSONException;
@@ -41,6 +42,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -491,4 +493,40 @@ public class Utils {
   }
 
 
+  public static String convert(String s){
+    SimpleDateFormat newformat = new SimpleDateFormat("d/MM/yy");
+    try{
+      if(s.contains("T")){
+        String datestring = s.split("T")[0];
+        SimpleDateFormat oldformat = new SimpleDateFormat("yyyy-MM-dd");
+        String reformattedStr = newformat.format(oldformat.parse(datestring));
+        return reformattedStr;
+      }
+      else{
+        if(Integer.parseInt(s.split("-")[0])>13){
+          SimpleDateFormat oldformat = new SimpleDateFormat("yyyy-MM-dd");
+          String reformattedStr = newformat.format(oldformat.parse(s));
+          return reformattedStr;
+        }
+        else{
+          SimpleDateFormat oldformat = new SimpleDateFormat("MM-dd-yyyy");
+          String reformattedStr = newformat.format(oldformat.parse(s));
+          return reformattedStr;
+        }
+
+      }
+    }
+    catch (Exception e){
+      return null;
+    }
+  }
+
+  public static User getUserWithUsername(List<User> userList,String username){
+    User userFound=null;
+    for (User user: userList){
+      if (user.getUsername().equalsIgnoreCase(username))
+        userFound=user;
+    }
+    return userFound;
+  }
 }

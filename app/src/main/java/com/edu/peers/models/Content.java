@@ -1,5 +1,7 @@
 package com.edu.peers.models;
 
+import com.edu.peers.others.Utils;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -16,10 +18,12 @@ public class Content {
   private List<ContentFile> contentFileList;
   private User user;
   private List<Input> inputList;
+  private String date;
 
 
   public Content(){
     this.uuid= UUID.randomUUID().toString();
+    this.date= Utils.getCurrentDate();
   }
 
   public Content(String title, String subject, List<ContentFile> contentFileList, User user){
@@ -28,6 +32,7 @@ public class Content {
     this.contentFileList=contentFileList;
     this.user=user;
     this.uuid= UUID.randomUUID().toString();
+    this.date= Utils.getCurrentDate();
   }
 
 
@@ -87,5 +92,13 @@ public class Content {
 
   public void setUuid(String uuid) {
     this.uuid = uuid;
+  }
+
+  public String getDate() {
+    return date;
+  }
+
+  public void setDate(String date) {
+    this.date = date;
   }
 }
