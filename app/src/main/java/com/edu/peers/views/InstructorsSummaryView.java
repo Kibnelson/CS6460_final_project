@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +23,6 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -29,6 +30,8 @@ import android.widget.TextView;
 import com.edu.peers.R;
 import com.edu.peers.adapter.ComboBoxViewAdapter;
 import com.edu.peers.adapter.ComboBoxViewListItem;
+import com.edu.peers.managers.UserManager;
+import com.edu.peers.models.User;
 import com.edu.peers.models.UserObject;
 import com.edu.peers.models.UserStatistics;
 import com.edu.peers.others.Base64;
@@ -69,13 +72,6 @@ public class InstructorsSummaryView extends Fragment implements
   private ArrayList<String> sampleDataId = new ArrayList<>();
   private ArrayList<String> sampleDataRevId = new ArrayList<>();
   private SchoolCensus schoolCensus;
-  private TextView title;
-  //  private ArrayList<SchoolResponse> schoolResponseArrayList;
-  private long totalSize = 0;
-  private Button helpButton;
-  private Button homeButton;
-  private Button signOutButton;
-  private ListView listView;
   private Handler mHandler;
   private LinearLayout progressBar;
   private View view;
@@ -86,7 +82,7 @@ public class InstructorsSummaryView extends Fragment implements
   private Button pickdate;
   private ComboBoxViewAdapter comboBoxViewAdapter;
   private String selectedLesson;
-  private TextView studentName, studentNo, county, studentClass;
+  private TextView studentName;
   private TextView tvX;
   private TextView tvY;
   private SeekBar mSeekBarX;
@@ -110,9 +106,12 @@ public class InstructorsSummaryView extends Fragment implements
   private UserObject userObject;
   private ArrayList<Entry> quizzesDoneEntries,quizzesCreatedEntries,questionsAskedEntries,questionsAnsweredEntries,contentUploadEntries;
   private ImageView userEdit;
+  private UserManager userManager;
+  private UserObject userObjectList;
+  private String username,passwordFieldStr;
 
-  public static StudentsSummaryView newInstance(int position) {
-    StudentsSummaryView f = new StudentsSummaryView();
+  public static InstructorsSummaryView newInstance(int position) {
+    InstructorsSummaryView f = new InstructorsSummaryView();
     Bundle b = new Bundle();
     f.setArguments(b);
     return f;
@@ -129,10 +128,13 @@ public class InstructorsSummaryView extends Fragment implements
     schoolCensus.setState(Constants.STUDENT_SUMMARY_VIEW);
     schoolCensus.setCurrentTitle(Constants.InstructorsSummaryView);
     userObject= schoolCensus.getUserObject();
+    username= userObject.getUser().getUsername();
+    passwordFieldStr= userObject.getUser().getPassword();
     mainView = schoolCensus.getMainView();
     mainView.enableMenuDrawer();
-
-
+    mainView.hideAddButton();
+    mainView.setTitle("Edu Peer > Dashboard");
+    userManager = new UserManager(schoolCensus.getCloudantInstance(), getContext());
   }
 
   @Override
@@ -143,6 +145,10 @@ public class InstructorsSummaryView extends Fragment implements
 
     final Calendar nextYear = Calendar.getInstance();
     nextYear.add(Calendar.YEAR, 1);
+
+
+    progressBar = (LinearLayout) view.findViewById(R.id.progressBarSchools);
+    progressBar.setVisibility(View.GONE);
 
 
     studentName = (TextView) view.findViewById(R.id.studentName);
@@ -212,6 +218,13 @@ public class InstructorsSummaryView extends Fragment implements
     xAxis.resetLabelsToSkip();
 
 
+    new backgroundProcess().execute();
+
+
+    return view;
+  }
+
+  public void populatechart(){
 
     List<Date> dateList= new ArrayList<>();
 
@@ -224,7 +237,6 @@ public class InstructorsSummaryView extends Fragment implements
     drawChart(true,true,true,true,true);
 
 
-    return view;
   }
 
   private void drawChart( Boolean quizzesDoneBool, Boolean quizzesCreatedBool, Boolean questionsAskedBool,Boolean questionsAnsweredBool, Boolean contentUploadBool
@@ -246,67 +258,43 @@ public class InstructorsSummaryView extends Fragment implements
     contentUploadEntries = new ArrayList<Entry>();
 
     xValues=new ArrayList<>();
-    xValues=new ArrayList();
+
+    Log.i(Constants.TAG, "quizzesDone=========" + quizzesDone.size());
+    Log.i(Constants.TAG,"quizzesCreated========="+quizzesCreated.size());
+    Log.i(Constants.TAG,"questionsAsked========="+questionsAsked.size());
+    Log.i(Constants.TAG,"questionsAnswered========="+questionsAnswered.size());
+    Log.i(Constants.TAG,"contentUpload========="+contentUpload.size());
+
 
     for (int y = 0; y < quizzesDone.size(); y++) {
       UserStatistics weightValue = quizzesDone.get(y);
         xValues.add(Utils.convert(weightValue.date));
-      quizzesDoneEntries.add(  new Entry(weightValue.value.value, y));
+      quizzesDoneEntries.add(  new Entry((weightValue.value.value), y));
     }
-
-
-//    quizzesDoneEntries.add(  new Entry(5, 0));
-//    quizzesDoneEntries.add(  new Entry(10, 1));
-//    quizzesDoneEntries.add(  new Entry(15, 2));
 
     for (int y = 0; y < quizzesCreated.size(); y++) {
       UserStatistics weightValue = quizzesCreated.get(y);
         xValues.add(Utils.convert(weightValue.date));
-      quizzesCreatedEntries.add(  new Entry(weightValue.value.value, y));
+      quizzesCreatedEntries.add(  new Entry((weightValue.value.value), y));
     }
-
-//    quizzesCreatedEntries.add(  new Entry(2, 0));
-//    quizzesCreatedEntries.add(  new Entry(4, 1));
-//    quizzesCreatedEntries.add(  new Entry(6, 2));
-
-
 
     for (int y = 0; y < questionsAsked.size(); y++) {
       UserStatistics weightValue = questionsAsked.get(y);
         xValues.add(Utils.convert(weightValue.date));
-      questionsAskedEntries.add(new Entry(weightValue.value.value, y));
+      questionsAskedEntries.add(new Entry((weightValue.value.value), y));
     }
-
-
-//    questionsAskedEntries.add(  new Entry(10, 0));
-//    questionsAskedEntries.add(  new Entry(20, 1));
-//    questionsAskedEntries.add(  new Entry(30, 2));
-
 
     for (int y = 0; y < questionsAnswered.size(); y++) {
       UserStatistics weightValue = questionsAnswered.get(y);
        xValues.add(Utils.convert(weightValue.date));
-      questionsAnsweredEntries.add(new Entry(weightValue.value.value, y));
+       questionsAnsweredEntries.add(new Entry((weightValue.value.value), y));
     }
-
-//    questionsAnsweredEntries.add(  new Entry(7, 0));
-//    questionsAnsweredEntries.add(  new Entry(14, 1));
-//    questionsAnsweredEntries.add(  new Entry(21, 2));
-
 
     for (int y = 0; y < contentUpload.size(); y++) {
       UserStatistics weightValue = contentUpload.get(y);
        xValues.add(Utils.convert(weightValue.date));
-       contentUploadEntries.add(new Entry(weightValue.value.value, y));
+       contentUploadEntries.add(new Entry((weightValue.value.value), y));
     }
-
-//    contentUploadEntries.add(  new Entry(1, 0));
-//    contentUploadEntries.add(  new Entry(10, 1));
-//    contentUploadEntries.add(  new Entry(23, 2));
-
-//    xValues.add("2017-01-01");
-//    xValues.add("2017-01-02");
-//    xValues.add("2017-01-03");
 
     CombinedData data = new CombinedData(xValues);
     data.setData(addLineData( quizzesDoneBool,  quizzesCreatedBool,  questionsAskedBool, questionsAnsweredBool,  contentUploadBool));
@@ -492,6 +480,8 @@ public class InstructorsSummaryView extends Fragment implements
     super.onResume();
     schoolCensus.setCurrentTitle(Constants.InstructorsSummaryView);
     mainView.showMenuDrawer();
+    mainView.hideAddButton();
+    mainView.setTitle("Edu Peer > Dashboard");
     userObject= schoolCensus.getUserObject();
     populateUserData(userObject);
   }
@@ -501,14 +491,6 @@ public class InstructorsSummaryView extends Fragment implements
     super.onPause();
 
     mainView.showMenuDrawer();
-
-  }
-
-  public void deleteEntry() {
-//    SchoolResponse schoolResponse = schoolCensus.getCurrentSchool();
-
-    schoolCensus.setState(Constants.STUDENT_GRID_VIEW);
-
 
   }
 
@@ -581,6 +563,57 @@ public class InstructorsSummaryView extends Fragment implements
     public void onNothingSelected(AdapterView parent) {
       // Do nothing.
     }
+  }
+  private class backgroundProcess extends AsyncTask<Integer, Integer, Long> {
+
+
+    protected Long doInBackground(Integer... params) {
+
+      userObjectList = userManager.getDocumentGetDocument(Constants.USERS);
+
+      if (userObjectList!=null){
+        int size=userObjectList.getUserList().size();
+        for (int y=0;y<size;y++){
+          User user=userObjectList.getUserList().get(y);
+          if (user.getUsername().equalsIgnoreCase(username)){
+            userObjectList.setPosition(y);
+            userObjectList.setUser(user);
+          }
+
+        }
+      }
+
+      long totalSize = 0;
+      return totalSize;
+    }
+
+
+    protected void onPostExecute(Long result) {
+
+      if (progressBar != null) {
+        progressBar.setVisibility(View.GONE);
+      }
+
+      if (userObjectList != null && userObjectList.getUser().getPassword()
+          .equalsIgnoreCase(passwordFieldStr)) {
+
+        schoolCensus.setUserObject(userObjectList);
+
+        userObject=userObjectList;
+
+      }
+
+      populatechart();
+    }
+
+    protected void onPreExecute() {
+      if (progressBar != null) {
+        progressBar.setVisibility(View.VISIBLE);
+      }
+    }
+
+
+
   }
 
 }

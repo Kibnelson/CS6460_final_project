@@ -185,6 +185,7 @@ public class RegistrationView extends FragmentActivity implements
   private String bitmapFaceImageString="";
   private boolean updateUser=false;
   private ProgressDialog progressDialog;
+  private MainView mainView;
 
 
   @Override
@@ -197,11 +198,9 @@ public class RegistrationView extends FragmentActivity implements
     schoolCensus.setState(Constants.USER_REGISTRATION_VIEW);
 
     userObject = schoolCensus.getUserObject();
-
-
-
     userManager = new UserManager(schoolCensus.getCloudantInstance(), this);
-
+    mainView = schoolCensus.getMainView();
+    mainView.hideNotification();
     backButton = (ImageView) findViewById(R.id.menu_drawer);
     deleteButton = (ImageView) findViewById(R.id.delete);
     imageView = (ImageView) findViewById(R.id.face_photo);
@@ -713,6 +712,9 @@ public class RegistrationView extends FragmentActivity implements
 
 
     protected void onPostExecute(Long result) {
+
+      mainView.showNotification();
+
       hideProgessDialog();      onBackPressed();
     }
     protected void onPreExecute() {

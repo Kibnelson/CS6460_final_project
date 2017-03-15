@@ -255,10 +255,21 @@ public class CommentDialogView extends DialogFragment
        input = new Input(1,qName.getText().toString(),questionStringWriting,questionStringVoice,userObject.getUser());
 
       User user =userObject.getUser();
-      List<UserStatistics> comments=user.getComments();
-      comments.add(new UserStatistics(Utils.getCurrentDate(), 1, UUID.randomUUID().toString(), Constants.COMMENTS_CATEGORY));
-      user.setComments(comments);
-      userObject.setUser(user);
+
+      List<User> userList =userObject.getUserList();
+      int size=userList.size();
+      for (int y=0;y<size;y++){
+        User user1=userList.get(y);
+        if (user.getUsername().equalsIgnoreCase(user1.getUsername())){
+
+          List<UserStatistics> comments=user1.getComments();
+        comments.add(new UserStatistics(Utils.getCurrentDate(), Utils.generateNumber(), UUID.randomUUID().toString(), Constants.COMMENTS_CATEGORY));
+        user1.setComments(comments);
+        userList.set(y,user1);
+        }
+
+      }
+      userObject.setUserList(userList);
       new backgroundProcessSave().execute();
 
     } else if (v == cancelButton) {
@@ -495,7 +506,7 @@ public class CommentDialogView extends DialogFragment
     protected Long doInBackground(Quiz... params) {
 
       try {
-        userManager.addDocument(userObject,userObject.getUser().getUsername());
+        userManager.addDocument(userObject,Constants.USERS);
       } catch (Exception e) {
         e.printStackTrace();
       }

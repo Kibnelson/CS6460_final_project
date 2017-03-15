@@ -38,10 +38,8 @@ import com.edu.peers.models.Questions;
 import com.edu.peers.models.Quiz;
 import com.edu.peers.models.User;
 import com.edu.peers.models.UserObject;
-import com.edu.peers.models.UserStatistics;
 import com.edu.peers.others.Base64;
 import com.edu.peers.others.Constants;
-import com.edu.peers.others.Utils;
 import com.edu.peers.views.SchoolCensus;
 
 import org.apache.commons.io.FileUtils;
@@ -51,7 +49,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 
 /**
@@ -198,6 +195,7 @@ public class QuestionCreationDialogView extends DialogFragment
   private UserManager userManager;
   private ProgressDialog progressDialog;
   private Questions questionsObject;
+  private boolean checkboxSelected=false;
 
   public QuestionCreationDialogView() {
     // Required empty public constructor
@@ -329,6 +327,10 @@ public class QuestionCreationDialogView extends DialogFragment
         errorBuffer.append("Please enter question name\n");
       }
 
+      if (!checkboxSelected) {
+        valid = false;
+        errorBuffer.append("Please choose at least one choice\n");
+      }
 
       if (valid) {
 
@@ -390,12 +392,29 @@ public class QuestionCreationDialogView extends DialogFragment
             new Questions(qName.getText().toString(), questionStringWriting, questionStringVoice,
                           answers, choices, getUserObject().getUser());
 
-        List<UserStatistics> questionsAsked = user.getQuestionsAsked();
-        questionsAsked.add(
-            new UserStatistics(Utils.getCurrentDate(), 1, UUID.randomUUID().toString(),
-                               Constants.QUESTIONS_CATEGORY));
-        user.setQuestionsAsked(questionsAsked);
-        userObject.setUser(user);
+        List<User> userList =userObject.getUserList();
+        int size=userList.size();
+
+//        for (int y=0;y<size;y++){
+//          User user1=userList.get(y);
+//          Log.i(Constants.TAG,"user.getUsername(==="+user.getUsername());
+//          Log.i(Constants.TAG,"user1.getUsername(==="+user1.getUsername());
+//
+//          if (user.getUsername().equalsIgnoreCase(user1.getUsername())) {
+//
+//            List<UserStatistics> questionsAsked = user1.getQuestionsAsked();
+//            questionsAsked.add(
+//                new UserStatistics(Utils.getCurrentDate(), Utils.generateNumber(),
+//                                   UUID.randomUUID().toString(),
+//                                   Constants.QUESTIONS_CATEGORY));
+//            user1.setQuestionsAsked(questionsAsked);
+//            userList.set(y, user1);
+//          }
+//        }
+        userObject.setUserList(userList);
+
+
+         userObject.setUser(user);
         new backgroundProcessSave().execute();
 
       } else {
@@ -492,13 +511,17 @@ public class QuestionCreationDialogView extends DialogFragment
       }
 
     } else if (v == checkbox_choice_1) {
+      checkboxSelected=true;
       answerSelection1 = 1;
     } else if (v == checkbox_choice_2) {
+      checkboxSelected=true;
       answerSelection2 = 2;
     } else if (v == checkbox_choice_3) {
       answerSelection3 = 3;
+      checkboxSelected=true;
     } else if (v == checkbox_choice_4) {
       answerSelection4 = 4;
+      checkboxSelected=true;
     }
 
 
@@ -776,7 +799,7 @@ public class QuestionCreationDialogView extends DialogFragment
     protected Long doInBackground(Quiz... params) {
 
       try {
-        userManager.addDocument(userObject,userObject.getUser().getUsername());
+        userManager.addDocument(userObject,Constants.USERS);
       } catch (Exception e) {
         e.printStackTrace();
       }

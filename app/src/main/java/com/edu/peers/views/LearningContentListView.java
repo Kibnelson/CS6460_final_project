@@ -121,6 +121,9 @@ public class LearningContentListView extends Fragment implements
     mainView = schoolCensus.getMainView();
     mainView.showAddButton();
     mainView.setAddButtonTag(4);
+
+    mainView.setTitle("Edu Peer > Learning Content");
+
   }
 
   void openDialog(final int index) {
@@ -220,15 +223,13 @@ public class LearningContentListView extends Fragment implements
     loadSpinnerData();
     spinner.setOnItemSelectedListener(new OnStudentSelected());
     spinner.setOnTouchListener(onSubjectTouchListener);
+    spinner.setVisibility(View.GONE);
 
     progressBar = (LinearLayout) view.findViewById(R.id.progressBarSchools);
 
     progressBar.setVisibility(View.GONE);
 
     listView = (ExpandableListView) view.findViewById(R.id.contentList);
-
-
-//    listView.setAdapter(new QuizListViewAdapter(this, sampleData));
 
     listView.setOnItemClickListener(this);
 
@@ -354,6 +355,8 @@ public class LearningContentListView extends Fragment implements
     mainView = schoolCensus.getMainView();
     mainView.showAddButton();
     mainView.setAddButtonTag(4);
+
+    mainView.setTitle("Edu Peer > Learning Content");
 
     add(sampleData);
     new backgroundProcess().execute();
@@ -521,6 +524,9 @@ public class LearningContentListView extends Fragment implements
       contentManager.addContent(contentObject);
 
       contentObject=contentManager.getContentObject();
+      if (contentObject==null)
+        contentObject= new ContentObject();
+
       sampleData = contentObject.getContentList();
 
       long totalSize = 0;

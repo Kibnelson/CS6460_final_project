@@ -30,6 +30,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 
 import static java.util.UUID.randomUUID;
 
@@ -86,9 +87,7 @@ public class CloudantStore implements CloudantSaveListener {
     }
 
     if (this.mPullReplicator != null) {
-
       this.mPullReplicator.stop();
-
 
     }
 
@@ -357,29 +356,23 @@ public class CloudantStore implements CloudantSaveListener {
   public void pushData() {
 
 //
-//    if (mPushReplicator.getState() == Replicator.State.COMPLETE
-//        || mPushReplicator.getState() == Replicator.State.PENDING
-//        || mPushReplicator.getState() == Replicator.State.STOPPED
-//        || mPushReplicator.getState() == Replicator.State.ERROR) {
-//      try {
-//
-//
-//        mPushReplicator.stop();
-//
-//        CountDownLatch latch =new CountDownLatch(1);
-//        Listener listener=new Listener(latch, CloudantStore.this, schoolCensus);
-//        mPushReplicator.getEventBus()
-//            .register(listener);
-//
-//
-////        mPushReplicator.start();
-//
-//
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//      }
-//
-//    }
+    if (mPushReplicator.getState() == Replicator.State.COMPLETE
+        || mPushReplicator.getState() == Replicator.State.PENDING
+        || mPushReplicator.getState() == Replicator.State.STOPPED
+        || mPushReplicator.getState() == Replicator.State.ERROR) {
+      try {
+
+        mPushReplicator.stop();
+        CountDownLatch latch =new CountDownLatch(1);
+        Listener listener=new Listener(latch, CloudantStore.this, schoolCensus);
+        mPushReplicator.getEventBus()
+            .register(listener);
+        mPushReplicator.start();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+    }
 
   }
 
@@ -414,25 +407,18 @@ public class CloudantStore implements CloudantSaveListener {
 
   public void pullData() {
 
-//    if (Utils.networkAvailable(context)) {
-//
-//
-//
-//
-//      if (mPullReplicator.getState() == Replicator.State.COMPLETE
-//          || mPullReplicator.getState() == Replicator.State.PENDING) {
-//        try {
-//          mPullReplicator.getEventBus()
-//              .register(new Listener(new CountDownLatch(1), CloudantStore.this, schoolCensus));
-//          mPullReplicator.start();
-//
-//
-//        } catch (Exception e) {
-//          e.printStackTrace();
-//        }
-//
-//      }
-//    }
+      if (mPullReplicator.getState() == Replicator.State.COMPLETE
+          || mPullReplicator.getState() == Replicator.State.PENDING) {
+        try {
+          mPullReplicator.getEventBus()
+              .register(new Listener(new CountDownLatch(1), CloudantStore.this, schoolCensus));
+          mPullReplicator.start();
+
+
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
   }
 
   public void deleteLocalDatastore() {

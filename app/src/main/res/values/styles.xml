@@ -158,6 +158,28 @@
 
 	</style>
 
+	<style name="school_title_text_1">
+		<item name="android:textColor">#ffffffff</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textSize">16dp</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+
+
+
+	</style>
+
+	<style name="school_title_text_2">
+		<item name="android:textColor">#ffffffff</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textSize">12dp</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+
+
+
+	</style>
+
 	<style name="school_generic_button">
 		<item name="android:textColor">@android:color/white</item>
 		<item name="android:textStyle">normal</item>

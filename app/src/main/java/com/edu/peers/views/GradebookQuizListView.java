@@ -119,6 +119,7 @@ public class GradebookQuizListView extends Fragment implements
 
     mainView = schoolCensus.getMainView();
     mainView.hideAddButton();
+    mainView.setTitle("Edu Peer > Grade book");
 
   }
 
@@ -292,7 +293,7 @@ public class GradebookQuizListView extends Fragment implements
     super.onResume();
     schoolCensus.setCurrentTitle(Constants.QuizListView);
     schoolCensus.setCurrentFragment(this);
-
+    mainView.setTitle("Edu Peer > Grade book");
     add(sampleData);
 
     new backgroundProcess().execute();

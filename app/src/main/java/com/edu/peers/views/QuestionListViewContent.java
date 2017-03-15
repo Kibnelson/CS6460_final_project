@@ -156,7 +156,7 @@ public class QuestionListViewContent extends Fragment implements
     mainView = schoolCensus.getMainView();
     mainView.showAddButton();
     mainView.setAddButtonTag(3);
-
+    mainView.setTitle("Edu Peer > Questions > View");
 
 
   }

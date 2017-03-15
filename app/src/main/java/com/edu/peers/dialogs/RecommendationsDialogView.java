@@ -375,11 +375,28 @@ public class RecommendationsDialogView extends DialogFragment
         questions.setQuestionType(questionType);
         questions.setSelectedUser(userMatch);
         User user = userObject.getUser();
-        List<UserStatistics> questionsAsked = user.getQuestionsAsked();
-        questionsAsked.add(
-            new UserStatistics(Utils.getCurrentDate(), 1, UUID.randomUUID().toString(),
-                               Constants.QUESTIONS_CATEGORY));
-        user.setQuestionsAsked(questionsAsked);
+
+        List<User> userList =userObject.getUserList();
+        int size=userList.size();
+        for (int y=0;y<size;y++){
+          User user1=userList.get(y);
+          if (user.getUsername().equalsIgnoreCase(user1.getUsername())) {
+
+            List<UserStatistics> questionsAsked = user1.getQuestionsAsked();
+            questionsAsked.add(
+                new UserStatistics(Utils.getCurrentDate(), Utils.generateNumber(),
+                                   UUID.randomUUID().toString(),
+                                   Constants.QUESTIONS_CATEGORY));
+            user1.setQuestionsAsked(questionsAsked);
+
+            userList.set(y, user1);
+          }
+
+        }
+        userObject.setUserList(userList);
+
+
+
 
         if (questionType.equalsIgnoreCase(Constants.PRIVATE))
         {

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -30,6 +31,8 @@ import android.widget.TextView;
 import com.edu.peers.R;
 import com.edu.peers.adapter.ComboBoxViewAdapter;
 import com.edu.peers.adapter.ComboBoxViewListItem;
+import com.edu.peers.managers.UserManager;
+import com.edu.peers.models.User;
 import com.edu.peers.models.UserObject;
 import com.edu.peers.models.UserStatistics;
 import com.edu.peers.others.Base64;
@@ -111,6 +114,10 @@ public class StudentsSummaryView extends Fragment implements
   private UserObject userObject;
   private ArrayList<Entry> quizzesDoneEntries,quizzesCreatedEntries,questionsAskedEntries,questionsAnsweredEntries,contentUploadEntries;
   private ImageView userEdit;
+  private String username;
+  private String passwordFieldStr;
+  private UserManager userManager;
+  private UserObject userObjectList;
 
   public static StudentsSummaryView newInstance(int position) {
     StudentsSummaryView f = new StudentsSummaryView();
@@ -131,9 +138,12 @@ public class StudentsSummaryView extends Fragment implements
     schoolCensus.setState(Constants.STUDENT_SUMMARY_VIEW);
     schoolCensus.setCurrentTitle(Constants.StudentsSummaryView);
     userObject= schoolCensus.getUserObject();
+    username= userObject.getUser().getUsername();
+    passwordFieldStr= userObject.getUser().getPassword();
     mainView = schoolCensus.getMainView();
     mainView.enableMenuDrawer();
-
+    userManager = new UserManager(schoolCensus.getCloudantInstance(), getContext());
+    mainView.setTitle("Edu Peer > Dashboard");
   }
 
   @Override
@@ -144,6 +154,8 @@ public class StudentsSummaryView extends Fragment implements
 
     final Calendar nextYear = Calendar.getInstance();
     nextYear.add(Calendar.YEAR, 1);
+    progressBar = (LinearLayout) view.findViewById(R.id.progressBarSchools);
+    progressBar.setVisibility(View.GONE);
 
 
     studentName = (TextView) view.findViewById(R.id.studentName);
@@ -214,6 +226,14 @@ public class StudentsSummaryView extends Fragment implements
 
 
 
+    new backgroundProcess().execute();
+
+
+    return view;
+  }
+
+  public void populatechart(){
+
     List<Date> dateList= new ArrayList<>();
 
     dateList.add(new DateTime().minusDays(5).toDate());
@@ -225,7 +245,6 @@ public class StudentsSummaryView extends Fragment implements
     drawChart(true,true,true,true,true);
 
 
-    return view;
   }
 
   private void drawChart( Boolean quizzesDoneBool, Boolean quizzesCreatedBool, Boolean questionsAskedBool,Boolean questionsAnsweredBool, Boolean contentUploadBool
@@ -507,6 +526,7 @@ public class StudentsSummaryView extends Fragment implements
     schoolCensus.setCurrentTitle(Constants.StudentsSummaryView);
     mainView.showMenuDrawer();
     userObject= schoolCensus.getUserObject();
+    mainView.setTitle("Edu Peer > Dashboard");
     populateUserData(userObject);
   }
 
@@ -515,14 +535,6 @@ public class StudentsSummaryView extends Fragment implements
     super.onPause();
 
     mainView.showMenuDrawer();
-
-  }
-
-  public void deleteEntry() {
-//    SchoolResponse schoolResponse = schoolCensus.getCurrentSchool();
-
-    schoolCensus.setState(Constants.STUDENT_GRID_VIEW);
-
 
   }
 
@@ -596,5 +608,52 @@ public class StudentsSummaryView extends Fragment implements
       // Do nothing.
     }
   }
+  private class backgroundProcess extends AsyncTask<Integer, Integer, Long> {
 
+
+    protected Long doInBackground(Integer... params) {
+
+      userObjectList = userManager.getDocumentGetDocument(Constants.USERS);
+
+      if (userObjectList != null) {
+        int size = userObjectList.getUserList().size();
+        for (int y = 0; y < size; y++) {
+          User user = userObjectList.getUserList().get(y);
+          if (user.getUsername().equalsIgnoreCase(username)) {
+            userObjectList.setPosition(y);
+            userObjectList.setUser(user);
+          }
+
+        }
+      }
+
+      long totalSize = 0;
+      return totalSize;
+    }
+
+
+    protected void onPostExecute(Long result) {
+
+      if (progressBar != null) {
+        progressBar.setVisibility(View.GONE);
+      }
+
+      if (userObjectList != null && userObjectList.getUser().getPassword()
+          .equalsIgnoreCase(passwordFieldStr)) {
+
+        schoolCensus.setUserObject(userObjectList);
+
+        userObject = userObjectList;
+
+      }
+
+      populatechart();
+    }
+
+    protected void onPreExecute() {
+      if (progressBar != null) {
+        progressBar.setVisibility(View.VISIBLE);
+      }
+    }
+  }
 }

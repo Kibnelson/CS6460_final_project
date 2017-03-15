@@ -332,13 +332,25 @@ public class ContentCreationDialogView extends DialogFragment
 
 
         content = new Content(contentTitleStr,selectedSubject,contentFiles,userObject.getUser());
-
-
         User user =userObject.getUser();
-        List<UserStatistics> contentUpload=user.getContentUpload();
-        contentUpload.add(new UserStatistics(Utils.getCurrentDate(), 1, UUID.randomUUID().toString(), Constants.QUESTIONS_CATEGORY));
-        user.setContentUpload(contentUpload);
-        userObject.setUser(user);
+
+        List<User> userList =userObject.getUserList();
+        int size=userList.size();
+        for (int y=0;y<size;y++){
+          User user1=userList.get(y);
+          if (user.getUsername().equalsIgnoreCase(user1.getUsername())) {
+
+            List<UserStatistics> contentUpload = user1.getContentUpload();
+            contentUpload.add(new UserStatistics(Utils.getCurrentDate(), Utils.generateNumber(),
+                                                 UUID.randomUUID().toString(),
+                                                 Constants.QUESTIONS_CATEGORY));
+            user1.setContentUpload(contentUpload);
+            userList.set(y, user1);
+
+          }
+
+        }
+        userObject.setUserList(userList);
 
         notificationObject.getNotificationsList().add(new Notifications("New learning content uploaded:" + userObject.getUser().getFirstName() + " " + userObject.getUser().getLastName()));
 
@@ -737,7 +749,7 @@ public class ContentCreationDialogView extends DialogFragment
     protected Long doInBackground(Quiz... params) {
 
       try {
-        userManager.addDocument(userObject,userObject.getUser().getUsername());
+        userManager.addDocument(userObject,Constants.USERS);
         notificationManager.addNotification(notificationObject);
 
       } catch (Exception e) {

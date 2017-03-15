@@ -28,6 +28,12 @@ public class Constants {
   public static final String CONTENT_FILES = "efa41919-6efb-4d3a-9ebd-84c85f81b47f1";
   public static final String CONTENT_FILES_COMMENTS = "efa41919-6efb-4d3a-9ebd-84c85f81b47f2";
   public static final String QUESTIONS_COMMENTS = "efa41919-6efb-4d3a-9ebd-84c85f81b47f=3";
+
+
+
+  public static final int QUIZ_LIST_VIEW = 6001;
+  public static final int QUIZ_LIST_VIEW_CONTENT = 6002;
+
   ////////////////////////////
 
   public static final int NON = -1;
@@ -231,4 +237,5 @@ public class Constants {
   public static String QuestionsListViewContent="QuestionsListViewContent";
   public static String QuestionsListView="QuestionListView";
   public static String LearningContentListView="LearningContentListView";
+  public static float STATISTICS=10;
 }

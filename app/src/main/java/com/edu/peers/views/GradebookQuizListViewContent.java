@@ -144,8 +144,7 @@ public class GradebookQuizListViewContent extends Fragment implements
     gradeBookManager =
         new GradeBookManager(schoolCensus.getCloudantInstance(), getContext());
 
-    Log.i(Constants.TAG,"YYYYYYYYYYYYY===="+schoolCensus.getQuizIndex());
-
+    mainView.setTitle("Edu Peer > Grade book > View");
   }
 
   void openDialog(final int index) {
@@ -366,7 +365,7 @@ public class GradebookQuizListViewContent extends Fragment implements
     schoolCensus.setCurrentTitle(Constants.QuizListViewContent);
     mainView.showMenuDrawer();
     schoolCensus.setCurrentFragment(this);
-
+    mainView.setTitle("Edu Peer > Grade book > View");
   }
 
   @Override

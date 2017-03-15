@@ -164,6 +164,22 @@
 
 					</LinearLayout>
 
+					<LinearLayout
+
+							android:id="@+id/progressBarSchools"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:gravity="center"
+							android:visibility="gone"
+							android:layout_gravity="center"
+							android:orientation="horizontal">
+
+
+						<ProgressBar
+								style="@style/progressbar_field"/>
+
+					</LinearLayout>
+
 					<ScrollView android:id="@+id/ScrollView01"
 								android:layout_width="fill_parent"
 								android:layout_height="wrap_content"

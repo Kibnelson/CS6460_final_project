@@ -127,7 +127,7 @@ public class RankingUserQuizListView extends Fragment implements
 
     mainView = schoolCensus.getMainView();
     mainView.hideAddButton();
-
+    mainView.setTitle("Edu Peer > Ranking > Quiz");
   }
 
   void openDialog(final int index) {
@@ -295,7 +295,7 @@ public class RankingUserQuizListView extends Fragment implements
     super.onResume();
     schoolCensus.setCurrentTitle(Constants.QuizListView);
     schoolCensus.setCurrentFragment(this);
-
+    mainView.setTitle("Edu Peer > Ranking > Quiz");
     add(sampleData);
 
     new backgroundProcess().execute();

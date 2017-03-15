@@ -117,13 +117,14 @@ public class QuizListViewContent extends Fragment implements
     schoolCensus = (SchoolCensus) getActivity().getApplication();
     schoolCensus.setCurrentFragment(this);
     schoolCensus.initHome();
-    schoolCensus.setState(Constants.STUDENT_SUMMARY_VIEW);
+
     schoolCensus.setCurrentTitle(Constants.QuizListViewContent);
     quiz = schoolCensus.getQuiz();
     userObject = schoolCensus.getUserObject();
 
     mainView = schoolCensus.getMainView();
     mainView.hideAddButton();
+    mainView.setTitle("Edu Peer > Quizzes > View");
   }
 
   void openDialog(final int index) {

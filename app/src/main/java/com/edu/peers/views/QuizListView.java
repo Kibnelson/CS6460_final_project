@@ -103,7 +103,6 @@ public class QuizListView extends Fragment implements
     schoolCensus = (SchoolCensus) getActivity().getApplication();
     schoolCensus.setCurrentFragment(this);
     schoolCensus.initHome();
-    schoolCensus.setState(Constants.STUDENT_SUMMARY_VIEW);
 
     schoolCensus.setCurrentTitle(Constants.QuizListView);
 
@@ -123,7 +122,10 @@ public class QuizListView extends Fragment implements
       mainView.hideAddButton();
 
     }
+    mainView.setTitle("Edu Peer > Quizzes");
+
     }
+
 
   void openDialog(final int index) {
 
@@ -161,7 +163,7 @@ public class QuizListView extends Fragment implements
     loadSpinnerData();
     spinner.setOnItemSelectedListener(new OnStudentSelected());
     spinner.setOnTouchListener(onSubjectTouchListener);
-
+    spinner.setVisibility(View.GONE);
     progressBar = (LinearLayout) view.findViewById(R.id.progressBarSchools);
 
     progressBar.setVisibility(View.GONE);
@@ -292,9 +294,7 @@ public class QuizListView extends Fragment implements
     super.onResume();
     schoolCensus.setCurrentTitle(Constants.QuizListView);
     schoolCensus.setCurrentFragment(this);
-
-
-
+    mainView.setTitle("Edu Peer > Quizzes");
     add(sampleData);
 
     new backgroundProcess().execute();

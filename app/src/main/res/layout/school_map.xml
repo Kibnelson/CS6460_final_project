@@ -88,8 +88,6 @@
                                         android:id="@+id/measures"
                                         android:layout_width="200dp"
                                         android:layout_margin="10dp"
-
-                                        android:layout_toRightOf="@+id/measures"
                                         style="@style/spinner_background_layout"
                                         android:layout_height="35dp"
                                         android:layout_toLeftOf="@+id/county"

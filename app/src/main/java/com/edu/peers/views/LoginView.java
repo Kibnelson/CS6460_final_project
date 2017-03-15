@@ -369,6 +369,9 @@ public class LoginView extends FragmentActivity
 
       userObjectList = userManager.getDocumentGetDocument(Constants.USERS);
 
+      if (userObjectList==null)
+        userObjectList= new UserObject();
+
       if (userObjectList!=null){
       int size=userObjectList.getUserList().size();
       for (int y=0;y<size;y++){

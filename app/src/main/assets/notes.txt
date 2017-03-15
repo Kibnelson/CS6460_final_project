@@ -2,6 +2,10 @@ Instructor
 Names: lorna bore
 username: lorna
 
+Names: John Kamau
+username: kamau
+
+
 Students
 Names: nelson bore
 username: nelson
@@ -9,9 +13,15 @@ username: nelson
 Names:  Saidi Koech
 username saidi
 
-Names: Loki Lolo
-username loki
+Names: Sam Karumba
+username sam
 
-Names: Lolo Loki
-username lolo
+Names: Juliet Wambo
+username Wambo
 
+
+Quiz
+Algebra
+Plants
+
+Learn

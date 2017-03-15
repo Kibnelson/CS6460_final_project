@@ -268,12 +268,27 @@ public class QuestionResponseCreationDialogView extends DialogFragment
 
        input = new Input(1,qName.getText().toString(),questionStringWriting,questionStringVoice,userObject.getUser());
 
-      User user=userObject.getUser();
-      List<UserStatistics> questionsAnswered = user.getQuestionsAnswered();
-      questionsAnswered.add(
-          new UserStatistics(Utils.getCurrentDate(), 1, UUID.randomUUID().toString(),
-                             Constants.QUESTIONS_RESPONSE_CATEGORY));
-      user.setQuestionsAnswered(questionsAnswered);
+      User user = userObject.getUser();
+
+      List<User> userList =userObject.getUserList();
+      int size=userList.size();
+      for (int y=0;y<size;y++){
+        User user1=userList.get(y);
+        if (user.getUsername().equalsIgnoreCase(user1.getUsername())) {
+
+          List<UserStatistics> questionsAnswered = user1.getQuestionsAnswered();
+          questionsAnswered.add(
+              new UserStatistics(Utils.getCurrentDate(), Utils.generateNumber(),
+                                 UUID.randomUUID().toString(),
+                                 Constants.QUESTIONS_RESPONSE_CATEGORY));
+          user1.setQuestionsAnswered(questionsAnswered);
+
+          userList.set(y, user1);
+        }
+
+      }
+      userObject.setUserList(userList);
+
 
 
       if (question.getQuestionType().equalsIgnoreCase(Constants.PRIVATE))
@@ -529,7 +544,7 @@ public class QuestionResponseCreationDialogView extends DialogFragment
     protected Long doInBackground(Quiz... params) {
 
       try {
-        userManager.addDocument(userObject,userObject.getUser().getUsername());
+        userManager.addDocument(userObject,Constants.USERS);
         notificationManager.addNotification(notificationObject);
 
       } catch (Exception e) {

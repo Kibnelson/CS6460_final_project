@@ -215,11 +215,12 @@ public class QuizCreationDialogView extends DialogFragment
 
     schoolCensus = (SchoolCensus) getActivity().getApplication();
 
-    userObject= schoolCensus.getUserObject();
+    userObject = schoolCensus.getUserObject();
     notificationManager = new NotificationManager(schoolCensus.getCloudantInstance(), getContext());
-    notificationObject=notificationManager.getNotificationObject();
-    if (notificationObject==null)
-      notificationObject= new NotificationObject();
+    notificationObject = notificationManager.getNotificationObject();
+    if (notificationObject == null) {
+      notificationObject = new NotificationObject();
+    }
 
     userManager = new UserManager(schoolCensus.getCloudantInstance(), getContext());
     quizListView = (QuizListView) schoolCensus.getCurrentFragment();
@@ -315,17 +316,31 @@ public class QuizCreationDialogView extends DialogFragment
 
       if (valid) {
 
-
-            quiz =
+        quiz =
             new Quiz(qNameStr, selectedSubject, durationStr, instructionsStr,
-                     Utils.getCurrentDate(), questionsArray,userObject.getUser());
+                     Utils.getCurrentDate(), questionsArray, userObject.getUser());
 
-        User user =userObject.getUser();
-        List<UserStatistics> quizzesCreated=user.getQuizzesCreated();
-        quizzesCreated.add(new UserStatistics(Utils.getCurrentDate(), 1, UUID.randomUUID().toString(),Constants.QUIZ_CATEGORY));
-        user.setQuizzesCreated(quizzesCreated);
-        userObject.setUser(user);
-        notificationObject.getNotificationsList().add(new Notifications("New quiz posted by:" + userObject.getUser().getFirstName() + " " + userObject.getUser().getLastName()));
+        User user = userObject.getUser();
+
+        List<User> userList = userObject.getUserList();
+        int size = userList.size();
+        for (int y = 0; y < size; y++) {
+
+          User user1 = userList.get(y);
+
+          if (user.getUsername().equalsIgnoreCase(user1.getUsername())) {
+            List<UserStatistics> quizzesCreated = user1.getQuizzesCreated();
+            quizzesCreated.add(new UserStatistics(Utils.getCurrentDate(), Utils.generateNumber(),
+                                                  UUID.randomUUID().toString(),
+                                                  Constants.QUIZ_CATEGORY));
+            user1.setQuizzesCreated(quizzesCreated);
+            userList.set(y, user1);
+          }
+        }
+        userObject.setUserList(userList);
+        notificationObject.getNotificationsList().add(new Notifications(
+            "New quiz posted by:" + userObject.getUser().getFirstName() + " " + userObject.getUser()
+                .getLastName()));
 
         new backgroundProcessSave().execute();
       } else {
@@ -380,7 +395,8 @@ public class QuizCreationDialogView extends DialogFragment
     protected Long doInBackground(Quiz... params) {
 
       try {
-        userManager.addDocument(userObject,userObject.getUser().getUsername());
+
+        userManager.addDocument(userObject, Constants.USERS);
         notificationManager.addNotification(notificationObject);
 
       } catch (Exception e) {
@@ -399,12 +415,12 @@ public class QuizCreationDialogView extends DialogFragment
     }
 
 
-
     protected void onPreExecute() {
       showProgessDialog();
     }
 
   }
+
   public void addQuestion(Questions question) {
     questionsArray.add(question);
 

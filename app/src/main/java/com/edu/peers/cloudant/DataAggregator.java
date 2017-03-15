@@ -26,6 +26,8 @@ public class DataAggregator {
     cloudantStore.setContext(context);
     cloudantStore.setSchoolCensus(schoolCensus);
     cloudantStore.startCloudant();
+    cloudantStore.pushData();
+    cloudantStore.pullData();
   }
 
 

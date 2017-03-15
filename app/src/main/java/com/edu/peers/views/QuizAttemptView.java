@@ -32,18 +32,23 @@ import com.edu.peers.dialogs.QuizCreationDialogView;
 import com.edu.peers.dialogs.RecordAudioDialog;
 import com.edu.peers.dialogs.ScratchPadDialog;
 import com.edu.peers.managers.GradeBookManager;
+import com.edu.peers.managers.UserManager;
 import com.edu.peers.models.GradebookObject;
 import com.edu.peers.models.Input;
 import com.edu.peers.models.Questions;
 import com.edu.peers.models.Quiz;
+import com.edu.peers.models.User;
 import com.edu.peers.models.UserObject;
+import com.edu.peers.models.UserStatistics;
 import com.edu.peers.others.Constants;
+import com.edu.peers.others.Utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 /**
@@ -103,7 +108,10 @@ public class QuizAttemptView extends Fragment implements
   private GradebookObject gradebookObject;
   private ProgressDialog progressDialog;
   private RadioButton yes, no;
-  private boolean shareWork=false;
+  private boolean shareWork = false;
+  private UserManager userManager;
+  private boolean answerChecked=false;
+  private boolean shareChecked=false;
 
 
   public static QuizAttemptView newInstance(int position) {
@@ -176,6 +184,7 @@ public class QuizAttemptView extends Fragment implements
 //    listView.setAdapter(new QuizListViewAdapter(this, sampleData));
 
     listView.setOnItemClickListener(this);
+    userManager = new UserManager(schoolCensus.getCloudantInstance(), getContext());
 
     quizName = (TextView) view.findViewById(R.id.quizName);
     duration = (TextView) view.findViewById(R.id.duration);
@@ -267,42 +276,48 @@ public class QuizAttemptView extends Fragment implements
 
 
   }
-
-
-  private List createGroupList(List<String> data) {
-    ArrayList result = new ArrayList();
-    for (int i = 0; i < data.size(); ++i) {
-      HashMap m = new HashMap();
-      m.put("menu", data.get(i));
-      result.add(m);
-    }
-
-    return (List) result;
-  }
-
-  private List createGroupListInner(List<String> data) {
-
-    ArrayList result1 = new ArrayList();
-    for (int i = 0; i < data.size(); ++i) {
-      ArrayList secList = new ArrayList();
-
-      result1.add(secList);
-    }
-    return result1;
-
-  }
-
   @Override
   public void onClick(View v) {
     if (v == yes) {
-      shareWork=true;
+      shareChecked=true;
+      shareWork = true;
     } else if (v == no) {
-      shareWork=false;
+      shareChecked=true;
+      shareWork = false;
     } else if (v == submitQuiz) {
       // Submit Quiz
-      quiz.setShareWork(shareWork);
-      quiz.setUser(userObject.getUser());
 
+      if (answerChecked&& shareChecked) {
+
+        quiz.setShareWork(shareWork);
+        quiz.setUser(userObject.getUser());
+        User user = userObject.getUser();
+
+        List<User> userList = userObject.getUserList();
+        int size = userList.size();
+        for (int y = 0; y < size; y++) {
+          User user1 = userList.get(y);
+          if (user.getUsername().equalsIgnoreCase(user1.getUsername())) {
+            List<UserStatistics> questionsAsked = user1.getQuizzesDone();
+            questionsAsked.add(
+                new UserStatistics(Utils.getCurrentDate(), Utils.generateNumber(),
+                                   UUID.randomUUID().toString(),
+                                   Constants.QUIZ_CATEGORY));
+            user1.setQuizzesDone(questionsAsked);
+            userList.set(y, user1);
+
+          }
+
+        }
+        userObject.setUserList(userList);
+
+        new backgroundProcess().execute(1);
+
+      } else {
+
+        schoolCensus.showMessageDialogAlert(getActivity(),"Please choose option in share work and select your choices","Info");
+
+      }
 //      choices =quiz.getChoices();
 //
 //      quiz.getChoices();
@@ -357,7 +372,6 @@ public class QuizAttemptView extends Fragment implements
 //
 //      }
 
-      new backgroundProcess().execute(1);
     }
 
   }
@@ -545,6 +559,8 @@ public class QuizAttemptView extends Fragment implements
 
   public void checkBoxSelected(int groupPosition, int childPosition, Boolean checked, Input value) {
 
+
+    answerChecked=true;
     choices = quiz.getChoices();
 
     checkBoxSelected1(groupPosition, childPosition, checked);
@@ -695,7 +711,12 @@ public class QuizAttemptView extends Fragment implements
 
       gradeBookManager.addGadebook(gradebookObject);
 
-//      loadSchoolData();
+      try {
+        userManager.addDocument(userObject, Constants.USERS);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
       long totalSize = 0;
       return totalSize;
     }

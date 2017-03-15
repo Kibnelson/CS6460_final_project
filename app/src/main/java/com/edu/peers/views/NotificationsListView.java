@@ -116,7 +116,7 @@ public class NotificationsListView extends Fragment implements
 
     mainView = schoolCensus.getMainView();
     mainView.hideAddButton();
-
+    mainView.setTitle("Edu Peer > Notifications");
   }
 
   void openDialog(final int index) {
@@ -155,7 +155,7 @@ public class NotificationsListView extends Fragment implements
     loadSpinnerData();
     spinner.setOnItemSelectedListener(new OnStudentSelected());
     spinner.setOnTouchListener(onSubjectTouchListener);
-
+    spinner.setVisibility(View.GONE);
     progressBar = (LinearLayout) view.findViewById(R.id.progressBarSchools);
 
     progressBar.setVisibility(View.GONE);

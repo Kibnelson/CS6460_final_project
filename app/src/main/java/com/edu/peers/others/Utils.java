@@ -417,10 +417,12 @@ public class Utils {
   }
 
   public static int generateNumber() {
+    Random r = new Random();
+    int Low = 10;
+    int High = 50;
+    int result = r.nextInt(High-Low) + Low;
 
-    Random r = new Random(System.currentTimeMillis());
-
-    return 10000 + r.nextInt(20000);
+    return result;
 
   }
 

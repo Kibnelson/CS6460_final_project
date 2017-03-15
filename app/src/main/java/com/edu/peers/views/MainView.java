@@ -130,6 +130,7 @@ public class MainView extends FragmentActivity
   private UserManager userManager;
   private int totalNotifications = 0;
   private TextView txt_count;
+  private TextView userName;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -191,7 +192,7 @@ public class MainView extends FragmentActivity
 
     title = (TextView) findViewById(R.id.title);
     txt_count = (TextView) findViewById(R.id.txt_count);
-
+    userName= (TextView) findViewById(R.id.userName);
     schoolList = new ArrayList<>();
 //    schoolList.add();
 
@@ -239,6 +240,7 @@ public class MainView extends FragmentActivity
       menuData.add("Seat arrangement");
       menuData.add("Ranking");
 
+      userName.setText("Instructor: "+userObject.getUser().getFirstName()+" "+userObject.getUser().getLastName());
     } else if (userObject.getUser().getRole().equalsIgnoreCase(Constants.STUDENT_ROLE)) {
       userView = 2;
       menuData.add("Dashboard");
@@ -250,6 +252,8 @@ public class MainView extends FragmentActivity
       menuData.add("General Notifications");
       menuData.add("Personal Notifications");
       menuData.add("Ranking");
+
+      userName.setText("Student: "+userObject.getUser().getFirstName()+" "+userObject.getUser().getLastName());
     }
     eventAggregator =
         new EventAggregator(schoolCensus.getCloudantInstance(),
@@ -274,6 +278,14 @@ public class MainView extends FragmentActivity
     }
 
 
+  }
+
+  public void  hideNotification(){
+    main_widget.setVisibility(View.GONE);
+  }
+
+  public void  showNotification(){
+    main_widget.setVisibility(View.VISIBLE);
   }
 
   public void setDrawerAdapter() {
@@ -634,21 +646,7 @@ public class MainView extends FragmentActivity
 
       }
 
-    } else if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentGridView)) {
-
-//        loadView(StudentsGradesHomeGridView.newInstance(1));
-
-    } else if (schoolCensus.getCurrentTitle()
-        .equalsIgnoreCase(Constants.StudentsGradeHomeGridView)) {
-
-//        loadView(StudentsHomeGridView.newInstance(1));
-
-    } else if (schoolCensus.getCurrentTitle()
-        .equalsIgnoreCase(Constants.StudentsGradeHomeGridView)) {
-
-//        loadView(StudentsHomeGridView.newInstance(1));
-
-    } else if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentsHomeGridView)) {
+    }  else if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentsHomeGridView)) {
 
 //        loadView(MainHomeGridView.newInstance(1));
 

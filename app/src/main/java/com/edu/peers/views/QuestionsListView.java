@@ -109,6 +109,7 @@ public class QuestionsListView extends Fragment implements
     mainView = schoolCensus.getMainView();
     mainView.showAddButton();
     mainView.setAddButtonTag(2);
+    mainView.setTitle("Edu Peer > Questions");
   }
 
   void openDialog(final int index) {
@@ -152,7 +153,7 @@ public class QuestionsListView extends Fragment implements
     loadSpinnerData();
     spinner.setOnItemSelectedListener(new OnStudentSelected());
     spinner.setOnTouchListener(onSubjectTouchListener);
-
+    spinner.setVisibility(View.GONE);
     progressBar = (LinearLayout) view.findViewById(R.id.progressBarSchools);
 
     progressBar.setVisibility(View.GONE);
@@ -286,7 +287,7 @@ public class QuestionsListView extends Fragment implements
     mainView = schoolCensus.getMainView();
     mainView.showAddButton();
     mainView.setAddButtonTag(2);
-
+    mainView.setTitle("Edu Peer > Questions");
     add(sampleData);
     new backgroundProcess().execute();
   }

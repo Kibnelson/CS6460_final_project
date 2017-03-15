@@ -337,11 +337,31 @@ public class OneQuestionCreationDialogView extends DialogFragment
         questions.setQuestionType(questionType);
         questions.setSelectedUser(userMatch);
         User user = userObject.getUser();
-        List<UserStatistics> questionsAsked = user.getQuestionsAsked();
-        questionsAsked.add(
-            new UserStatistics(Utils.getCurrentDate(), 1, UUID.randomUUID().toString(),
-                               Constants.QUESTIONS_CATEGORY));
-        user.setQuestionsAsked(questionsAsked);
+
+        List<User> userList =userObject.getUserList();
+        int size=userList.size();
+        for (int y=0;y<size;y++){
+          User user1=userList.get(y);
+
+          Log.i(Constants.TAG,"user.getUsername(==="+user.getUsername());
+          Log.i(Constants.TAG,"user1.getUsername(==="+user1.getUsername());
+
+          if (user.getUsername().equalsIgnoreCase(user1.getUsername())) {
+            Log.i(Constants.TAG,"-----------------------------");
+
+            List<UserStatistics> questionsAsked = user1.getQuestionsAsked();
+            questionsAsked.add(
+                new UserStatistics(Utils.getCurrentDate(), Utils.generateNumber(),
+                                   UUID.randomUUID().toString(),
+                                   Constants.QUESTIONS_CATEGORY));
+            user1.setQuestionsAsked(questionsAsked);
+            userList.set(y, user1);
+
+          }
+
+        }
+        userObject.setUserList(userList);
+
 
         if (questionType.equalsIgnoreCase(Constants.PRIVATE))
         {
@@ -437,13 +457,15 @@ public class OneQuestionCreationDialogView extends DialogFragment
 
         int size=userList.size();
 
-        for (int y=0;y<size;y++){
-          User user1=userList.get(y);
-          if (user1.getUsername().equalsIgnoreCase(userMatch.getUsername())){
-            user1.getNotificationsList().add(privateNotification);
-            userList.set(y,user1);}
+        for (int y=0;y<size;y++) {
+          User user1 = userList.get(y);
+          if (userMatch != null) {
+            if (user1.getUsername().equalsIgnoreCase(userMatch.getUsername())) {
+              user1.getNotificationsList().add(privateNotification);
+              userList.set(y, user1);
+            }
+          }
         }
-
         userObject.setUserList(userList);
 
         userManager.addDocument(userObject,Constants.USERS);
