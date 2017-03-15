@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import com.edu.peers.models.UserObject;
 import com.edu.peers.models.UserStatistics;
 import com.edu.peers.others.Base64;
 import com.edu.peers.others.Constants;
+import com.edu.peers.others.Utils;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.Legend;
@@ -184,7 +186,7 @@ public class StudentsSummaryView extends Fragment implements
     ll1.setLabelPosition(LimitLine.LimitLabelPosition.LEFT_BOTTOM);
     ll1.setTextSize(10f);
 
-    LimitLine ll2 = new LimitLine(20f, "Improvement needed");
+    LimitLine ll2 = new LimitLine(10f, "Improvement needed");
     ll2.setLineWidth(4f);
     ll2.enableDashedLine(10f, 10f, 0f);
     ll2.setLabelPosition(LimitLine.LimitLabelPosition.LEFT_TOP);
@@ -244,69 +246,82 @@ public class StudentsSummaryView extends Fragment implements
     questionsAnsweredEntries = new ArrayList<Entry>();
     contentUploadEntries = new ArrayList<Entry>();
 
+
+    Log.i(Constants.TAG,"quizzesDoneEntries========="+quizzesDoneEntries.size());
+    Log.i(Constants.TAG,"quizzesCreatedEntries========="+quizzesCreatedEntries.size());
+    Log.i(Constants.TAG,"questionsAskedEntries========="+questionsAskedEntries.size());
+    Log.i(Constants.TAG,"questionsAnsweredEntries========="+questionsAnsweredEntries.size());
+    Log.i(Constants.TAG,"contentUploadEntries========="+contentUploadEntries.size());
+
+
     xValues=new ArrayList<>();
-//    xValues=new HashSet<String>();
+    xValues=new ArrayList();
 
-//    for (int y = 0; y < quizzesDone.size(); y++) {
-//      UserStatistics weightValue = quizzesDone.get(y);
-//        xValues.add(Utils.convert(weightValue.date));
-//      quizzesDoneEntries.add(  new Entry(weightValue.value.value, y));
-//    }
-
-
-    quizzesDoneEntries.add(  new Entry(5, 0));
-    quizzesDoneEntries.add(  new Entry(10, 1));
-    quizzesDoneEntries.add(  new Entry(15, 2));
-
-//    for (int y = 0; y < quizzesCreated.size(); y++) {
-//      UserStatistics weightValue = quizzesCreated.get(y);
-//        xValues.add(Utils.convert(weightValue.date));
-//      quizzesCreatedEntries.add(  new Entry(weightValue.value.value, y));
-//    }
-
-    quizzesCreatedEntries.add(  new Entry(2, 0));
-    quizzesCreatedEntries.add(  new Entry(4, 1));
-    quizzesCreatedEntries.add(  new Entry(6, 2));
+    for (int y = 0; y < quizzesDone.size(); y++) {
+      UserStatistics weightValue = quizzesDone.get(y);
+        xValues.add(Utils.convert(weightValue.date));
+      Log.i(Constants.TAG,"weightValue"+weightValue);
+      quizzesDoneEntries.add(  new Entry(weightValue.value.value, y));
+    }
 
 
+//    quizzesDoneEntries.add(  new Entry(5, 0));
+//    quizzesDoneEntries.add(  new Entry(10, 1));
+//    quizzesDoneEntries.add(  new Entry(15, 2));
 
-//    for (int y = 0; y < questionsAsked.size(); y++) {
-//      UserStatistics weightValue = questionsAsked.get(y);
-//        xValues.add(Utils.convert(weightValue.date));
-//      questionsAskedEntries.add(new Entry(weightValue.value.value, y));
-//    }
+    for (int y = 0; y < quizzesCreated.size(); y++) {
+      UserStatistics weightValue = quizzesCreated.get(y);
+        xValues.add(Utils.convert(weightValue.date));
+      quizzesCreatedEntries.add(  new Entry(weightValue.value.value, y));
+    }
 
-
-    questionsAskedEntries.add(  new Entry(10, 0));
-    questionsAskedEntries.add(  new Entry(20, 1));
-    questionsAskedEntries.add(  new Entry(30, 2));
-
-
-//    for (int y = 0; y < questionsAnswered.size(); y++) {
-//      UserStatistics weightValue = questionsAnswered.get(y);
-//       xValues.add(Utils.convert(weightValue.date));
-//      questionsAnsweredEntries.add(new Entry(weightValue.value.value, y));
-//    }
-
-    questionsAnsweredEntries.add(  new Entry(7, 0));
-    questionsAnsweredEntries.add(  new Entry(14, 1));
-    questionsAnsweredEntries.add(  new Entry(21, 2));
+//    quizzesCreatedEntries.add(  new Entry(2, 0));
+//    quizzesCreatedEntries.add(  new Entry(4, 1));
+//    quizzesCreatedEntries.add(  new Entry(6, 2));
 
 
-//    for (int y = 0; y < contentUpload.size(); y++) {
-//      UserStatistics weightValue = contentUpload.get(y);
-//       xValues.add(Utils.convert(weightValue.date));
-//       contentUploadEntries.add(new Entry(weightValue.value.value, y));
-//    }
 
-    contentUploadEntries.add(  new Entry(1, 0));
-    contentUploadEntries.add(  new Entry(10, 1));
-    contentUploadEntries.add(  new Entry(23, 2));
+    for (int y = 0; y < questionsAsked.size(); y++) {
+      UserStatistics weightValue = questionsAsked.get(y);
+        xValues.add(Utils.convert(weightValue.date));
+      questionsAskedEntries.add(new Entry(weightValue.value.value, y));
+    }
 
-    xValues.add("2017-01-01");
-    xValues.add("2017-01-02");
-    xValues.add("2017-01-03");
 
+//    questionsAskedEntries.add(  new Entry(10, 0));
+//    questionsAskedEntries.add(  new Entry(20, 1));
+//    questionsAskedEntries.add(  new Entry(30, 2));
+
+
+    for (int y = 0; y < questionsAnswered.size(); y++) {
+      UserStatistics weightValue = questionsAnswered.get(y);
+       xValues.add(Utils.convert(weightValue.date));
+      questionsAnsweredEntries.add(new Entry(weightValue.value.value, y));
+    }
+
+//    questionsAnsweredEntries.add(  new Entry(7, 0));
+//    questionsAnsweredEntries.add(  new Entry(14, 1));
+//    questionsAnsweredEntries.add(  new Entry(21, 2));
+
+
+    for (int y = 0; y < contentUpload.size(); y++) {
+      UserStatistics weightValue = contentUpload.get(y);
+       xValues.add(Utils.convert(weightValue.date));
+       contentUploadEntries.add(new Entry(weightValue.value.value, y));
+    }
+
+//    contentUploadEntries.add(  new Entry(1, 0));
+//    contentUploadEntries.add(  new Entry(10, 1));
+//    contentUploadEntries.add(  new Entry(23, 2));
+//
+//    xValues.add("2017-01-01");
+//    xValues.add("2017-01-02");
+//    xValues.add("2017-01-03");
+
+
+    for (String data:xValues){
+      Log.i(Constants.TAG,"data"+data);
+    }
     CombinedData data = new CombinedData(xValues);
     data.setData(addLineData( quizzesDoneBool,  quizzesCreatedBool,  questionsAskedBool, questionsAnsweredBool,  contentUploadBool));
     cChart.setData(data);

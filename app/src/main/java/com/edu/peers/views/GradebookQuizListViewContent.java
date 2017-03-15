@@ -27,6 +27,7 @@ import com.edu.peers.adapter.ComboBoxViewAdapter;
 import com.edu.peers.adapter.ComboBoxViewListItem;
 import com.edu.peers.adapter.GradebookQuizExpandableListViewAdapter;
 import com.edu.peers.dialogs.QuizCreationDialogView;
+import com.edu.peers.dialogs.RecommendationsDialogView;
 import com.edu.peers.dialogs.RecordAudioDialog;
 import com.edu.peers.dialogs.ScratchPadDialog;
 import com.edu.peers.managers.GradeBookManager;
@@ -41,6 +42,8 @@ import com.edu.peers.others.Constants;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +64,8 @@ public class GradebookQuizListViewContent extends Fragment implements
   public ComboBoxViewListItem[] comboBoxViewListItems;
   private List<Quiz> array_sort = new ArrayList<>();
   private List<Quiz> sampleData = new ArrayList<>();
+  private List<Questions> recommendedQuestions = new ArrayList<>();
+  private List<Quiz> recommendedQuiz = new ArrayList<>();
   private SchoolCensus schoolCensus;
   private TextView title;
   private long totalSize = 0;
@@ -100,6 +105,11 @@ public class GradebookQuizListViewContent extends Fragment implements
   private UserObject userObject;
   private QuizManager quizManager;
   private GradeBookManager gradeBookManager;
+  private User userQuiz;
+  private GradebookObject gradebookObject;
+  private Questions userQuestion;
+  private int groupPosition;
+  private int childPosition;
 
 
   public static GradebookQuizListViewContent newInstance(int position) {
@@ -134,6 +144,7 @@ public class GradebookQuizListViewContent extends Fragment implements
     gradeBookManager =
         new GradeBookManager(schoolCensus.getCloudantInstance(), getContext());
 
+    Log.i(Constants.TAG,"YYYYYYYYYYYYY===="+schoolCensus.getQuizIndex());
 
   }
 
@@ -244,7 +255,7 @@ public class GradebookQuizListViewContent extends Fragment implements
     marks.setText(mark);
 
     List<Questions> questionsList = quiz.getQuestions();
-    User userQuiz=quiz.getUser();
+    userQuiz=quiz.getUser();
 
     groupData = new ArrayList<Map<String, Questions>>();
     childData = new ArrayList<List<Map<String, Input>>>();
@@ -551,7 +562,6 @@ public class GradebookQuizListViewContent extends Fragment implements
 
     quiz.getQuestions().get(groupPosition).getChoices().get(childPosition).setRecommended(true);
 
-
     schoolCensus.setQuiz(quiz);
 
     new backgroundProcessSave().execute(quiz);
@@ -559,13 +569,21 @@ public class GradebookQuizListViewContent extends Fragment implements
 
   }
 
-  public void thumbsUpClicked(int groupPosition, int childPosition, Boolean checked, Input value) {
+  public void
 
+
+  thumbsUpClicked(int groupPosition, int childPosition, Boolean checked, Input value) {
+
+    this.groupPosition=groupPosition;
+    this.childPosition=childPosition;
     int current= quiz.getQuestions().get(groupPosition).getChoices().get(childPosition).getThumbsUp();
     int newNumber=current+1;
     quiz.getQuestions().get(groupPosition).getChoices().get(childPosition).setThumbsUp(newNumber);
 
     schoolCensus.setQuiz(quiz);
+
+    Log.i(Constants.TAG,"thumbsUpClickedthumbsUpClickedthumbsUpClicked=="+  quiz.getQuestions().get(groupPosition).getChoices().get(childPosition).getThumbsUp());
+
 
     new backgroundProcessSave().execute(quiz);
 
@@ -599,21 +617,40 @@ public class GradebookQuizListViewContent extends Fragment implements
 
         List<Quiz> quizList=gradebookObject.getQuizList();
 
+        Collections.sort(quizList, new Comparator<Quiz>(){
+          public int compare(Quiz quiz1, Quiz quiz2) {
+            return Integer.valueOf(quiz2.getMarks()).compareTo(quiz1.getMarks()); // To compare integer values
+          }
+        });
+
         for (int y=0;y<quizList.size();y++){
 
           Quiz quiz=quizList.get(y);
 
-          if ( schoolCensus.getUserQiuz() !=null && quiz.getUser().getUsername().equalsIgnoreCase(schoolCensus.getUserQiuz().getUsername())){
+          Log.i(Constants.TAG,"thumbsUpClickedthumbsUpClickedthumbsUpClicked==XXXXXXXXX===="+schoolCensus.getQuizIndex());
+
+
+//          if ( schoolCensus.getUserQiuz() !=null && quiz.getUser().getUsername().equalsIgnoreCase(schoolCensus.getUserQiuz().getUsername())){
+////
+//            Log.i(Constants.TAG,"thumbsUpClickedthumbsUpClickedthumbsUpClicked==1");
+
             if (y== schoolCensus.getQuizIndex()){
+              Log.i(Constants.TAG,"thumbsUpClickedthumbsUpClickedthumbsUpClicked==2");
+
               quizList.set(y,params[0]);
 
             }
-          }else if ( schoolCensus.getUserQiuz()==null &&quiz.getUser().getUsername().equalsIgnoreCase(userObject.getUser().getUsername())){
-            if (y== schoolCensus.getQuizIndex()){
-              quizList.set(y,params[0]);
-
-            }
-          }
+//          }else if ( schoolCensus.getUserQiuz()==null && quiz.getUser().getUsername().equalsIgnoreCase(userObject.getUser().getUsername())){
+//            Log.i(Constants.TAG,"thumbsUpClickedthumbsUpClickedthumbsUpClicked==="+schoolCensus.getQuizIndex()+"====3=="+y);
+//
+//            if (y== schoolCensus.getQuizIndex()){
+//              Log.i(Constants.TAG,"thumbsUpClickedthumbsUpClickedthumbsUpClicked==4==="+quiz.getQuestions().get(groupPosition).getChoices().get(childPosition).getThumbsUp());
+//              Log.i(Constants.TAG,"thumbsUpClickedthumbsUpClickedthumbsUpClicked==4===="+params[0].getQuestions().get(groupPosition).getChoices().get(childPosition).getThumbsUp());
+//
+//              quizList.set(y,params[0]);
+//
+//            }
+//          }
         }
 
         gradebookObject.setQuizList(quizList);
@@ -662,8 +699,128 @@ public class GradebookQuizListViewContent extends Fragment implements
 
 
   }
+  public void getRecommendations(int groupPosition, int childPosition, Input value, Questions questions) {
+
+    userQuestion=questions;
+    userQuiz=quiz.getUser();
+    recommendedQuestions = new ArrayList<>();
+    recommendedQuiz = new ArrayList<>();
+
+    new backgroundProcessRecommendations().execute();
 
 
+  }
+  private class backgroundProcessRecommendations extends AsyncTask<Integer, Integer, Long> {
+
+    protected Long doInBackground(Integer... params) {
+      sampleData= new ArrayList<>();
+      gradebookObject = gradeBookManager.getGradebookObject();
+
+      if (gradebookObject != null) {
+
+        List<Quiz> quizList=gradebookObject.getQuizList();
+
+        for (int y=0;y<quizList.size();y++) {
+
+          Quiz quiz1 = quizList.get(y);
+          Log.i(Constants.TAG,"-------"+quiz1.getUser().getUsername()+"--------------------------"+userQuiz.getUsername()+"--------------------------------");
+
+          if (quiz1.getUuid().equalsIgnoreCase(quiz.getUuid())
+              && !quiz1.getUser().getUsername().equalsIgnoreCase(userQuiz.getUsername())) {
+            // Found matching
+
+            List<Questions> questionsList = quiz1.getQuestions();
+            int size = questionsList.size();
+            for (int k = 0; k < size; k++) {
+
+              Questions questions = questionsList.get(k);
+
+
+              Log.i(Constants.TAG,"questions.getUuid()==="+questions.getUuid());
+
+              Log.i(Constants.TAG,"questions.getUuid()==="+userQuestion.getUuid());
+
+              if (questions.getUuid().equalsIgnoreCase(userQuestion.getUuid())) {
+                // Found match
+                Log.i(Constants.TAG,"-----------------------------------------------------------------");
+
+                List<Input> inputList = questions.getChoices();
+                for (Input input : inputList) {
+
+
+                  if (input.getSelected() && input.getAnswer()) {
+                    Log.i(Constants.TAG,"input.getRecommended()==="+input.getRecommended());
+                    Log.i(Constants.TAG,"input.getRecommended()==="+input.getRecommended());
+
+                    if (input.getRecommended() && input.getThumbsUp() > 0
+                        && input.getThumbsDown() == 0) {
+                      recommendedQuestions.add(questions);
+                      recommendedQuiz.add(quiz1);
+                      Log.i(Constants.TAG,"-------------------------1----------------------------------------");
+
+                    } else if (input.getRecommended() && input.getThumbsUp() == 0
+                               && input.getThumbsDown() == 0) {
+                      recommendedQuestions.add(questions);
+                      recommendedQuiz.add(quiz1);
+                      Log.i(Constants.TAG,"-----------------------------2------------------------------------");
+
+                    } else if (input.getRecommended()) {
+                      recommendedQuestions.add(questions);
+                      recommendedQuiz.add(quiz1);
+                      Log.i(Constants.TAG,"------------------------------3-----------------------------------");
+
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+        }
+      }
+
+      long totalSize = 0;
+      return totalSize;
+    }
+
+    protected void onPostExecute(Long result) {
+      if (progressBar != null) {
+        progressBar.setVisibility(View.GONE);
+      }
+
+      if (recommendedQuestions.size()==0 && recommendedQuiz.size()==0){
+        schoolCensus.showMessageDialogAlert(getActivity(),"There are no recommendations at the moment, please try later","Info");
+      } else{
+        // Open a dialog that shows the questions or the found quiz
+
+         schoolCensus.setRecommendedQuestions(recommendedQuestions);
+        schoolCensus.setRecommendedQuiz(recommendedQuiz);
+        schoolCensus.setUserQiuz(userQuiz);
+        mHandler.post(new Runnable() {
+          @Override
+          public void run() {
+
+            mStackLevel++;
+
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+            RecommendationsDialogView
+                newFragment = RecommendationsDialogView.newInstance(mStackLevel);
+            newFragment.show(ft, "StudentDataDialog111");
+
+          }
+        });
+      }
+
+    }
+
+    protected void onPreExecute() {
+      if (progressBar != null) {
+        progressBar.setVisibility(View.VISIBLE);
+      }
+    }
+
+  }
   public void checkBoxSelected(int groupPosition, int childPosition, Boolean checked, Input value) {
 
     choices=  quiz.getChoices();

@@ -8,7 +8,7 @@ import java.util.UUID;
  * Created by nelson on 27/02/2017.
  */
 
-public class User {
+public class UserPair {
   private String uuid;
   private String firstName;
   private String lastName;
@@ -19,7 +19,6 @@ public class User {
   private String facephoto;
   private List<String> notificationsId;
   private Boolean paired;
-  private String pairedWith;
   private float average;
   private float difference;
   private Boolean recommend;
@@ -46,12 +45,12 @@ public class User {
   private List<Notifications> notificationsList;
 
 
-  public User() {
+  public UserPair() {
     this.uuid= UUID.randomUUID().toString();
   }
 
-  public User(String firstName, String lastName, String role, String gender, String username,
-              String password) {
+  public UserPair(String firstName, String lastName, String role, String gender, String username,
+                  String password) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.role = role;
@@ -213,13 +212,6 @@ public class User {
     this.paired = paired;
   }
 
-  public String getPairedWith() {
-    return pairedWith;
-  }
-
-  public void setPairedWith(String pairedWith) {
-    this.pairedWith = pairedWith;
-  }
 
   public float getAverage() {
     return average;

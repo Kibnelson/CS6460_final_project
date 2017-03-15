@@ -14,18 +14,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edu.peers.R;
+import com.edu.peers.dialogs.RecommendationsDialogView;
 import com.edu.peers.models.Input;
 import com.edu.peers.models.Questions;
+import com.edu.peers.models.Quiz;
 import com.edu.peers.models.User;
 import com.edu.peers.others.Constants;
-import com.edu.peers.views.GradebookQuizListViewContent;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
-public class GradebookQuizExpandableListViewAdapter extends
+public class RecommendationsQuizExpandableListViewAdapter extends
                                                     SimpleExpandableListAdapterQuiz
     implements View.OnClickListener {
 
@@ -50,7 +51,7 @@ public class GradebookQuizExpandableListViewAdapter extends
   private int mLastChildLayout;
   private String[] mChildFrom;
   private int[] mChildTo;
-  private GradebookQuizListViewContent mContext;
+  private RecommendationsDialogView mContext;
   private OnDataChangeListener mOnDataChangeListener;
   private TextView groupPositionTextView;
   private LinearLayout selectedAnswersLayout;
@@ -59,15 +60,15 @@ public class GradebookQuizExpandableListViewAdapter extends
   private User loggedInUser;
   private TextView thumbsupValue, thumbsdownValue;
   private LinearLayout recommendedLayout;
-  private User userQuiz;
+  private List<Quiz> quizList;
 
-  public GradebookQuizExpandableListViewAdapter(GradebookQuizListViewContent context,
-                                                List<? extends Map<String, Questions>> groupData,
-                                                int groupLayout,
-                                                String[] groupFrom, int[] groupTo,
-                                                List<? extends List<? extends Map<String, Input>>> childData,
-                                                int childLayout, String[] childFrom, int[] childTo,
-                                                User loggedInUser,User userQuiz) {
+  public RecommendationsQuizExpandableListViewAdapter(RecommendationsDialogView context,
+                                                      List<? extends Map<String, Questions>> groupData,
+                                                      int groupLayout,
+                                                      String[] groupFrom, int[] groupTo,
+                                                      List<? extends List<? extends Map<String, Input>>> childData,
+                                                      int childLayout, String[] childFrom, int[] childTo,
+                                                      User loggedInUser, List<Quiz> quizList) {
 
     super(context.getContext(), groupData, groupLayout, groupFrom, groupTo, childData,
           childLayout, childFrom, childTo);
@@ -81,7 +82,7 @@ public class GradebookQuizExpandableListViewAdapter extends
     mChildTo = childTo;
     this.mContext = context;
     this.loggedInUser = loggedInUser;
-    this.userQuiz=userQuiz;
+    this.quizList=quizList;
   }
 
   @Override
@@ -96,11 +97,15 @@ public class GradebookQuizExpandableListViewAdapter extends
     groupPositionTextView = (TextView) v.findViewById(R.id.groupPosition);
     selectedAnswersLayout = (LinearLayout) v.findViewById(R.id.selectedAnswersLayout);
     int position = groupPosition + 1;
-    groupPositionTextView.setText("" + position);
+//    groupPositionTextView.setText("By: "+mGroupData.get(groupPosition).get(NAME).getUser().getFirstName()+" "+mGroupData.get(groupPosition).get(NAME).getUser().getLastName() +":");
+//    groupPositionTextView.setText("By: "+userQuiz.getUser().getFirstName()+" "+userQuiz.getUser().getLastName() +":");
+    groupPositionTextView.setText("By: "+quizList.get(groupPosition).getUser().getFirstName()+" "+quizList.get(groupPosition).getUser().getLastName() +":");
+
+
 
     integerTextViewMap.put(groupPosition, selectedAnswers);
 
-    mContext.updateTextViewMap(groupPosition, selectedAnswers);
+//    mContext.updateTextViewMap(groupPosition, selectedAnswers);
 
     final ImageView voice_q = (ImageView) v.findViewById(R.id.voice_q);
     voice_q.setOnClickListener(new View.OnClickListener() {
@@ -230,8 +235,8 @@ public class GradebookQuizExpandableListViewAdapter extends
       public void onClick(View v) {
 
 
-          mContext.recommendClicked(groupPosition, childPosition, true,
-                                    mChildData.get(groupPosition).get(childPosition).get(NAME));
+//          mContext.recommendClicked(groupPosition, childPosition, true,
+//                                    mChildData.get(groupPosition).get(childPosition).get(NAME));
           Toast.makeText(mContext.getContext(), "Recommend clicked", Toast.LENGTH_LONG)
               .show();
 
@@ -244,18 +249,18 @@ public class GradebookQuizExpandableListViewAdapter extends
       @Override
       public void onClick(View v) {
 
-        if (loggedInUser.getUsername().equalsIgnoreCase(userQuiz.getUsername())) {
-
-          Toast.makeText(mContext.getContext(), "This feature is not allowed because its your own test results", Toast.LENGTH_LONG)
-              .show();
-
-        } else {
-          mContext.thumbsUpClicked(groupPosition, childPosition, true,
-                                   mChildData.get(groupPosition).get(childPosition).get(NAME));
+//        if (loggedInUser.getUsername().equalsIgnoreCase(userQuiz.getUsername())) {
+//
+//          Toast.makeText(mContext.getContext(), "This feature is not allowed because its your own test results", Toast.LENGTH_LONG)
+//              .show();
+//
+//        } else {
+//          mContext.thumbsUpClicked(groupPosition, childPosition, true,
+//                                   mChildData.get(groupPosition).get(childPosition).get(NAME));
 
           Toast.makeText(mContext.getContext(), "Thumbs up clicked", Toast.LENGTH_LONG)
               .show();
-        }
+//        }
 
       }
     });
@@ -266,19 +271,19 @@ public class GradebookQuizExpandableListViewAdapter extends
       @Override
       public void onClick(View v) {
 
-        if (loggedInUser.getUsername().equalsIgnoreCase(userQuiz.getUsername())) {
-
-          Toast.makeText(mContext.getContext(), "This feature is not allowed because its your own test results", Toast.LENGTH_LONG)
-              .show();
-
-        } else {
-          mContext.thumbsDownClicked(groupPosition, childPosition, true,
-                                     mChildData.get(groupPosition).get(childPosition).get(NAME));
-
-          Toast.makeText(mContext.getContext(), "Thumbs down clicked", Toast.LENGTH_LONG)
-              .show();
-
-        }
+//        if (loggedInUser.getUsername().equalsIgnoreCase(userQuiz.getUsername())) {
+//
+//          Toast.makeText(mContext.getContext(), "This feature is not allowed because its your own test results", Toast.LENGTH_LONG)
+//              .show();
+//
+//        } else {
+//          mContext.thumbsDownClicked(groupPosition, childPosition, true,
+//                                     mChildData.get(groupPosition).get(childPosition).get(NAME));
+//
+//          Toast.makeText(mContext.getContext(), "Thumbs down clicked", Toast.LENGTH_LONG)
+//              .show();
+//
+//        }
       }
     });
 
@@ -305,7 +310,7 @@ public class GradebookQuizExpandableListViewAdapter extends
         // Get the same quiz for another person
         //
 
-        mContext.getRecommendations(groupPosition,childPosition,mChildData.get(groupPosition).get(childPosition).get(NAME), mGroupData.get(groupPosition).get(NAME));
+//        mContext.getRecommendations(groupPosition,childPosition,mChildData.get(groupPosition).get(childPosition).get(NAME), mGroupData.get(groupPosition).get(NAME));
 
           Toast.makeText(mContext.getContext(), "Recommender clicked", Toast.LENGTH_LONG)
               .show();
@@ -323,17 +328,8 @@ public class GradebookQuizExpandableListViewAdapter extends
     if (input.getSelected() && !input.getAnswer()) {
       wrong.setVisibility(View.VISIBLE);
       // Show recomender ICOn
-
-      if (loggedInUser.getRole().equalsIgnoreCase(Constants.INSTRUCTOR_ROLE)) {
-        recommendOptionsLayout.setVisibility(View.GONE);
-      } else if (loggedInUser.getRole().equalsIgnoreCase(Constants.STUDENT_ROLE)) {
-
-        recommendOptionsLayout.setVisibility(View.VISIBLE);
-      }
-
-
+//      recommendOptionsLayout.setVisibility(View.VISIBLE);
     }
-
 
 
     if (input.getRecommended()) {
@@ -345,14 +341,12 @@ public class GradebookQuizExpandableListViewAdapter extends
       }
 
 
-
-
     }
 
     TextView groupPositionChild = (TextView) v.findViewById(R.id.groupPositionChild);
     groupPositionChild
         .setText("" + mChildData.get(groupPosition).get(childPosition).get(NAME).getPosition());
-    selectedAnswers.setText(mContext.getCheckedValues(groupPosition, childPosition));
+//    selectedAnswers.setText(mContext.getCheckedValues(groupPosition, childPosition));
 
     final ImageView voice_q = (ImageView) v.findViewById(R.id.voice_q_c);
     voice_q.setOnClickListener(new View.OnClickListener() {
@@ -403,7 +397,9 @@ public class GradebookQuizExpandableListViewAdapter extends
 
     final CheckBox explist_indicator = (CheckBox) v.findViewById(R.id.childCheckbox);
 
-    explist_indicator.setChecked(mContext.isCheckCheckedValues(groupPosition, childPosition));
+    explist_indicator.setVisibility(View.GONE);
+
+    explist_indicator.setChecked(mContext.isCheckCheckedValues(groupPosition, childPosition,quizList.get(groupPosition)));
 
     explist_indicator.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -413,8 +409,6 @@ public class GradebookQuizExpandableListViewAdapter extends
 
       }
     });
-
-    explist_indicator.setEnabled(false);
 
     bindViewChild(v, mChildData.get(groupPosition).get(childPosition), mChildFrom, mChildTo,
                   groupPosition, childPosition);
@@ -454,13 +448,5 @@ public class GradebookQuizExpandableListViewAdapter extends
 
   public void setLoggedInUser(User loggedInUser) {
     this.loggedInUser = loggedInUser;
-  }
-
-  public User getUserQuiz() {
-    return userQuiz;
-  }
-
-  public void setUserQuiz(User userQuiz) {
-    this.userQuiz = userQuiz;
   }
 }

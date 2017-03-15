@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			 android:id="@+id/root"
+			 android:layout_width="fill_parent"
+			 android:layout_height="fill_parent"
+			 android:background="@drawable/school_layer_background">
+
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_gravity="center"
+			android:orientation="vertical">
+
+		<!--<include layout="@layout/school_action_bar_view"/>-->
+
+		<FrameLayout
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:background="@drawable/school_layer_background">
+
+			<LinearLayout
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:orientation="vertical">
+
+
+				<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"
+
+						android:orientation="vertical">
+
+
+
+					<LinearLayout
+
+							android:id="@+id/progressBarSchools"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:gravity="center"
+							android:layout_gravity="center"
+							android:orientation="horizontal">
+
+
+						<ProgressBar
+								style="@style/progressbar_field"/>
+
+					</LinearLayout>
+
+
+
+
+
+					<include layout="@layout/school_list_divider"/>
+
+					<LinearLayout
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:background="@drawable/school_form_background"
+							android:gravity="center"
+							android:orientation="vertical">
+
+
+							<ExpandableListView
+									android:id="@+id/quiz"
+									android:layout_alignParentTop="true"
+									android:layout_width="fill_parent"
+									android:layout_weight="1"
+									android:layout_height="wrap_content"
+									android:background="@drawable/school_layer_background"
+									android:cacheColorHint="#00000000"
+									android:indicatorRight="?android:attr/expandableListPreferredItemIndicatorRight"
+									android:groupIndicator="@android:color/transparent"
+
+									></ExpandableListView>
+
+
+
+						<LinearLayout
+								android:id="@+id/button_layout"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+
+								android:gravity="center"
+								android:layout_gravity="center"
+								android:orientation="horizontal">
+
+							<Button
+									android:id="@+id/cancel"
+									style="@style/style_button_one"
+									android:layout_width="100dp"
+									android:layout_height="30dp"
+									android:layout_marginBottom="4dp"
+									android:layout_marginRight="10dp"
+									android:layout_marginTop="4dp"
+									android:background="@drawable/school_round_button_layout"
+									android:text="Close"/>
+
+
+
+						</LinearLayout>
+
+					</LinearLayout>
+				</LinearLayout>
+
+
+
+
+
+			</LinearLayout>
+
+
+		</FrameLayout>
+	</LinearLayout>
+
+</FrameLayout>

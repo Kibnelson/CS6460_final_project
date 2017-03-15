@@ -1,0 +1,17 @@
+Instructor
+Names: lorna bore
+username: lorna
+
+Students
+Names: nelson bore
+username: nelson
+
+Names:  Saidi Koech
+username saidi
+
+Names: Loki Lolo
+username loki
+
+Names: Lolo Loki
+username lolo
+

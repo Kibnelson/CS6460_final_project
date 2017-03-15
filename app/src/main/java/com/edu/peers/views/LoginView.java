@@ -206,12 +206,19 @@ public class LoginView extends FragmentActivity
 
   }
 
-  private ProgressDialog showProgessDialog() {
+  private void showProgessDialog() {
+
+    try{
+
+
 
     progressDialog = new ProgressDialog(LoginView.this);
     progressDialog.setMessage("Please wait");
     progressDialog.show();
-    return progressDialog;
+
+    }catch (Exception e){
+
+    }
 
 
   }
@@ -362,6 +369,7 @@ public class LoginView extends FragmentActivity
 
       userObjectList = userManager.getDocumentGetDocument(Constants.USERS);
 
+      if (userObjectList!=null){
       int size=userObjectList.getUserList().size();
       for (int y=0;y<size;y++){
         User user=userObjectList.getUserList().get(y);
@@ -370,6 +378,7 @@ public class LoginView extends FragmentActivity
           userObjectList.setUser(user);
         }
 
+      }
       }
 
       long totalSize = 0;

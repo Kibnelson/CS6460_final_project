@@ -68,36 +68,35 @@
 					<ImageView
 
 							android:id="@+id/voice_q_c"
-							android:layout_width="30dp"
-							android:layout_height="30dp"
+							android:layout_width="40dp"
+							android:layout_height="40dp"
 							android:layout_gravity="center"
 							android:src="@drawable/voice"/>
 
 					<ImageView
 
 							android:id="@+id/write_q_c"
-							android:layout_width="30dp"
-							android:layout_height="30dp"
+							android:layout_width="40dp"
+							android:layout_height="40dp"
 							android:layout_gravity="center"
 							android:src="@drawable/write"/>
 
 					<ImageView
 
 							android:id="@+id/picture_q_c"
-							android:layout_width="30dp"
-							android:layout_height="30dp"
+							android:layout_width="40dp"
+							android:layout_height="40dp"
+							android:visibility="gone"
 							android:layout_gravity="center"
 							android:src="@drawable/camera"/>
 
 					<ImageView
 
 							android:id="@+id/recommend"
-							android:layout_width="30dp"
-							android:layout_height="30dp"
+							android:layout_width="40dp"
+							android:layout_height="40dp"
 							android:layout_gravity="center"
 							android:src="@drawable/recommend"/>
-
-
 
 
 					<LinearLayout
@@ -121,8 +120,8 @@
 						<ImageView
 
 								android:id="@+id/thumbsupImage"
-								android:layout_width="30dp"
-								android:layout_height="30dp"
+								android:layout_width="40dp"
+								android:layout_height="40dp"
 								android:layout_gravity="center"
 								android:src="@drawable/thumb_up"/>
 
@@ -151,8 +150,8 @@
 						<ImageView
 
 								android:id="@+id/thumbsDownImage"
-								android:layout_width="30dp"
-								android:layout_height="30dp"
+								android:layout_width="40dp"
+								android:layout_height="40dp"
 								android:layout_gravity="center"
 								android:src="@drawable/thumb_down"/>
 

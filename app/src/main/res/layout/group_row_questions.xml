@@ -71,24 +71,25 @@
 					<ImageView
 
 							android:id="@+id/voice_q"
-							android:layout_width="30dp"
-							android:layout_height="30dp"
+							android:layout_width="40dp"
+							android:layout_height="40dp"
 							android:layout_gravity="center"
 							android:src="@drawable/voice"/>
 
 					<ImageView
 
 							android:id="@+id/write_q"
-							android:layout_width="30dp"
-							android:layout_height="30dp"
+							android:layout_width="40dp"
+							android:layout_height="40dp"
 							android:layout_gravity="center"
 							android:src="@drawable/write"/>
 
 					<ImageView
 
 							android:id="@+id/picture_q"
-							android:layout_width="30dp"
-							android:layout_height="30dp"
+							android:layout_width="40dp"
+							android:visibility="gone"
+							android:layout_height="40dp"
 							android:layout_gravity="center"
 							android:src="@drawable/camera"/>
 					<LinearLayout
@@ -168,8 +169,8 @@
 				<ImageView
 						android:src="@drawable/expander_group"
 						android:id="@+id/explist_indicator"
-						android:layout_width="50dp"
-						android:layout_height="50dp"
+						android:layout_width="40dp"
+						android:layout_height="40dp"
 						android:gravity="center"
 
 						android:layout_alignParentRight="true"

@@ -33,6 +33,7 @@ import com.edu.peers.dialogs.QuizCreationDialogView;
 import com.edu.peers.managers.QuizManager;
 import com.edu.peers.models.Quiz;
 import com.edu.peers.models.QuizObject;
+import com.edu.peers.models.UserObject;
 import com.edu.peers.others.Constants;
 
 import java.util.ArrayList;
@@ -80,6 +81,7 @@ public class QuizListView extends Fragment implements
   private int mStackLevel;
   private QuizManager quizManager;
   private QuizObject quizObject;
+  private UserObject userObject;
 
   public static QuizListView newInstance(int position) {
     QuizListView f = new QuizListView();
@@ -109,9 +111,19 @@ public class QuizListView extends Fragment implements
         new QuizManager(schoolCensus.getCloudantInstance(), getContext());
 
     mainView = schoolCensus.getMainView();
-    mainView.showAddButton();
-    mainView.setAddButtonTag(1);
-  }
+
+    userObject = schoolCensus.getUserObject();
+
+    if (userObject.getUser().getRole().equalsIgnoreCase(Constants.INSTRUCTOR_ROLE)) {
+      mainView.showAddButton();
+      mainView.setAddButtonTag(1);
+
+
+    } else if (userObject.getUser().getRole().equalsIgnoreCase(Constants.STUDENT_ROLE)) {
+      mainView.hideAddButton();
+
+    }
+    }
 
   void openDialog(final int index) {
 

@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			 android:id="@+id/root"
+			 android:layout_width="fill_parent"
+			 android:layout_height="fill_parent"
+			 android:background="@drawable/school_layer_background">
+
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_gravity="center"
+			android:orientation="vertical">
+
+		<!--<include layout="@layout/school_action_bar_view"/>-->
+
+		<FrameLayout
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:background="@drawable/school_layer_background">
+
+			<LinearLayout
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:orientation="vertical">
+
+
+				<LinearLayout
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"
+
+						android:orientation="vertical">
+
+					<include layout="@layout/school_list_divider"/>
+
+
+
+					<LinearLayout
+
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:gravity="center"
+							android:layout_gravity="center"
+							android:orientation="horizontal">
+
+						<TextView
+								style="@style/list_item_text"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:text="Selected Student"
+								android:textStyle="bold"
+								android:textColor="@color/school_list_item_text"/>
+
+
+					</LinearLayout>
+
+
+					<include layout="@layout/school_list_divider"/>
+
+
+					<LinearLayout
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:orientation="horizontal">
+
+						<LinearLayout
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_margin="10dp"
+								android:layout_gravity="center_vertical"
+								android:orientation="vertical">
+
+							<RelativeLayout
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_gravity="center_vertical"
+									android:orientation="horizontal">
+
+
+								<LinearLayout
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:orientation="horizontal">
+									<TextView
+											android:id="@+id/studentName"
+											style="@style/list_item_text"
+											android:layout_alignParentLeft="true"
+											android:layout_width="wrap_content"
+											android:layout_height="wrap_content"
+											android:layout_gravity="left|center"
+											android:gravity="left|center"
+											android:text="testyyyy"
+											android:textColor="@color/school_list_item_text"/>
+
+
+								</LinearLayout>
+							</RelativeLayout>
+
+							<RelativeLayout
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_gravity="center_vertical"
+									android:orientation="horizontal">
+
+
+								<LinearLayout
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:orientation="horizontal">
+
+									<ImageView
+
+											android:id="@+id/recommended"
+											android:layout_width="40dp"
+											android:layout_height="40dp"
+											android:layout_gravity="center"
+											android:src="@drawable/recommended"/>
+
+
+								</LinearLayout>
+
+
+
+
+							</RelativeLayout>
+
+
+						</LinearLayout>
+
+						<LinearLayout
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_margin="10dp"
+								android:layout_gravity="center_vertical"
+								android:orientation="vertical">
+
+
+							<RelativeLayout
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_gravity="center_vertical"
+									android:orientation="horizontal">
+								<LinearLayout
+										android:layout_width="wrap_content"
+										android:layout_alignParentRight="true"
+										android:layout_height="wrap_content"
+										android:orientation="vertical">
+
+									<LinearLayout
+											android:visibility="visible"
+											android:layout_width="wrap_content"
+											android:layout_alignParentRight="true"
+											android:layout_height="wrap_content"
+											android:orientation="horizontal">
+
+										<TextView
+												style="@style/list_item_text"
+												android:layout_width="wrap_content"
+												android:layout_height="wrap_content"
+												android:text="Average"/>
+
+										<TextView
+												android:id="@+id/average"
+												style="@style/list_item_text"
+												android:layout_width="wrap_content"
+												android:layout_height="wrap_content"
+												android:text="20%"/>
+
+									</LinearLayout>
+
+									<LinearLayout
+											android:visibility="visible"
+											android:layout_width="wrap_content"
+											android:layout_alignParentRight="true"
+											android:layout_height="wrap_content"
+											android:orientation="horizontal">
+
+										<TextView
+												style="@style/list_item_text"
+												android:layout_width="wrap_content"
+												android:layout_height="wrap_content"
+												android:text="Difference"/>
+
+										<TextView
+												android:id="@+id/difference"
+												style="@style/list_item_text"
+												android:layout_width="wrap_content"
+												android:layout_height="wrap_content"
+												android:text="20%"/>
+
+									</LinearLayout>
+
+
+								</LinearLayout>
+
+
+
+
+							</RelativeLayout>
+
+
+						</LinearLayout>
+
+
+					</LinearLayout>
+
+					<include layout="@layout/school_list_divider"/>
+
+					<LinearLayout
+
+							android:id="@+id/progressBarSchools"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:gravity="center"
+							android:layout_gravity="center"
+							android:orientation="horizontal">
+
+						<TextView
+								style="@style/list_item_text"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:textStyle="bold"
+								android:text="Possible Students To Pair with"
+								android:textColor="@color/school_list_item_text"/>
+
+
+					</LinearLayout>
+
+
+					<include layout="@layout/school_list_divider"/>
+
+
+					<LinearLayout
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:background="@drawable/school_form_background"
+							android:gravity="center"
+							android:orientation="vertical">
+
+
+
+						<ListView
+								android:id="@+id/students_list"
+								style="@style/school_list_view"
+
+								android:layout_alignParentTop="true"
+								android:layout_width="fill_parent"
+								android:layout_weight="1"
+								android:layout_height="wrap_content"
+								android:background="@drawable/school_layer_background"
+
+								android:listSelector="@drawable/school_list_background_selector"></ListView>
+
+
+
+
+
+
+
+						<LinearLayout
+								android:id="@+id/button_layout"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+
+								android:gravity="center"
+								android:layout_gravity="center"
+								android:orientation="horizontal">
+
+							<Button
+									android:id="@+id/cancel"
+									style="@style/style_button_one"
+									android:layout_width="100dp"
+									android:layout_height="30dp"
+									android:layout_marginBottom="4dp"
+									android:layout_marginRight="10dp"
+									android:layout_marginTop="4dp"
+									android:background="@drawable/school_round_button_layout"
+									android:text="Close"/>
+
+
+
+						</LinearLayout>
+
+					</LinearLayout>
+				</LinearLayout>
+
+
+
+
+
+			</LinearLayout>
+
+
+		</FrameLayout>
+	</LinearLayout>
+
+</FrameLayout>

@@ -27,6 +27,9 @@ import com.edu.peers.others.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by nelson on 3/16/15.
@@ -68,7 +71,10 @@ public class SchoolCensus extends MultiDexApplication {
   private String questionState;
   private User userQiuz=null;
   private int currentYear;
-
+  private List<Questions> recommendedQuestions;
+  private List<Quiz> recommendedQuiz;
+  private User selectedUser;
+  private List<User> userList;
 
   private UserObject userObject;
   private VolleyManager volleyManager;
@@ -419,6 +425,45 @@ public class SchoolCensus extends MultiDexApplication {
 
   public void setUserQiuz(User userQiuz) {
     this.userQiuz = userQiuz;
+  }
+
+  public List<Questions> getRecommendedQuestions() {
+    if (recommendedQuestions==null)
+      recommendedQuestions = new ArrayList<>();
+
+    return recommendedQuestions;
+  }
+
+  public void setRecommendedQuestions(
+      List<Questions> recommendedQuestions) {
+    this.recommendedQuestions = recommendedQuestions;
+  }
+
+  public List<Quiz> getRecommendedQuiz() {
+    if (recommendedQuiz==null)
+      recommendedQuiz = new ArrayList<>();
+
+    return recommendedQuiz;
+  }
+
+  public void setRecommendedQuiz(List<Quiz> recommendedQuiz) {
+    this.recommendedQuiz = recommendedQuiz;
+  }
+
+  public User getSelectedUser() {
+    return selectedUser;
+  }
+
+  public void setSelectedUser(User selectedUser) {
+    this.selectedUser = selectedUser;
+  }
+
+  public List<User> getUserList() {
+    return userList;
+  }
+
+  public void setUserList(List<User> userList) {
+    this.userList = userList;
   }
 }
 

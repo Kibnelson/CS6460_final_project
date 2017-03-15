@@ -535,7 +535,8 @@ public class MainView extends FragmentActivity
 
       }else if (position == 8) {
         // Seat arrangement
-
+        closeOpenDrawer();
+        loadView(StudentsPairListView.newInstance(1));
       }else if (position == 9) {
         // Seat arrangement
         closeOpenDrawer();

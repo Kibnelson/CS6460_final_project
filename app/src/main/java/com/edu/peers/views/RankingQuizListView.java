@@ -161,6 +161,7 @@ public class RankingQuizListView extends Fragment implements
     loadSpinnerData();
     spinner.setOnItemSelectedListener(new OnStudentSelected());
     spinner.setOnTouchListener(onSubjectTouchListener);
+    spinner.setVisibility(View.GONE);
 
     progressBar = (LinearLayout) view.findViewById(R.id.progressBarSchools);
 
@@ -380,7 +381,7 @@ public class RankingQuizListView extends Fragment implements
         for (int y=0;y<quizList.size();y++){
           Quiz quiz=quizList.get(y);
 
-          if (!checkIfListContains(sampleData,quiz.getUuid()))
+          if (!checkIfListContains(sampleData,quiz.getUuid())&& quiz.getShareWork())
               sampleData.add(quiz);
         }
       }
