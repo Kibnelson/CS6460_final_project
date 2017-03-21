@@ -420,7 +420,7 @@ public class Utils {
     Random r = new Random();
     int Low = 10;
     int High = 50;
-    int result = r.nextInt(High-Low) + Low;
+    int result = r.nextInt(High - Low) + Low;
 
     return result;
 
@@ -474,7 +474,6 @@ public class Utils {
       }
     }
 
-
     // Create an image file name
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
     File
@@ -495,39 +494,42 @@ public class Utils {
   }
 
 
-  public static String convert(String s){
+  public static String convert(String s) {
     SimpleDateFormat newformat = new SimpleDateFormat("d/MM/yy");
-    try{
-      if(s.contains("T")){
+    try {
+      if (s.contains("T")) {
         String datestring = s.split("T")[0];
         SimpleDateFormat oldformat = new SimpleDateFormat("yyyy-MM-dd");
         String reformattedStr = newformat.format(oldformat.parse(datestring));
         return reformattedStr;
-      }
-      else{
-        if(Integer.parseInt(s.split("-")[0])>13){
+      } else {
+        if (Integer.parseInt(s.split("-")[0]) > 13) {
           SimpleDateFormat oldformat = new SimpleDateFormat("yyyy-MM-dd");
           String reformattedStr = newformat.format(oldformat.parse(s));
           return reformattedStr;
-        }
-        else{
+        } else {
           SimpleDateFormat oldformat = new SimpleDateFormat("MM-dd-yyyy");
           String reformattedStr = newformat.format(oldformat.parse(s));
           return reformattedStr;
         }
 
       }
-    }
-    catch (Exception e){
+    } catch (Exception e) {
       return null;
     }
   }
 
-  public static User getUserWithUsername(List<User> userList,String username){
-    User userFound=null;
-    for (User user: userList){
-      if (user.getUsername().equalsIgnoreCase(username))
-        userFound=user;
+  public static User getUserWithUsername(List<User> userList, String username) {
+    User userFound = null;
+    for (User user : userList) {
+      Log.i(Constants.TAG,"user==="+username+"===XXX====="+user.getUsername());
+
+      if (username.contains(user.getUsername()) || username.contains(user.getFirstName())|| username.contains(user.getLastName())) {
+        Log.i(Constants.TAG,"user==="+user.getUsername());
+
+        userFound = user;
+        break;
+      }
     }
     return userFound;
   }

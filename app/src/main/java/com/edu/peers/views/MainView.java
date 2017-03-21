@@ -16,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -147,7 +148,7 @@ public class MainView extends FragmentActivity
         new UserManager(schoolCensus.getCloudantInstance(), getApplicationContext());
 
     main_widget = (RelativeLayout) findViewById(R.id.main_widget);
-
+    main_widget.setVisibility(View.VISIBLE);
     icon = (ImageView) findViewById(R.id.icon);
     icon.setOnClickListener(this);
 
@@ -231,10 +232,14 @@ public class MainView extends FragmentActivity
       userView = 1;
       menuData.add("Dashboard");
       menuData.add("Quizzes");
+      menuData.add("Learning material");
+
       menuData.add("Public Questions");
       menuData.add("Private Questions");
       menuData.add("Students Grade Book");
-      menuData.add("Learning material");
+
+
+
       menuData.add("General Notifications");
       menuData.add("Personal Notifications");
       menuData.add("Seat arrangement");
@@ -245,10 +250,12 @@ public class MainView extends FragmentActivity
       userView = 2;
       menuData.add("Dashboard");
       menuData.add("Quizzes");
+      menuData.add("Learning material");
+
       menuData.add("Public Questions");
       menuData.add("Private Questions");
       menuData.add("Grade Book");
-      menuData.add("Learning material");
+
       menuData.add("General Notifications");
       menuData.add("Personal Notifications");
       menuData.add("Ranking");
@@ -497,6 +504,8 @@ public class MainView extends FragmentActivity
 
     schoolCensus.setUserQiuz(null);
 
+    Log.i(Constants.TAG,"POSTION=="+position);
+
 
     if (userObject.getUser().getRole().equalsIgnoreCase(Constants.INSTRUCTOR_ROLE)) {
 
@@ -511,28 +520,29 @@ public class MainView extends FragmentActivity
         closeOpenDrawer();
         loadView(QuizListView.newInstance(1));
 
-      } else if (position == 2) {
+      }  else if (position == 2) {
+
+        closeOpenDrawer();
+        loadView(LearningContentListView.newInstance(1));
+
+      }else if (position == 3) {
 
         schoolCensus.setQuestionState(Constants.PUBLIC);
         closeOpenDrawer();
         loadView(QuestionsListView.newInstance(1));
 
-      } else if (position == 3) {
+      } else if (position == 4) {
 
         schoolCensus.setQuestionState(Constants.PRIVATE);
         closeOpenDrawer();
         loadView(QuestionsListView.newInstance(1));
 
-      } else if (position == 4) {
+      } else if (position == 5) {
+
 
         closeOpenDrawer();
 
         loadView(StudentsListView.newInstance(1));
-
-      } else if (position == 5) {
-
-        closeOpenDrawer();
-        loadView(LearningContentListView.newInstance(1));
 
       } else if (position == 6) {
         schoolCensus.setQuestionState(Constants.PUBLIC);
@@ -541,15 +551,18 @@ public class MainView extends FragmentActivity
         loadView(NotificationsListView.newInstance(1));
 
       } else if (position == 7) {
+
         schoolCensus.setQuestionState(Constants.PRIVATE);
         closeOpenDrawer();
         loadView(NotificationsListView.newInstance(1));
 
       }else if (position == 8) {
-        // Seat arrangement
+
+//         Seat arrangement
         closeOpenDrawer();
         loadView(StudentsPairListView.newInstance(1));
       }else if (position == 9) {
+
         // Seat arrangement
         closeOpenDrawer();
         loadView(RankingQuizListView.newInstance(1));
@@ -571,26 +584,26 @@ public class MainView extends FragmentActivity
 
       } else if (position == 2) {
 
-        schoolCensus.setQuestionState(Constants.PUBLIC);
         closeOpenDrawer();
-        loadView(QuestionsListView.newInstance(1));
+        loadView(LearningContentListView.newInstance(1));
 
       } else if (position == 3) {
 
-        schoolCensus.setQuestionState(Constants.PRIVATE);
+        schoolCensus.setQuestionState(Constants.PUBLIC);
         closeOpenDrawer();
         loadView(QuestionsListView.newInstance(1));
 
       } else if (position == 4) {
 
+        schoolCensus.setQuestionState(Constants.PRIVATE);
         closeOpenDrawer();
-
-        loadView(GradebookQuizListView.newInstance(1));
+        loadView(QuestionsListView.newInstance(1));
 
       } else if (position == 5) {
 
         closeOpenDrawer();
-        loadView(LearningContentListView.newInstance(1));
+
+        loadView(GradebookQuizListView.newInstance(1));
 
       } else if (position == 6) {
         schoolCensus.setQuestionState(Constants.PUBLIC);
@@ -598,6 +611,7 @@ public class MainView extends FragmentActivity
         loadView(NotificationsListView.newInstance(1));
 
       } else if (position == 7) {
+
         schoolCensus.setQuestionState(Constants.PRIVATE);
         closeOpenDrawer();
         loadView(NotificationsListView.newInstance(1));
@@ -625,39 +639,50 @@ public class MainView extends FragmentActivity
   @Override
   public void onBackPressed() {
 
-    if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.InstructorsSummaryView)
-        || schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentsSummaryView)) {
-      logout();
-    } else if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.QuizListViewContent)) {
+    if (userView == 1) {
 
-      loadView(QuizListView.newInstance(1));
+      loadView(InstructorsSummaryView.newInstance(0));
 
-    } else if (schoolCensus.getCurrentTitle()
-                   .equalsIgnoreCase(Constants.QuizListView) || schoolCensus.getCurrentTitle()
-                   .equalsIgnoreCase(Constants.LearningContentListView)) {
+    } else if (userView == 2) {
 
-      if (userView == 1) {
+      loadView(StudentsSummaryView.newInstance(0));
 
-        loadView(InstructorsSummaryView.newInstance(0));
-
-      } else if (userView == 2) {
-
-        loadView(StudentsSummaryView.newInstance(0));
-
-      }
-
-    }  else if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentsHomeGridView)) {
-
-//        loadView(MainHomeGridView.newInstance(1));
-
-    } else if (schoolCensus.getCurrentTitle()
-        .equalsIgnoreCase(Constants.StudentTransferWizardView)) {
-
-//        loadView(StudentsHomeGridView.newInstance(1));
-
-    } else {
-      super.onBackPressed();
     }
+
+
+//    if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.InstructorsSummaryView)
+//        || schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentsSummaryView)) {
+//      logout();
+//    } else if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.QuizListViewContent)) {
+//
+//      loadView(QuizListView.newInstance(1));
+//
+//    } else if (schoolCensus.getCurrentTitle()
+//                   .equalsIgnoreCase(Constants.QuizListView) || schoolCensus.getCurrentTitle()
+//                   .equalsIgnoreCase(Constants.LearningContentListView)) {
+//
+//      if (userView == 1) {
+//
+//        loadView(InstructorsSummaryView.newInstance(0));
+//
+//      } else if (userView == 2) {
+//
+//        loadView(StudentsSummaryView.newInstance(0));
+//
+//      }
+//
+//    }  else if (schoolCensus.getCurrentTitle().equalsIgnoreCase(Constants.StudentsHomeGridView)) {
+//
+////        loadView(MainHomeGridView.newInstance(1));
+//
+//    } else if (schoolCensus.getCurrentTitle()
+//        .equalsIgnoreCase(Constants.StudentTransferWizardView)) {
+//
+////        loadView(StudentsHomeGridView.newInstance(1));
+//
+//    } else {
+//      super.onBackPressed();
+//    }
 
   }
 

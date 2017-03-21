@@ -345,7 +345,7 @@ public class RecommendationsQuizExpandableListViewAdapter extends
 
     TextView groupPositionChild = (TextView) v.findViewById(R.id.groupPositionChild);
     groupPositionChild
-        .setText("" + mChildData.get(groupPosition).get(childPosition).get(NAME).getPosition());
+        .setText("# " + mChildData.get(groupPosition).get(childPosition).get(NAME).getPosition());
 //    selectedAnswers.setText(mContext.getCheckedValues(groupPosition, childPosition));
 
     final ImageView voice_q = (ImageView) v.findViewById(R.id.voice_q_c);

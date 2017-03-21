@@ -33,6 +33,7 @@ import com.edu.peers.managers.NotificationManager;
 import com.edu.peers.managers.UserManager;
 import com.edu.peers.models.NotificationObject;
 import com.edu.peers.models.Notifications;
+import com.edu.peers.models.User;
 import com.edu.peers.models.UserObject;
 import com.edu.peers.others.Constants;
 
@@ -377,20 +378,20 @@ public class NotificationsListView extends Fragment implements
 
       if ( schoolCensus.getQuestionState().equalsIgnoreCase(Constants.PRIVATE)){
 
-//        List<User> userList=  userObject.getUserList();
-//
-//        int size=userList.size();
-//
-//        for (int y=0;y<size;y++){
-//          User user1=userList.get(y);
-//
-//          if (user1.getUsername().equalsIgnoreCase(userObjectList.getUser().getUsername())) {
-//
-//            break;
-//          }
-//        }
+        List<User> userList=  userObject.getUserList();
 
-        sampleData=userObjectList.getUser().getNotificationsList();
+        int size=userList.size();
+
+        for (int y=0;y<size;y++){
+          User user1=userList.get(y);
+
+          if (user1.getUsername().equalsIgnoreCase(userObjectList.getUser().getUsername())) {
+            sampleData=user1.getNotificationsList();
+            break;
+          }
+        }
+
+
       } else if ( schoolCensus.getQuestionState().equalsIgnoreCase(Constants.PUBLIC)){
 
         if (notificationObject != null) {

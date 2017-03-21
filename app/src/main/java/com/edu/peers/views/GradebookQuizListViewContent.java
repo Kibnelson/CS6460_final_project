@@ -568,10 +568,7 @@ public class GradebookQuizListViewContent extends Fragment implements
 
   }
 
-  public void
-
-
-  thumbsUpClicked(int groupPosition, int childPosition, Boolean checked, Input value) {
+  public void thumbsUpClicked(int groupPosition, int childPosition, Boolean checked, Input value) {
 
     this.groupPosition=groupPosition;
     this.childPosition=childPosition;

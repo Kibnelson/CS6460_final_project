@@ -368,12 +368,12 @@ public class QuestionsListView extends Fragment implements
       if (questionObject != null) {
 
         List<Questions> questionsList = questionObject.getQuestionsList();
-
-
           for (Questions questions : questionsList) {
             if (questions.getQuestionType() != null) {
               if (questions.getQuestionType().equalsIgnoreCase(schoolCensus.getQuestionState())) {
                 if (schoolCensus.getQuestionState().equalsIgnoreCase(Constants.PUBLIC))
+                  sampleData.add(questions);
+                else if (schoolCensus.getQuestionState().equalsIgnoreCase(Constants.PRIVATE))
                   sampleData.add(questions);
                 else if (schoolCensus.getUserObject().getUser().getUsername().equalsIgnoreCase(questions.getSelectedUser().getUsername())){
                   sampleData.add(questions);
@@ -438,6 +438,8 @@ public class QuestionsListView extends Fragment implements
             if (questions.getQuestionType().equalsIgnoreCase(schoolCensus.getQuestionState())) {
 
               if (schoolCensus.getQuestionState().equalsIgnoreCase(Constants.PUBLIC))
+                sampleData.add(questions);
+              else if (schoolCensus.getQuestionState().equalsIgnoreCase(Constants.PRIVATE))
                 sampleData.add(questions);
               else if (schoolCensus.getUserObject().getUser().getUsername().equalsIgnoreCase(questions.getSelectedUser().getUsername())){
                 sampleData.add(questions);

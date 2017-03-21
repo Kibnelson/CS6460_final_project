@@ -84,7 +84,7 @@ public class ContentFileExpandableListViewAdapter extends
     user = (TextView) v.findViewById(R.id.user);
 
     int position=groupPosition+1;
-    groupPositionTextView.setText(""+position);
+    groupPositionTextView.setText("# "+position +" : ");
 
 
     subject.setText(""+mGroupData.get(groupPosition).get(NAME).getSubject());
@@ -146,7 +146,8 @@ public class ContentFileExpandableListViewAdapter extends
 
     TextView    groupPositionChild = (TextView) v.findViewById(R.id.groupPositionChild);
     int index=childPosition+1;
-    groupPositionChild.setText(""+index);
+//    groupPositionChild.setText(""+index);
+    groupPositionChild.setText("# "+index +" : ");
 
     date.setText(mChildData.get(groupPosition).get(childPosition).get(NAME).getDate());
 

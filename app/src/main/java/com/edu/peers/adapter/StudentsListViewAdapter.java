@@ -59,9 +59,8 @@ public class StudentsListViewAdapter extends BaseAdapter {
     TextView textViewOne = (TextView) homeListItem
         .findViewById(R.id.listitem_labeltwo);
     textView.setText(item.getFirstName() +" "+item.getLastName());
-    textViewOne.setText(item.getUsername());
-
-
+    textViewOne.setText("Username: "+item.getUsername());
+//    textViewOne.setVisibility(View.GONE);
 
     return homeListItem;
   }

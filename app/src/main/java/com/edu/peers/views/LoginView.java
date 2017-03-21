@@ -380,8 +380,8 @@ public class LoginView extends FragmentActivity
           userObjectList.setPosition(y);
           userObjectList.setUser(user);
         }
-
       }
+
       }
 
       long totalSize = 0;
@@ -392,8 +392,10 @@ public class LoginView extends FragmentActivity
     protected void onPostExecute(Long result) {
 
       hideProgessDialog();
+      if (userObjectList==null)
+        userObjectList= new UserObject();
 
-      if (userObjectList != null && userObjectList.getUser().getPassword()
+      if (userObjectList != null && userObjectList.getUser()!=null && userObjectList.getUser().getPassword()
           .equalsIgnoreCase(passwordFieldStr)) {
 
         schoolCensus.setUserObject(userObjectList);

@@ -83,12 +83,13 @@ public class CloudantStore implements CloudantSaveListener {
   void stopAllReplications() {
 
     if (this.mPushReplicator != null) {
-      this.mPushReplicator.stop();
+//      this.mPushReplicator.stop();
+//      this.mPushReplicator.start();
     }
 
     if (this.mPullReplicator != null) {
-      this.mPullReplicator.stop();
-
+//      this.mPullReplicator.stop();
+//      this.mPullReplicator.start();
     }
 
   }
@@ -355,7 +356,7 @@ public class CloudantStore implements CloudantSaveListener {
 
   public void pushData() {
 
-//
+
     if (mPushReplicator.getState() == Replicator.State.COMPLETE
         || mPushReplicator.getState() == Replicator.State.PENDING
         || mPushReplicator.getState() == Replicator.State.STOPPED
@@ -410,8 +411,10 @@ public class CloudantStore implements CloudantSaveListener {
       if (mPullReplicator.getState() == Replicator.State.COMPLETE
           || mPullReplicator.getState() == Replicator.State.PENDING) {
         try {
+          mPullReplicator.stop();
+
           mPullReplicator.getEventBus()
-              .register(new Listener(new CountDownLatch(1), CloudantStore.this, schoolCensus));
+              .register(new ListenerPush(new CountDownLatch(1), CloudantStore.this, schoolCensus));
           mPullReplicator.start();
 
 
@@ -419,6 +422,8 @@ public class CloudantStore implements CloudantSaveListener {
           e.printStackTrace();
         }
       }
+  } public void stopPullData() {
+        mPullReplicator.stop();
   }
 
   public void deleteLocalDatastore() {

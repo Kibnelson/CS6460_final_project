@@ -662,7 +662,6 @@ public class StudentsPairListView extends Fragment implements
 
       User useUser=params[0];
 
-
       sampleData= new ArrayList<>();
       gradebookObject = gradeBookManager.getGradebookObject();
 
@@ -739,6 +738,10 @@ public class StudentsPairListView extends Fragment implements
         progressBar.setVisibility(View.GONE);
       }
 
+      for (User user : userList) {
+        Log.i(Constants.TAG,">>>>>>>>>>"+user.getUsername());
+
+      }
       schoolCensus.setUserList(userList);
 
       FragmentTransaction ft = getFragmentManager().beginTransaction();

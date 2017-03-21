@@ -85,7 +85,8 @@ public class QuizAttemptExpandableListViewAdapter extends
     groupPositionTextView = (TextView) v.findViewById(R.id.groupPosition);
 
     int position=groupPosition+1;
-    groupPositionTextView.setText(""+position);
+//    groupPositionTextView.setText(""+position);
+    groupPositionTextView.setText("# "+position+" : ");
 
     integerTextViewMap.put(groupPosition,selectedAnswers);
 
@@ -181,7 +182,7 @@ public class QuizAttemptExpandableListViewAdapter extends
     }
 
     TextView    groupPositionChild = (TextView) v.findViewById(R.id.groupPositionChild);
-    groupPositionChild.setText(""+mChildData.get(groupPosition).get(childPosition).get(NAME).getPosition());
+    groupPositionChild.setText("# "+mChildData.get(groupPosition).get(childPosition).get(NAME).getPosition()+" : ");
     selectedAnswers.setText(mContext.getCheckedValues( groupPosition,childPosition));
 
 

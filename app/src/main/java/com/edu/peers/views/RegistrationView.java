@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -186,6 +187,8 @@ public class RegistrationView extends FragmentActivity implements
   private boolean updateUser=false;
   private ProgressDialog progressDialog;
   private MainView mainView;
+  private RelativeLayout main_widget;
+  private LinearLayout facePhotoLayout;
 
 
   @Override
@@ -199,8 +202,8 @@ public class RegistrationView extends FragmentActivity implements
 
     userObject = schoolCensus.getUserObject();
     userManager = new UserManager(schoolCensus.getCloudantInstance(), this);
-    mainView = schoolCensus.getMainView();
-    mainView.hideNotification();
+    main_widget = (RelativeLayout) findViewById(R.id.main_widget);
+    main_widget.setVisibility(View.GONE);
     backButton = (ImageView) findViewById(R.id.menu_drawer);
     deleteButton = (ImageView) findViewById(R.id.delete);
     imageView = (ImageView) findViewById(R.id.face_photo);
@@ -210,6 +213,9 @@ public class RegistrationView extends FragmentActivity implements
     okButton.setOnClickListener(this);
     cancelButton = (Button) findViewById(R.id.cancel_button);
     cancelButton.setOnClickListener(this);
+
+    facePhotoLayout= (LinearLayout) findViewById(R.id.facePhotoLayout);
+//    facePhotoLayout.setVisibility(View.GONE);
 
     title = (TextView) findViewById(R.id.title);
     title.setText("User Registration");
@@ -712,9 +718,6 @@ public class RegistrationView extends FragmentActivity implements
 
 
     protected void onPostExecute(Long result) {
-
-      mainView.showNotification();
-
       hideProgessDialog();      onBackPressed();
     }
     protected void onPreExecute() {

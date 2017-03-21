@@ -77,6 +77,7 @@ public class StudentsPairListViewAdapter extends BaseAdapter {
 
     }
 
+    difference.setVisibility(View.GONE);
     return homeListItem;
   }
 

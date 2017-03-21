@@ -109,7 +109,9 @@ public class PairingListViewAdapter extends BaseAdapter {
     }
 
     int index=position+1;
-    groupPositionChild.setText(""+index+": ");
+//    groupPositionChild.setText(""+index+": ");
+    groupPositionChild.setText("#"+index+" : ");
+
     studentsName.setText(item.getFirstName()+" "+item.getLastName());
 
     return homeListItem;

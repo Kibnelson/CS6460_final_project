@@ -66,7 +66,7 @@ public class RankingUserListViewAdapter extends BaseAdapter {
 
     int index=position+1;
 
-    textView.setText(index+" "+item.getFirstName() +" "+item.getLastName());
+    textView.setText("# "+index+" : "+item.getFirstName() +" "+item.getLastName());
 
     Log.i(Constants.TAG,"items.get(position)items.get(position)===="+items.get(position).getMarks());
     Log.i(Constants.TAG,"items.get(position)items.get(position)===="+calculateMarks(items.get(position)));

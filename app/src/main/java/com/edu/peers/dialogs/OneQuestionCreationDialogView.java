@@ -255,6 +255,8 @@ public class OneQuestionCreationDialogView extends DialogFragment
 
     userObject=schoolCensus.getUserObject();
 
+
+
     for (User user:userObject.getUserList()){
 
       String userType="";
@@ -264,7 +266,7 @@ public class OneQuestionCreationDialogView extends DialogFragment
         userType="S";
 
       usersList.add(user.getFirstName() +" "+user.getLastName()+":"+userType);
-      userNameList.add(user.getUsername());
+      userNameList.add(user.getFirstName() +" "+user.getLastName()+" "+user.getUsername());
 
 
     }
@@ -335,6 +337,7 @@ public class OneQuestionCreationDialogView extends DialogFragment
             new Questions(qName.getText().toString(), questionStringWriting, questionStringVoice,
                           answers, choices, userObject.getUser());
         questions.setQuestionType(questionType);
+
         questions.setSelectedUser(userMatch);
         User user = userObject.getUser();
 
@@ -441,7 +444,8 @@ public class OneQuestionCreationDialogView extends DialogFragment
 
     selectedUser=targetUser.getAdapter().getItem(position).toString();
 
-    userMatch=Utils.getUserWithUsername(userObject.getUserList(),userNameList.get(position));
+    userMatch=Utils.getUserWithUsername(userObject.getUserList(),selectedUser);
+
 
 
 
@@ -482,7 +486,6 @@ public class OneQuestionCreationDialogView extends DialogFragment
 
     protected void onPostExecute(Long result) {
       hideProgessDialog();
-
       completeQuestionCreation();
     }
 

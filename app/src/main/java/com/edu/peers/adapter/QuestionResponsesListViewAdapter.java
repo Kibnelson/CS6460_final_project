@@ -57,7 +57,7 @@ public class QuestionResponsesListViewAdapter extends BaseAdapter {
     } else {
       homeListItem = convertView;
     }
-    Input item = items.get(position);
+    final Input item = items.get(position);
     TextView groupPositionChild = (TextView) homeListItem
         .findViewById(R.id.groupPositionChild);
     TextView textView = (TextView) homeListItem
@@ -96,11 +96,55 @@ public class QuestionResponsesListViewAdapter extends BaseAdapter {
 
 
 
+    ImageView thumbsupImage = (ImageView) homeListItem.findViewById(R.id.thumbsupImage);
+    thumbsupImage.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+
+//        if (loggedInUser.getUsername().equalsIgnoreCase(userQuiz.getUsername())) {
+//
+//          Toast.makeText(mContext.getContext(), "This feature is not allowed because its your own test results", Toast.LENGTH_LONG)
+//              .show();
+//
+//        } else {
+          mContext.thumbsUpClicked(item,position);
+
+        Toast.makeText(mContext.getContext(), "Thumbs up clicked", Toast.LENGTH_LONG)
+            .show();
+//        }
+
+      }
+    });
+    recommend.setVisibility(View.GONE);
+
+    ImageView thumbsdownImage = (ImageView) homeListItem.findViewById(R.id.thumbsDownImage);
+    thumbsdownImage.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+
+//        if (loggedInUser.getUsername().equalsIgnoreCase(item.getUser().getu)) {
+//
+//          Toast.makeText(mContext.getContext(), "This feature is not allowed because its your own test results", Toast.LENGTH_LONG)
+//              .show();
+//
+//        } else {
+          mContext.thumbsDownClicked(item,position);
+//
+          Toast.makeText(mContext.getContext(), "Thumbs down clicked", Toast.LENGTH_LONG)
+              .show();
+//
+//        }
+      }
+    });
+
+
 
 
 
     int index=position+1;
-    groupPositionChild.setText(""+index);
+//    groupPositionChild.setText(""+index);
+    groupPositionChild.setText("#"+index+" : ");
+
     textView.setText(item.getQuestionInput());
     textViewOne.setText(item.getDate());
 

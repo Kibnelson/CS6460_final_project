@@ -238,7 +238,7 @@
 									android:layout_height="wrap_content"
 									android:layout_gravity="left"
 									android:gravity="left"
-									android:text="Created by"
+									android:text="By"
 
 									android:textColor="@android:color/black"
 									android:textSize="15dp"

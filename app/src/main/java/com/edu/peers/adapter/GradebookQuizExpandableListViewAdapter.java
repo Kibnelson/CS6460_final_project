@@ -96,7 +96,7 @@ public class GradebookQuizExpandableListViewAdapter extends
     groupPositionTextView = (TextView) v.findViewById(R.id.groupPosition);
     selectedAnswersLayout = (LinearLayout) v.findViewById(R.id.selectedAnswersLayout);
     int position = groupPosition + 1;
-    groupPositionTextView.setText("" + position);
+    groupPositionTextView.setText("# " + position+" : ");
 
     integerTextViewMap.put(groupPosition, selectedAnswers);
 
@@ -350,8 +350,12 @@ public class GradebookQuizExpandableListViewAdapter extends
     }
 
     TextView groupPositionChild = (TextView) v.findViewById(R.id.groupPositionChild);
+//    groupPositionChild
+//        .setText("" + mChildData.get(groupPosition).get(childPosition).get(NAME).getPosition());
     groupPositionChild
-        .setText("" + mChildData.get(groupPosition).get(childPosition).get(NAME).getPosition());
+        .setText("# " + mChildData.get(groupPosition).get(childPosition).get(NAME).getPosition() +" : ");
+
+
     selectedAnswers.setText(mContext.getCheckedValues(groupPosition, childPosition));
 
     final ImageView voice_q = (ImageView) v.findViewById(R.id.voice_q_c);

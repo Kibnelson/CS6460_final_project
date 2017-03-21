@@ -54,6 +54,7 @@ public class StudentsRecommendListViewAdapter extends BaseAdapter {
     } else {
       homeListItem = convertView;
     }
+
     User selectedUser = items.get(position);
 
     TextView average = (TextView) homeListItem.findViewById(R.id.average);

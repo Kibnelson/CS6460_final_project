@@ -499,6 +499,56 @@ public class QuestionListViewContent extends Fragment implements
   }
 
 
+  public void thumbsUpClicked(Input input, int inputPosition) {
+
+    QuestionsResponses questionsResponses=questionsResponsesList.get(inputPosition);
+    int current=questionsResponses.getInput().getThumbsUp();
+    int  newNumber=current+1;
+    questionsResponses.getInput().setThumbsUp(newNumber);
+    new backgroundProcessSaveUpdate().execute(questionsResponses);
+
+
+
+//    this.groupPosition=groupPosition;
+//    this.childPosition=childPosition;
+//    int current= quiz.getQuestions().get(groupPosition).getChoices().get(childPosition).getThumbsUp();
+//    int newNumber=current+1;
+//    quiz.getQuestions().get(groupPosition).getChoices().get(childPosition).setThumbsUp(newNumber);
+//
+//    schoolCensus.setQuiz(quiz);
+//
+//    Log.i(Constants.TAG, "thumbsUpClickedthumbsUpClickedthumbsUpClicked==" + quiz.getQuestions().get(groupPosition).getChoices().get(childPosition).getThumbsUp());
+//
+//
+//    new backgroundProcessSave().execute(quiz);
+
+
+  }
+
+  public void thumbsDownClicked(Input input, int inputPosition) {
+
+
+    QuestionsResponses questionsResponses=questionsResponsesList.get(inputPosition);
+    int current=questionsResponses.getInput().getThumbsDown();
+    int  newNumber=current-1;
+    questionsResponses.getInput().setThumbsDown(newNumber);
+    new backgroundProcessSaveUpdate().execute(questionsResponses);
+
+
+
+//    int current= quiz.getQuestions().get(groupPosition).getChoices().get(childPosition).getThumbsDown();
+//    int newNumber=current-1;
+//    quiz.getQuestions().get(groupPosition).getChoices().get(childPosition).setThumbsDown(newNumber);
+//
+//    schoolCensus.setQuiz(quiz);
+//
+//    new backgroundProcessSave().execute(quiz);
+
+
+  }
+
+
+
   public void openRecordDialog(String recordedString) {
     mStackLevel++;
     FragmentTransaction ft = getFragmentManager().beginTransaction();

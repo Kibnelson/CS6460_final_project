@@ -750,6 +750,7 @@ public class ContentCreationDialogView extends DialogFragment
 
       try {
         userManager.addDocument(userObject,Constants.USERS);
+
         notificationManager.addNotification(notificationObject);
 
       } catch (Exception e) {
